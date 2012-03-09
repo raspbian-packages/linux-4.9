@@ -164,6 +164,9 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
 	if (p != *ppos)
 		return -EFBIG;
 
+	if (get_securelevel() > 0)
+		return -EPERM;
+
 	if (!valid_phys_addr_range(p, count))
 		return -EFAULT;
 
@@ -512,6 +515,9 @@ static ssize_t write_kmem(struct file *file, const char __user *buf,
 	ssize_t virtr = 0;
 	char *kbuf; /* k-addr because vwrite() takes vmlist_lock rwlock */
 	int err = 0;
+
+	if (get_securelevel() > 0)
+		return -EPERM;
 
 	if (!pfn_valid(PFN_DOWN(p)))
 		return -EIO;
