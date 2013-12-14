@@ -293,7 +293,7 @@ static int fw_read_file_contents(struct file *file, struct firmware_buf *fw_buf)
 	int rc;
 
 	if (!S_ISREG(file_inode(file)->i_mode))
-		return -EINVAL;
+		return -ENOTTY;
 	size = i_size_read(file_inode(file));
 	if (size <= 0)
 		return -EINVAL;
@@ -302,7 +302,7 @@ static int fw_read_file_contents(struct file *file, struct firmware_buf *fw_buf)
 		return -ENOMEM;
 	rc = kernel_read(file, 0, buf, size);
 	if (rc != size) {
-		if (rc > 0)
+		if (rc >= 0)
 			rc = -EIO;
 		goto fail;
 	}
@@ -334,8 +334,10 @@ static int fw_get_filesystem_firmware(struct device *device,
 		snprintf(path, PATH_MAX, "%s/%s", fw_path[i], buf->fw_id);
 
 		file = filp_open(path, O_RDONLY, 0);
-		if (IS_ERR(file))
+		if (IS_ERR(file)) {
+			rc = PTR_ERR(file);
 			continue;
+		}
 		rc = fw_read_file_contents(file, buf);
 		fput(file);
 		if (rc)
@@ -974,13 +976,6 @@ static void kill_requests_without_uevent(void)
 #endif
 
 #else /* CONFIG_FW_LOADER_USER_HELPER */
-static inline int
-fw_load_from_user_helper(struct firmware *firmware, const char *name,
-			 struct device *device, unsigned int opt_flags,
-			 long timeout)
-{
-	return -ENOENT;
-}
 
 /* No abort during direct loading */
 #define is_fw_load_aborted(buf) false
@@ -1132,6 +1127,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
 	}
 
 	ret = fw_get_filesystem_firmware(device, fw->priv);
+#ifdef CONFIG_FW_LOADER_USER_HELPER
 	if (ret) {
 		if (!(opt_flags & FW_OPT_NO_WARN))
 			dev_warn(device,
@@ -1143,6 +1139,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
 						       opt_flags, timeout);
 		}
 	}
+#endif
 
 	if (!ret)
 		ret = assign_firmware_buf(fw, device, opt_flags);
