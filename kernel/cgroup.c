@@ -5286,7 +5286,11 @@ int __init cgroup_init_early(void)
 	return 0;
 }
 
+#ifdef CONFIG_MEMCG_DISABLED
+static unsigned long cgroup_disable_mask __initdata = 1 << memory_cgrp_id;
+#else
 static unsigned long cgroup_disable_mask __initdata;
+#endif
 
 /**
  * cgroup_init - cgroup initialization
@@ -5761,7 +5765,7 @@ out_free:
 	kfree(pathbuf);
 }
 
-static int __init cgroup_disable(char *str)
+static int __init cgroup_set_disabled(char *str, int value)
 {
 	struct cgroup_subsys *ss;
 	char *token;
@@ -5775,12 +5779,26 @@ static int __init cgroup_disable(char *str)
 			if (strcmp(token, ss->name) &&
 			    strcmp(token, ss->legacy_name))
 				continue;
-			cgroup_disable_mask |= 1 << i;
+			if (value)
+				cgroup_disable_mask |= 1 << i;
+			else
+				cgroup_disable_mask &= ~(1 << i);
 		}
 	}
 	return 1;
 }
+
+static int __init cgroup_disable(char *str)
+{
+	return cgroup_set_disabled(str, 1);
+}
 __setup("cgroup_disable=", cgroup_disable);
+
+static int __init cgroup_enable(char *str)
+{
+	return cgroup_set_disabled(str, 0);
+}
+__setup("cgroup_enable=", cgroup_enable);
 
 /**
  * css_tryget_online_from_dir - get corresponding css from a cgroup dentry
