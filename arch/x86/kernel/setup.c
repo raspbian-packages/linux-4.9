@@ -1145,6 +1145,12 @@ void __init setup_arch(char **cmdline_p)
 	/* Allocate bigger log buffer */
 	setup_log_buf(1);
 
+#ifdef CONFIG_EFI_SECURE_BOOT_SECURELEVEL
+	if (boot_params.secure_boot) {
+		set_securelevel(1);
+	}
+#endif
+
 	reserve_initrd();
 
 	early_initrd_acpi_init();
@@ -1152,12 +1158,6 @@ void __init setup_arch(char **cmdline_p)
 	vsmp_init();
 
 	io_delay_init();
-
-#ifdef CONFIG_EFI_SECURE_BOOT_SECURELEVEL
-	if (boot_params.secure_boot) {
-		set_securelevel(1);
-	}
-#endif
 
 	/*
 	 * Parse the ACPI tables for possible boot-time SMP configuration.
