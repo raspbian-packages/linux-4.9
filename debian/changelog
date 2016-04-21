@@ -1,3 +1,10 @@
+linux-4.4 (4.4.6-1+rpi4) jessie-staging; urgency=medium
+
+  * With previous version rpi2 kernel booted but rpi kernel didn't.
+    try some more config changes.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Thu, 21 Apr 2016 21:08:58 +0000
+
 linux-4.4 (4.4.6-1+rpi3) jessie-staging; urgency=medium
 
   * Don't specity an ext3-modules udeb for rpi and rpi2 flavors, debian no
