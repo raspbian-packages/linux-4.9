@@ -1,3 +1,9 @@
+linux-4.4 (4.4.6-1+rpi6) jessie-staging; urgency=medium
+
+  * Unshelve some more config settings.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Thu, 28 Apr 2016 13:30:55 +0000
+
 linux-4.4 (4.4.6-1+rpi5) jessie-staging; urgency=medium
 
   * Unshelve some more config settings.
