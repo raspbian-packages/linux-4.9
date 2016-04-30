@@ -1,3 +1,9 @@
+linux-4.4 (4.4.6-1+rpi9) jessie-staging; urgency=medium
+
+  * Unshelve remaining config settings (this should make us equivilent to +rpi2)
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Sat, 30 Apr 2016 23:47:50 +0000
+
 linux-4.4 (4.4.6-1+rpi8) jessie-staging; urgency=medium
 
   * unshelve yet more config settings.
