@@ -44,7 +44,6 @@ hardware-long: Raspberry PI
 [rpi_image]
 configs:
  armhf/config.rpix
- armhf/config.test
  armhf/config.rpi
 
 [rpi2_image]

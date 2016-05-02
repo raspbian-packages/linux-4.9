@@ -1,3 +1,11 @@
+linux-4.4 (4.4.6-1+rpi12) jessie-staging; urgency=medium
+
+  * Merge config.test into config.rpi
+  * Allow loop drivers to be built as modules so udeb build succeeds.
+  * Remove CONFIG_FIRMWARE_IN_KERNEL from config.rpi
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Mon, 02 May 2016 14:59:12 +0000
+
 linux-4.4 (4.4.6-1+rpi11) jessie-staging; urgency=medium
 
   * Remove settings unshelved in +rpi5 and +rpi6
