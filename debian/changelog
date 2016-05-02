@@ -1,3 +1,9 @@
+linux-4.4 (4.4.6-1+rpi11) jessie-staging; urgency=medium
+
+  * Remove settings unshelved in +rpi5 and +rpi6
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Mon, 02 May 2016 01:51:47 +0000
+
 linux-4.4 (4.4.6-1+rpi10) jessie-staging; urgency=medium
 
   * Remove config settings unshelved in +rpi7 and +rpi8
