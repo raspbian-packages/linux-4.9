@@ -1,3 +1,13 @@
+linux-4.4 (4.4.6-1+rpi13) jessie-staging; urgency=medium
+
+  * Remove more stuff from config.rpi because it's breaking udeb generation
+    + Remove "# CONFIG_CRYPTO_BLOWFISH is not set"
+    + Remove "# CONFIG_CRYPTO_SERPENT is not set"
+    + Remove "# CONFIG_CRYPTO_TWOFISH is not set"
+    + Remove "# CONFIG_MINIX_FS is not set"
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Tue, 03 May 2016 02:16:27 +0000
+
 linux-4.4 (4.4.6-1+rpi12) jessie-staging; urgency=medium
 
   * Merge config.test into config.rpi
