@@ -1,3 +1,11 @@
+linux-4.4 (4.4.6-1+rpi14) jessie-staging; urgency=medium
+
+  * Add a couple of settings to the rpi2 config based on looking at difference
+    between foundation rpi and rpi2 configs.
+  * Move a bunch of stuff from rpi config to rpix config.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Thu, 05 May 2016 19:38:10 +0000
+
 linux-4.4 (4.4.6-1+rpi13) jessie-staging; urgency=medium
 
   * Remove more stuff from config.rpi because it's breaking udeb generation
