@@ -2114,8 +2114,10 @@ struct napi_gro_cb {
 	/* Used to determine if flush_id can be ignored */
 	u8	is_atomic:1;
 
+#ifndef __GENKSYMS__
 	/* Number of gro_receive callbacks this packet already went through */
 	u8 recursion_counter:4;
+#endif
 
 	/* 1 bit hole */
 
