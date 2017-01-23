@@ -2339,7 +2339,9 @@ enum nl80211_attrs {
 	NL80211_ATTR_NAN_FUNC,
 	NL80211_ATTR_NAN_MATCH,
 
+#if !defined(__KERNEL__) || !defined(__GENKSYMS__)
 	NL80211_ATTR_BSSID,
+#endif
 
 	/* add attributes here, update the policy in nl80211.c */
 
