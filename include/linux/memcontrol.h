@@ -120,7 +120,11 @@ struct mem_cgroup_reclaim_iter {
  */
 struct mem_cgroup_per_node {
 	struct lruvec		lruvec;
+#ifdef __GENKSYMS__
+	unsigned long		lru_size[NR_LRU_LISTS];
+#else
 	unsigned long		lru_zone_size[MAX_NR_ZONES][NR_LRU_LISTS];
+#endif
 
 	struct mem_cgroup_reclaim_iter	iter[DEF_PRIORITY + 1];
 
