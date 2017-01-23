@@ -28,8 +28,13 @@ extern void pm_runtime_remove(struct device *dev);
 
 struct wake_irq {
 	struct device *dev;
+#ifndef __GENKSYMS__
 	unsigned int status;
+#endif
 	int irq;
+#ifdef __GENKSYMS__
+	bool dedicated_irq:1;
+#endif
 };
 
 extern void dev_pm_arm_wake_irq(struct wake_irq *wirq);
