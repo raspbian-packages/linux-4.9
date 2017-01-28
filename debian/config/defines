@@ -1,0 +1,79 @@
+[abi]
+abiname: 1
+ignore-changes:
+ __cpuhp_*
+ module:drivers/iio/common/st_sensors/**
+ module:drivers/net/wireless/**
+ module:drivers/power/supply/bq27xxx_battery
+ module:drivers/usb/host/**
+ module:drivers/usb/musb/**
+ module:net/ceph/libceph
+# btree library is only selected by few drivers so not useful OOT
+ btree_*
+ visitor*
+
+[base]
+arches:
+ alpha
+ amd64
+ arm64
+ armel
+ armhf
+ hppa
+ i386
+ m68k
+ mips
+ mipsel
+ mipsn32
+ mipsn32el
+ mips64
+ mips64el
+# Disabled until dak accepts them in the control file
+# mipsr6
+# mipsr6el
+# mipsn32r6
+# mipsn32r6el
+# mips64r6
+# mips64r6el
+ or1k
+ powerpc
+ powerpcspe
+ ppc64
+ ppc64el
+ s390
+ s390x
+ sh3
+ sh4
+ sparc
+ sparc64
+ tilegx
+ x32
+compiler: gcc-6
+featuresets:
+ none
+ rt
+
+[build]
+debug-info: true
+# Enable module signing by default (implemented in the linux-signed package)
+signed-modules: true
+
+[featureset-rt_base]
+enabled: true
+
+[description]
+part-long-up: This kernel is not suitable for SMP (multi-processor,
+ multi-core or hyper-threaded) systems.
+part-long-xen: This kernel also runs on a Xen hypervisor.
+ It supports both privileged (dom0) and unprivileged (domU) operation.
+
+[image]
+initramfs-generators: initramfs-tools initramfs-fallback
+
+[relations]
+# compilers
+gcc-6: gcc-6 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cross>
+
+# initramfs-generators
+initramfs-fallback: linux-initramfs-tool
+initramfs-tools: initramfs-tools (>= 0.120+deb8u2)
