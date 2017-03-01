@@ -36,16 +36,17 @@ static int usb_cypress_writemem(struct usb_device *udev,u16 addr,u8 *data, u8 le
 int usb_cypress_load_firmware(struct usb_device *udev, const struct firmware *fw, int type)
 {
 	struct hexline *hx;
-	u8 reset;
+	u8 *reset;
 	int ret,pos=0;
 
 	hx = kmalloc(sizeof(*hx), GFP_KERNEL);
 	if (!hx)
 		return -ENOMEM;
+	reset = (u8 *)hx;
 
 	/* stop the CPU */
-	reset = 1;
-	if ((ret = usb_cypress_writemem(udev,cypress[type].cpu_cs_register,&reset,1)) != 1)
+	*reset = 1;
+	if ((ret = usb_cypress_writemem(udev, cypress[type].cpu_cs_register, reset, 1)) != 1)
 		err("could not stop the USB controller CPU.");
 
 	while ((ret = dvb_usb_get_hexline(fw, hx, &pos)) > 0) {
@@ -68,8 +69,8 @@ int usb_cypress_load_firmware(struct usb_device *udev, const struct firmware *fw
 
 	if (ret == 0) {
 		/* restart the CPU */
-		reset = 0;
-		if (ret || usb_cypress_writemem(udev,cypress[type].cpu_cs_register,&reset,1) != 1) {
+		*reset = 0;
+		if (ret || usb_cypress_writemem(udev,cypress[type].cpu_cs_register, reset, 1) != 1) {
 			err("could not restart the USB controller CPU.");
 			ret = -EINVAL;
 		}
