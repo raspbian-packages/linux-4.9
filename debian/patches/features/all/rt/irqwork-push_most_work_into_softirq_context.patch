@@ -1,7 +1,7 @@
 Subject: irqwork: push most work into softirq context
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Tue, 23 Jun 2015 15:32:51 +0200
-Origin: https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patches-4.4.3-rt9.tar.xz
+Origin: https://www.kernel.org/pub/linux/kernel/projects/rt/4.9/older/patches-4.9.13-rt10.tar.xz
 
 Initially we defered all irqwork into softirq because we didn't want the
 latency spikes if perf or another user was busy and delayed the RT task.
@@ -23,9 +23,9 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  include/linux/irq_work.h |    1 +
  kernel/irq_work.c        |   47 ++++++++++++++++++++++++++++++++++-------------
  kernel/sched/rt.c        |    1 +
- kernel/time/tick-sched.c |    6 ++++++
+ kernel/time/tick-sched.c |    1 +
  kernel/time/timer.c      |    6 +++++-
- 5 files changed, 47 insertions(+), 14 deletions(-)
+ 5 files changed, 42 insertions(+), 14 deletions(-)
 
 --- a/include/linux/irq_work.h
 +++ b/include/linux/irq_work.h
@@ -144,7 +144,7 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  
 --- a/kernel/sched/rt.c
 +++ b/kernel/sched/rt.c
-@@ -94,6 +94,7 @@ void init_rt_rq(struct rt_rq *rt_rq)
+@@ -102,6 +102,7 @@ void init_rt_rq(struct rt_rq *rt_rq)
  	rt_rq->push_cpu = nr_cpu_ids;
  	raw_spin_lock_init(&rt_rq->push_lock);
  	init_irq_work(&rt_rq->push_work, push_irq_work_func);
@@ -154,29 +154,17 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  	/* We start is dequeued state, because no RT tasks are queued */
 --- a/kernel/time/tick-sched.c
 +++ b/kernel/time/tick-sched.c
-@@ -181,6 +181,11 @@ static bool can_stop_full_tick(void)
- 		return false;
- 	}
- 
-+	if (!arch_irq_work_has_interrupt()) {
-+		trace_tick_stop(0, "missing irq work interrupt\n");
-+		return false;
-+	}
-+
- 	/* sched_clock_tick() needs us? */
- #ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
- 	/*
-@@ -209,6 +214,7 @@ static void nohz_full_kick_work_func(str
+@@ -220,6 +220,7 @@ static void nohz_full_kick_func(struct i
  
  static DEFINE_PER_CPU(struct irq_work, nohz_full_kick_work) = {
- 	.func = nohz_full_kick_work_func,
+ 	.func = nohz_full_kick_func,
 +	.flags = IRQ_WORK_HARD_IRQ,
  };
  
  /*
 --- a/kernel/time/timer.c
 +++ b/kernel/time/timer.c
-@@ -1484,7 +1484,7 @@ void update_process_times(int user_tick)
+@@ -1691,7 +1691,7 @@ void update_process_times(int user_tick)
  	scheduler_tick();
  	run_local_timers();
  	rcu_check_callbacks(user_tick);
@@ -185,14 +173,14 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  	if (in_irq())
  		irq_work_tick();
  #endif
-@@ -1498,6 +1498,10 @@ static void run_timer_softirq(struct sof
+@@ -1720,6 +1720,10 @@ static __latent_entropy void run_timer_s
  {
- 	struct tvec_base *base = this_cpu_ptr(&tvec_bases);
+ 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
  
 +#if defined(CONFIG_IRQ_WORK) && defined(CONFIG_PREEMPT_RT_FULL)
 +	irq_work_tick();
 +#endif
 +
- 	if (time_after_eq(jiffies, base->timer_jiffies))
- 		__run_timers(base);
- }
+ 	__run_timers(base);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON) && base->nohz_active)
+ 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));

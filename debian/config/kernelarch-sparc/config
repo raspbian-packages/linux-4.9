@@ -44,7 +44,6 @@ CONFIG_PATA_LEGACY=m
 ## file: drivers/block/Kconfig
 ##
 CONFIG_BLK_DEV_FD=y
-# CONFIG_BLK_CPQ_DA is not set
 # CONFIG_BLK_CPQ_CISS_DA is not set
 # CONFIG_BLK_DEV_DAC960 is not set
 # CONFIG_BLK_DEV_UMEM is not set
@@ -78,9 +77,9 @@ CONFIG_CRYPTO_DEV_NIAGARA2=m
 ## file: drivers/gpu/drm/Kconfig
 ##
 CONFIG_DRM=m
+CONFIG_DRM_RADEON=m
 CONFIG_DRM_TDFX=m
 CONFIG_DRM_R128=m
-CONFIG_DRM_RADEON=m
 CONFIG_DRM_MGA=m
 
 ##
@@ -331,10 +330,6 @@ CONFIG_NATSEMI=m
 ##
 # CONFIG_8139CP is not set
 CONFIG_8139TOO=m
-# CONFIG_8139TOO_PIO is not set
-# CONFIG_8139TOO_TUNE_TWISTER is not set
-# CONFIG_8139TOO_8129 is not set
-# CONFIG_8139_OLD_RX_RESET is not set
 
 ##
 ## file: drivers/net/ethernet/sis/Kconfig
@@ -383,7 +378,7 @@ CONFIG_PLIP=m
 # CONFIG_WAN is not set
 
 ##
-## file: drivers/net/wireless/mwifiex/Kconfig
+## file: drivers/net/wireless/marvell/mwifiex/Kconfig
 ##
 CONFIG_MWIFIEX=m
 CONFIG_MWIFIEX_PCIE=m
@@ -477,7 +472,6 @@ CONFIG_FRAMEBUFFER_CONSOLE=y
 ##
 ## file: drivers/video/fbdev/Kconfig
 ##
-CONFIG_FB=y
 CONFIG_FB_MODE_HELPERS=y
 # CONFIG_FB_TILEBLITTING is not set
 # CONFIG_FB_CIRRUS is not set

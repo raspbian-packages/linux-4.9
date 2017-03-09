@@ -1,7 +1,7 @@
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Tue, 19 Mar 2013 14:44:30 +0100
 Subject: kernel/SRCU: provide a static initializer
-Origin: https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patches-4.4.3-rt9.tar.xz
+Origin: https://www.kernel.org/pub/linux/kernel/projects/rt/4.9/older/patches-4.9.13-rt10.tar.xz
 
 There are macros for static initializer for the three out of four
 possible notifier types, that are:
@@ -39,8 +39,8 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 + * often but notifier_blocks will seldom be removed.
   */
  
- typedef	int (*notifier_fn_t)(struct notifier_block *nb,
-@@ -88,7 +86,7 @@ struct srcu_notifier_head {
+ struct notifier_block;
+@@ -90,7 +88,7 @@ struct srcu_notifier_head {
  		(name)->head = NULL;		\
  	} while (0)
  
@@ -49,7 +49,7 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
  #define srcu_cleanup_notifier_head(name)	\
  		cleanup_srcu_struct(&(name)->srcu);
-@@ -101,7 +99,13 @@ extern void srcu_init_notifier_head(stru
+@@ -103,7 +101,13 @@ extern void srcu_init_notifier_head(stru
  		.head = NULL }
  #define RAW_NOTIFIER_INIT(name)	{				\
  		.head = NULL }
@@ -64,7 +64,7 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  
  #define ATOMIC_NOTIFIER_HEAD(name)				\
  	struct atomic_notifier_head name =			\
-@@ -113,6 +117,18 @@ extern void srcu_init_notifier_head(stru
+@@ -115,6 +119,18 @@ extern void srcu_init_notifier_head(stru
  	struct raw_notifier_head name =				\
  		RAW_NOTIFIER_INIT(name)
  
@@ -83,7 +83,7 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  #ifdef __KERNEL__
  
  extern int atomic_notifier_chain_register(struct atomic_notifier_head *nh,
-@@ -182,12 +198,12 @@ static inline int notifier_to_errno(int
+@@ -184,12 +200,12 @@ static inline int notifier_to_errno(int
  
  /*
   *	Declared notifiers so far. I can imagine quite a few more chains
@@ -114,7 +114,7 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  		.queue_lock = __SPIN_LOCK_UNLOCKED(name.queue_lock),	\
  		.running = false,					\
  		.batch_queue = RCU_BATCH_INIT(name.batch_queue),	\
-@@ -104,7 +104,7 @@ void process_srcu(struct work_struct *wo
+@@ -119,7 +119,7 @@ void process_srcu(struct work_struct *wo
   */
  #define __DEFINE_SRCU(name, is_static)					\
  	static DEFINE_PER_CPU(struct srcu_struct_array, name##_srcu_array);\

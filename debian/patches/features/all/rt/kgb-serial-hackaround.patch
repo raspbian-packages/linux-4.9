@@ -1,7 +1,7 @@
 From: Jason Wessel <jason.wessel@windriver.com>
 Date: Thu, 28 Jul 2011 12:42:23 -0500
 Subject: kgdb/serial: Short term workaround
-Origin: https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patches-4.4.3-rt9.tar.xz
+Origin: https://www.kernel.org/pub/linux/kernel/projects/rt/4.9/older/patches-4.9.13-rt10.tar.xz
 
 On 07/27/2011 04:37 PM, Thomas Gleixner wrote:
 >  - KGDB (not yet disabled) is reportedly unusable on -rt right now due
@@ -19,10 +19,10 @@ Thanks,
 Jason.
 
 ---
- drivers/tty/serial/8250/8250_port.c |    3 ++-
+ drivers/tty/serial/8250/8250_port.c |    3 +++
  include/linux/kdb.h                 |    2 ++
  kernel/debug/kdb/kdb_io.c           |    6 ++----
- 3 files changed, 6 insertions(+), 5 deletions(-)
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
 --- a/drivers/tty/serial/8250/8250_port.c
 +++ b/drivers/tty/serial/8250/8250_port.c
@@ -33,16 +33,16 @@ Jason.
 +#include <linux/kdb.h>
  #include <linux/uaccess.h>
  #include <linux/pm_runtime.h>
+ #include <linux/timer.h>
+@@ -3146,6 +3147,8 @@ void serial8250_console_write(struct uar
  
-@@ -2851,7 +2852,7 @@ void serial8250_console_write(struct uar
- 
- 	if (port->sysrq)
+ 	if (port->sysrq || oops_in_progress)
  		locked = 0;
--	else if (oops_in_progress)
-+	else if (oops_in_progress || in_kdb_printk())
- 		locked = spin_trylock_irqsave(&port->lock, flags);
++	else if (in_kdb_printk())
++		locked = spin_trylock_irqsave(&port->lock, flags);
  	else
  		spin_lock_irqsave(&port->lock, flags);
+ 
 --- a/include/linux/kdb.h
 +++ b/include/linux/kdb.h
 @@ -167,6 +167,7 @@ extern __printf(2, 0) int vkdb_printf(en

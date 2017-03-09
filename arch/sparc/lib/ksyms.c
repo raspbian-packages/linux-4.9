@@ -2,9 +2,6 @@
  * Export of symbols defined in assembler
  */
 
-/* Tell string.h we don't want memcpy etc. as cpp defines */
-#define EXPORT_SYMTAB_STROPS
-
 #include <linux/module.h>
 #include <linux/string.h>
 #include <linux/types.h>
@@ -20,9 +17,12 @@ EXPORT_SYMBOL(strncmp);
 /* mem* functions */
 extern void *__memscan_zero(void *, size_t);
 extern void *__memscan_generic(void *, int, size_t);
+#undef memcpy
+extern void *memcpy(void *, const void *, size_t);
+#undef memset
+extern void *memset(void *, int, size_t);
 extern void *__bzero(void *, size_t);
 
-EXPORT_SYMBOL(memscan);
 EXPORT_SYMBOL(__memscan_zero);
 EXPORT_SYMBOL(__memscan_generic);
 EXPORT_SYMBOL(memcmp);
@@ -61,7 +61,6 @@ EXPORT_SYMBOL(__csum_partial_copy_sparc_generic);
 
 /* Special internal versions of library functions. */
 EXPORT_SYMBOL(__copy_1page);
-EXPORT_SYMBOL(__memmove);
 EXPORT_SYMBOL(bzero_1page);
 
 /* Moving data to/from/in userspace. */
@@ -107,15 +106,24 @@ EXPORT_SYMBOL(atomic64_##op);
 EXPORT_SYMBOL(atomic_##op##_return);					\
 EXPORT_SYMBOL(atomic64_##op##_return);
 
-#define ATOMIC_OPS(op) ATOMIC_OP(op) ATOMIC_OP_RETURN(op)
+#define ATOMIC_FETCH_OP(op)						\
+EXPORT_SYMBOL(atomic_fetch_##op);					\
+EXPORT_SYMBOL(atomic64_fetch_##op);
+
+#define ATOMIC_OPS(op) ATOMIC_OP(op) ATOMIC_OP_RETURN(op) ATOMIC_FETCH_OP(op)
 
 ATOMIC_OPS(add)
 ATOMIC_OPS(sub)
-ATOMIC_OP(and)
-ATOMIC_OP(or)
-ATOMIC_OP(xor)
 
 #undef ATOMIC_OPS
+#define ATOMIC_OPS(op) ATOMIC_OP(op) ATOMIC_FETCH_OP(op)
+
+ATOMIC_OPS(and)
+ATOMIC_OPS(or)
+ATOMIC_OPS(xor)
+
+#undef ATOMIC_OPS
+#undef ATOMIC_FETCH_OP
 #undef ATOMIC_OP_RETURN
 #undef ATOMIC_OP
 

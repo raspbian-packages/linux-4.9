@@ -39,9 +39,10 @@
 	mov (%rsp), %rsp
 
 ENTRY(efi_call)
+	pushq %rbp
+	movq %rsp, %rbp
 	SAVE_XMM
-	mov (%rsp), %rax
-	mov 8(%rax), %rax
+	mov 16(%rbp), %rax
 	subq $48, %rsp
 	mov %r9, 32(%rsp)
 	mov %rax, 40(%rsp)
@@ -51,5 +52,6 @@ ENTRY(efi_call)
 	call *%rdi
 	addq $48, %rsp
 	RESTORE_XMM
+	popq %rbp
 	ret
 ENDPROC(efi_call)

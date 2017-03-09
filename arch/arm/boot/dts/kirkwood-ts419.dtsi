@@ -45,12 +45,12 @@
 		pinctrl-0 = <&pmx_reset_button &pmx_USB_copy_button>;
 		pinctrl-names = "default";
 
-		button@1 {
+		copy {
 			label = "USB Copy";
 			linux,code = <KEY_COPY>;
 			gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
 		};
-		button@2 {
+		reset {
 			label = "Reset";
 			linux,code = <KEY_RESTART>;
 			gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
@@ -72,4 +72,12 @@
 	ethernet1-port@0 {
 		phy-handle = <&ethphy1>;
 	};
+};
+
+&pmx_sata0 {
+	marvell,pins = "mpp15";
+};
+
+&pmx_sata1 {
+	marvell,pins = "mpp16";
 };

@@ -1,21 +1,19 @@
 [abi]
-abiname: 1
+abiname: 2
 ignore-changes:
-# Not used by OOT modules
- __scm_destroy
- __scm_send
- scm_detach_fds
- scm_fp_dup
- efivar_validate
- get_thermal_instance
- inet_csk_reqsk_queue_add
- tcp_req_err
- module:drivers/gpu/drm/drm_kms_helper
- module:drivers/hv/hv_vmbus
- module:drivers/md/dm-snapshot
- module:drivers/mmc/host/sdhci
- module:drivers/mmc/host/sdhci*
+ __cpuhp_*
+ module:drivers/iio/common/st_sensors/**
+ module:drivers/net/wireless/**
+ module:drivers/power/supply/bq27xxx_battery
+ module:drivers/usb/host/**
+ module:drivers/usb/musb/**
  module:net/ceph/libceph
+# btree library is only selected by few drivers so not useful OOT
+ btree_*
+ visitor*
+# Exported for related protocols only
+ can_rx_register
+ ip6_xmit
 
 [base]
 arches:
@@ -29,23 +27,38 @@ arches:
  m68k
  mips
  mipsel
+ mipsn32
+ mipsn32el
  mips64
  mips64el
- or1k
+# Disabled until dak accepts them in the control file
+# mipsr6
+# mipsr6el
+# mipsn32r6
+# mipsn32r6el
+# mips64r6
+# mips64r6el
  powerpc
  powerpcspe
  ppc64
  ppc64el
  s390
  s390x
+ sh3
  sh4
  sparc
  sparc64
+ tilegx
  x32
-compiler: gcc-4.9
+compiler: gcc-6
 featuresets:
  none
  rt
+
+[build]
+debug-info: true
+# Enable module signing by default (implemented in the linux-signed package)
+signed-modules: true
 
 [featureset-rt_base]
 enabled: true
@@ -61,13 +74,11 @@ initramfs-generators: initramfs-tools initramfs-fallback
 
 [relations]
 # compilers
-gcc-4.8: gcc-4.8 <!stage1>
-gcc-4.9: gcc-4.9 <!stage1>
-gcc-5: gcc-5 <!stage1>
+gcc-6: gcc-6 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cross>
 
 # initramfs-generators
 initramfs-fallback: linux-initramfs-tool
-initramfs-tools: initramfs-tools (>= 0.110~)
+initramfs-tools: initramfs-tools (>= 0.120+deb8u2)
 
 [packages]
 libc-dev: false

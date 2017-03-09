@@ -479,6 +479,9 @@ static int fib_get_nhs(struct fib_info *fi, struct rtnexthop *rtnh,
 		if (!rtnh_ok(rtnh, remaining))
 			return -EINVAL;
 
+		if (rtnh->rtnh_flags & (RTNH_F_DEAD | RTNH_F_LINKDOWN))
+			return -EINVAL;
+
 		nexthop_nh->nh_flags =
 			(cfg->fc_flags & ~0xFF) | rtnh->rtnh_flags;
 		nexthop_nh->nh_oif = rtnh->rtnh_ifindex;
@@ -975,6 +978,8 @@ fib_convert_metrics(struct fib_info *fi, const struct fib_config *cfg)
 			val = 65535 - 40;
 		if (type == RTAX_MTU && val > 65535 - 15)
 			val = 65535 - 15;
+		if (type == RTAX_HOPLIMIT && val > 255)
+			val = 255;
 		if (type == RTAX_FEATURES && (val & ~RTAX_FEATURE_MASK))
 			return -EINVAL;
 		fi->fib_metrics[type - 1] = val;
@@ -999,6 +1004,9 @@ struct fib_info *fib_create_info(struct fib_config *cfg)
 
 	/* Fast check to catch the most weird cases */
 	if (fib_props[cfg->fc_type].scope > cfg->fc_scope)
+		goto err_inval;
+
+	if (cfg->fc_flags & (RTNH_F_DEAD | RTNH_F_LINKDOWN))
 		goto err_inval;
 
 #ifdef CONFIG_IP_ROUTE_MULTIPATH
@@ -1049,6 +1057,7 @@ struct fib_info *fib_create_info(struct fib_config *cfg)
 	fi->fib_priority = cfg->fc_priority;
 	fi->fib_prefsrc = cfg->fc_prefsrc;
 	fi->fib_type = cfg->fc_type;
+	fi->fib_tb_id = cfg->fc_table;
 
 	fi->fib_nhs = nhs;
 	change_nexthops(fi) {
@@ -1269,8 +1278,9 @@ int fib_dump_info(struct sk_buff *skb, u32 portid, u32 seq, int event,
 		    nla_put_u32(skb, RTA_FLOW, fi->fib_nh[0].nh_tclassid))
 			goto nla_put_failure;
 #endif
-		if (fi->fib_nh->nh_lwtstate)
-			lwtunnel_fill_encap(skb, fi->fib_nh->nh_lwtstate);
+		if (fi->fib_nh->nh_lwtstate &&
+		    lwtunnel_fill_encap(skb, fi->fib_nh->nh_lwtstate) < 0)
+			goto nla_put_failure;
 	}
 #ifdef CONFIG_IP_ROUTE_MULTIPATH
 	if (fi->fib_nhs > 1) {
@@ -1306,8 +1316,10 @@ int fib_dump_info(struct sk_buff *skb, u32 portid, u32 seq, int event,
 			    nla_put_u32(skb, RTA_FLOW, nh->nh_tclassid))
 				goto nla_put_failure;
 #endif
-			if (nh->nh_lwtstate)
-				lwtunnel_fill_encap(skb, nh->nh_lwtstate);
+			if (nh->nh_lwtstate &&
+			    lwtunnel_fill_encap(skb, nh->nh_lwtstate) < 0)
+				goto nla_put_failure;
+
 			/* length of rtnetlink header + attributes */
 			rtnh->rtnh_len = nlmsg_get_pos(skb) - (void *) rtnh;
 		} endfor_nexthops(fi);
@@ -1329,18 +1341,21 @@ nla_put_failure:
  *   referring to it.
  * - device went down -> we must shutdown all nexthops going via it.
  */
-int fib_sync_down_addr(struct net *net, __be32 local)
+int fib_sync_down_addr(struct net_device *dev, __be32 local)
 {
 	int ret = 0;
 	unsigned int hash = fib_laddr_hashfn(local);
 	struct hlist_head *head = &fib_info_laddrhash[hash];
+	struct net *net = dev_net(dev);
+	int tb_id = l3mdev_fib_table(dev);
 	struct fib_info *fi;
 
 	if (!fib_info_laddrhash || local == 0)
 		return 0;
 
 	hlist_for_each_entry(fi, head, fib_lhash) {
-		if (!net_eq(fi->fib_net, net))
+		if (!net_eq(fi->fib_net, net) ||
+		    fi->fib_tb_id != tb_id)
 			continue;
 		if (fi->fib_prefsrc == local) {
 			fi->fib_flags |= RTNH_F_DEAD;
@@ -1559,29 +1574,59 @@ int fib_sync_up(struct net_device *dev, unsigned int nh_flags)
 }
 
 #ifdef CONFIG_IP_ROUTE_MULTIPATH
+static bool fib_good_nh(const struct fib_nh *nh)
+{
+	int state = NUD_REACHABLE;
+
+	if (nh->nh_scope == RT_SCOPE_LINK) {
+		struct neighbour *n;
+
+		rcu_read_lock_bh();
+
+		n = __ipv4_neigh_lookup_noref(nh->nh_dev,
+					      (__force u32)nh->nh_gw);
+		if (n)
+			state = n->nud_state;
+
+		rcu_read_unlock_bh();
+	}
+
+	return !!(state & NUD_VALID);
+}
 
 void fib_select_multipath(struct fib_result *res, int hash)
 {
 	struct fib_info *fi = res->fi;
+	struct net *net = fi->fib_net;
+	bool first = false;
 
 	for_nexthops(fi) {
 		if (hash > atomic_read(&nh->nh_upper_bound))
 			continue;
 
-		res->nh_sel = nhsel;
-		return;
+		if (!net->ipv4.sysctl_fib_multipath_use_neigh ||
+		    fib_good_nh(nh)) {
+			res->nh_sel = nhsel;
+			return;
+		}
+		if (!first) {
+			res->nh_sel = nhsel;
+			first = true;
+		}
 	} endfor_nexthops(fi);
-
-	/* Race condition: route has just become dead. */
-	res->nh_sel = 0;
 }
 #endif
 
 void fib_select_path(struct net *net, struct fib_result *res,
 		     struct flowi4 *fl4, int mp_hash)
 {
+	bool oif_check;
+
+	oif_check = (fl4->flowi4_oif == 0 ||
+		     fl4->flowi4_flags & FLOWI_FLAG_SKIP_NH_OIF);
+
 #ifdef CONFIG_IP_ROUTE_MULTIPATH
-	if (res->fi->fib_nhs > 1 && fl4->flowi4_oif == 0) {
+	if (res->fi->fib_nhs > 1 && oif_check) {
 		if (mp_hash < 0)
 			mp_hash = get_hash_from_flowi4(fl4) >> 1;
 
@@ -1591,7 +1636,7 @@ void fib_select_path(struct net *net, struct fib_result *res,
 #endif
 	if (!res->prefixlen &&
 	    res->table->tb_num_default > 1 &&
-	    res->type == RTN_UNICAST && !fl4->flowi4_oif)
+	    res->type == RTN_UNICAST && oif_check)
 		fib_select_default(fl4, res);
 
 	if (!fl4->saddr)

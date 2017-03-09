@@ -45,6 +45,8 @@ struct vc4_rcl_setup {
 
 	struct drm_gem_cma_object *rcl;
 	u32 next_offset;
+
+	u32 next_write_bo_index;
 };
 
 static inline void rcl_u8(struct vc4_rcl_setup *setup, u8 val)
@@ -316,19 +318,10 @@ static int vc4_create_rcl_bo(struct drm_device *dev, struct vc4_exec_info *exec,
 	size += xtiles * ytiles * loop_body_size;
 
 	setup->rcl = &vc4_bo_create(dev, size, true)->base;
-	if (!setup->rcl)
-		return -ENOMEM;
+	if (IS_ERR(setup->rcl))
+		return PTR_ERR(setup->rcl);
 	list_add_tail(&to_vc4_bo(&setup->rcl->base)->unref_head,
 		      &exec->unref_list);
-
-	rcl_u8(setup, VC4_PACKET_TILE_RENDERING_MODE_CONFIG);
-	rcl_u32(setup,
-		(setup->color_write ? (setup->color_write->paddr +
-				       args->color_write.offset) :
-		 0));
-	rcl_u16(setup, args->width);
-	rcl_u16(setup, args->height);
-	rcl_u16(setup, args->color_write.bits);
 
 	/* The tile buffer gets cleared when the previous tile is stored.  If
 	 * the clear values changed between frames, then the tile buffer has
@@ -348,6 +341,15 @@ static int vc4_create_rcl_bo(struct drm_device *dev, struct vc4_exec_info *exec,
 		rcl_u16(setup, VC4_LOADSTORE_TILE_BUFFER_NONE);
 		rcl_u32(setup, 0); /* no address, since we're in None mode */
 	}
+
+	rcl_u8(setup, VC4_PACKET_TILE_RENDERING_MODE_CONFIG);
+	rcl_u32(setup,
+		(setup->color_write ? (setup->color_write->paddr +
+				       args->color_write.offset) :
+		 0));
+	rcl_u16(setup, args->width);
+	rcl_u16(setup, args->height);
+	rcl_u16(setup, args->color_write.bits);
 
 	for (y = min_y_tile; y <= max_y_tile; y++) {
 		for (x = min_x_tile; x <= max_x_tile; x++) {
@@ -407,6 +409,8 @@ static int vc4_rcl_msaa_surface_setup(struct vc4_exec_info *exec,
 	if (!*obj)
 		return -EINVAL;
 
+	exec->rcl_write_bo[exec->rcl_write_bo_count++] = *obj;
+
 	if (surf->offset & 0xf) {
 		DRM_ERROR("MSAA write must be 16b aligned.\n");
 		return -EINVAL;
@@ -417,7 +421,8 @@ static int vc4_rcl_msaa_surface_setup(struct vc4_exec_info *exec,
 
 static int vc4_rcl_surface_setup(struct vc4_exec_info *exec,
 				 struct drm_gem_cma_object **obj,
-				 struct drm_vc4_submit_rcl_surface *surf)
+				 struct drm_vc4_submit_rcl_surface *surf,
+				 bool is_write)
 {
 	uint8_t tiling = VC4_GET_FIELD(surf->bits,
 				       VC4_LOADSTORE_TILE_BUFFER_TILING);
@@ -440,6 +445,9 @@ static int vc4_rcl_surface_setup(struct vc4_exec_info *exec,
 	if (!*obj)
 		return -EINVAL;
 
+	if (is_write)
+		exec->rcl_write_bo[exec->rcl_write_bo_count++] = *obj;
+
 	if (surf->flags & VC4_SUBMIT_RCL_SURFACE_READ_IS_FULL_RES) {
 		if (surf == &exec->args->zs_write) {
 			DRM_ERROR("general zs write may not be a full-res.\n");
@@ -453,7 +461,7 @@ static int vc4_rcl_surface_setup(struct vc4_exec_info *exec,
 		}
 
 		ret = vc4_full_res_bounds_check(exec, *obj, surf);
-		if (!ret)
+		if (ret)
 			return ret;
 
 		return 0;
@@ -542,6 +550,8 @@ vc4_rcl_render_config_surface_setup(struct vc4_exec_info *exec,
 	if (!*obj)
 		return -EINVAL;
 
+	exec->rcl_write_bo[exec->rcl_write_bo_count++] = *obj;
+
 	if (tiling > VC4_TILING_FORMAT_LT) {
 		DRM_ERROR("Bad tiling format\n");
 		return -EINVAL;
@@ -599,15 +609,18 @@ int vc4_get_rcl(struct drm_device *dev, struct vc4_exec_info *exec)
 	if (ret)
 		return ret;
 
-	ret = vc4_rcl_surface_setup(exec, &setup.color_read, &args->color_read);
+	ret = vc4_rcl_surface_setup(exec, &setup.color_read, &args->color_read,
+				    false);
 	if (ret)
 		return ret;
 
-	ret = vc4_rcl_surface_setup(exec, &setup.zs_read, &args->zs_read);
+	ret = vc4_rcl_surface_setup(exec, &setup.zs_read, &args->zs_read,
+				    false);
 	if (ret)
 		return ret;
 
-	ret = vc4_rcl_surface_setup(exec, &setup.zs_write, &args->zs_write);
+	ret = vc4_rcl_surface_setup(exec, &setup.zs_write, &args->zs_write,
+				    true);
 	if (ret)
 		return ret;
 

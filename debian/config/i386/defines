@@ -1,5 +1,4 @@
 [base]
-compiler: gcc-5
 featuresets:
  none
  rt
@@ -17,22 +16,15 @@ part-long-pae: This kernel requires PAE (Physical Address Extension).
 
 [image]
 bootloaders: grub-pc extlinux
-configs:
 install-stem: vmlinuz
 breaks: xserver-xorg-input-vmmouse (<< 1:13.0.99)
 
 [relations]
-headers%gcc-5: linux-compiler-gcc-5-x86
+headers%gcc-6: linux-compiler-gcc-6-x86
 
 [686_description]
 hardware: older PCs
 hardware-long: PCs with one or more processors not supporting PAE
-
-[686_image]
-configs:
- kernelarch-x86/config-arch-32
- i386/config.686
-recommends: libc6-i686
 
 [686-pae_build]
 debug-info: true
@@ -41,9 +33,3 @@ debug-info: true
 hardware: modern PCs
 hardware-long: PCs with one or more processors supporting PAE
 parts: pae
-
-[686-pae_image]
-configs:
- kernelarch-x86/config-arch-32
- i386/config.686-pae
-recommends: libc6-i686

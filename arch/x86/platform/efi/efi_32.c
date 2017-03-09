@@ -49,9 +49,6 @@ int __init efi_setup_page_tables(unsigned long pa_memmap, unsigned num_pages)
 {
 	return 0;
 }
-void __init efi_cleanup_page_tables(unsigned long pa_memmap, unsigned num_pages)
-{
-}
 
 void __init efi_map_region(efi_memory_desc_t *md)
 {
@@ -90,7 +87,7 @@ void __init efi_call_phys_epilog(pgd_t *save_pgd)
 	__flush_tlb_all();
 }
 
-void __init efi_runtime_mkexec(void)
+void __init efi_runtime_update_mappings(void)
 {
 	if (__supported_pte_mask & _PAGE_NX)
 		runtime_code_page_mkexec();
