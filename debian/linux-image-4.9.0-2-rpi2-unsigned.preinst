@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-version=4.9.0-2-sh7785lcr
+version=4.9.0-2-rpi2
 image_path=/boot/vmlinuz-$version
 kimage=vmlinuz
 

@@ -1,4 +1,4 @@
-Source: linux
+Source: linux-4.9
 Section: kernel
 Priority: optional
 Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
@@ -10,7 +10,7 @@ Homepage: https://www.kernel.org/
 Vcs-Browser: https://anonscm.debian.org/cgit/kernel/linux.git
 Vcs-Git: https://anonscm.debian.org/git/kernel/linux.git
 
-Package: linux-source-4.9
+Package: linux-4.9-source-4.9
 Architecture: all
 Section: kernel
 Depends: binutils, xz-utils, ${misc:Depends}
@@ -25,7 +25,7 @@ Description: Linux kernel source for version 4.9 with Debian patches
 Build-Profiles: <!stage1>
 Multi-Arch: foreign
 
-Package: linux-support-4.9.0-2
+Package: linux-4.9-support-4.9.0-2
 Architecture: all
 Section: devel
 Depends: ${python3:Depends}, ${misc:Depends}
@@ -36,7 +36,7 @@ Description: Support files for Linux 4.9
 Build-Profiles: <!stage1>
 Multi-Arch: foreign
 
-Package: linux-doc-4.9
+Package: linux-4.9-doc-4.9
 Architecture: all
 Section: doc
 Depends: ${misc:Depends}
@@ -50,7 +50,7 @@ Description: Linux kernel specific documentation for version 4.9
 Build-Profiles: <!stage1 !nodoc>
 Multi-Arch: foreign
 
-Package: linux-manual-4.9
+Package: linux-4.9-manual-4.9
 Architecture: all
 Section: doc
 Provides: linux-manual
@@ -202,17 +202,6 @@ Description: Common header files for Linux 4.9.0-2-rt
  matching the flavour of the kernel you intend the build for.
 Build-Profiles: <!stage1>
 Multi-Arch: foreign
-
-Package: linux-libc-dev
-Architecture: alpha amd64 arm64 armel armhf hppa i386 m68k mips mips64 mips64el mipsel mipsn32 mipsn32el powerpc powerpcspe ppc64 ppc64el s390 s390x sh3 sh4 sparc sparc64 tilegx x32
-Section: devel
-Provides: linux-kernel-headers
-Depends: ${misc:Depends}
-Description: Linux support headers for userspace development
- This package provides userspaces headers from the Linux kernel.  These
- headers are used by the installed headers for GNU libc and other system
- libraries.
-Multi-Arch: same
 
 Package: linux-headers-4.9.0-2-all
 Architecture: alpha amd64 arm64 armel armhf hppa i386 m68k mips mips64 mips64el mipsel powerpc powerpcspe ppc64 ppc64el s390x sh4 sparc64
@@ -1411,81 +1400,76 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-all-armhf
 Architecture: armhf
-Depends: ${misc:Depends}, linux-headers-4.9.0-2-armmp (= ${binary:Version}), linux-headers-4.9.0-2-armmp-lpae (= ${binary:Version})
+Depends: ${misc:Depends}, linux-headers-4.9.0-2-rpi (= ${binary:Version}), linux-headers-4.9.0-2-rpi2 (= ${binary:Version})
 Description: All header files for Linux 4.9 (meta-package)
  This package depends against all architecture-specific kernel header files
  for Linux kernel version 4.9, generally used for building out-of-tree
  kernel modules.
 Build-Profiles: <!stage1>
 
-Package: linux-image-4.9.0-2-armmp-unsigned
+Package: linux-image-4.9.0-2-rpi-unsigned
 Architecture: armhf
-Provides: linux-image-4.9.0-2-armmp
+Provides: linux-image-4.9.0-2-rpi
 Depends: kmod, linux-base (>= 4.3~), ${misc:Depends}, initramfs-tools (>= 0.120+deb8u2) [armhf] | linux-initramfs-tool [armhf]
 Recommends: firmware-linux-free, ${kernel:Recommends}
 Suggests: linux-doc-4.9, debian-kernel-handbook
-Replaces: linux-image-4.9.0-2-armmp
+Replaces: linux-image-4.9.0-2-rpi
 Breaks: initramfs-tools (<< 0.120+deb8u2)
-Conflicts: linux-image-4.9.0-2-armmp
-Description: Linux 4.9 for ARMv7 multiplatform compatible SoCs
- The Linux kernel 4.9 and modules for use on ARMv7 multiplatform kernel.
- See https://wiki.debian.org/DebianKernel/ARMMP for details of supported
- platforms.
+Conflicts: linux-image-4.9.0-2-rpi
+Description: Linux 4.9 for RaspberryPI
+ The Linux kernel 4.9 and modules for use on Raspberry PI.
 Build-Profiles: <!stage1>
 
-Package: linux-headers-4.9.0-2-armmp
+Package: linux-headers-4.9.0-2-rpi
 Architecture: armhf
 Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-arm
-Description: Header files for Linux 4.9.0-2-armmp
+Description: Header files for Linux 4.9.0-2-rpi
  This package provides the architecture-specific kernel header files for
- Linux kernel 4.9.0-2-armmp, generally used for building out-of-tree kernel
+ Linux kernel 4.9.0-2-rpi, generally used for building out-of-tree kernel
  modules.  These files are going to be installed into
- /usr/src/linux-headers-4.9.0-2-armmp, and can be used for building modules
- that load into the kernel provided by the linux-image-4.9.0-2-armmp
+ /usr/src/linux-headers-4.9.0-2-rpi, and can be used for building modules
+ that load into the kernel provided by the linux-image-4.9.0-2-rpi package.
+Build-Profiles: <!stage1>
+
+Package: linux-image-4.9.0-2-rpi-dbgsym
+Architecture: armhf
+Section: debug
+Priority: extra
+Depends: ${misc:Depends}
+Description: Debug symbols for linux-image-4.9.0-2-rpi
+Build-Profiles: <!stage1>
+
+Package: linux-image-4.9.0-2-rpi2-unsigned
+Architecture: armhf
+Provides: linux-image-4.9.0-2-rpi2
+Depends: kmod, linux-base (>= 4.3~), ${misc:Depends}, initramfs-tools (>= 0.120+deb8u2) [armhf] | linux-initramfs-tool [armhf]
+Recommends: firmware-linux-free, ${kernel:Recommends}
+Suggests: linux-doc-4.9, debian-kernel-handbook
+Replaces: linux-image-4.9.0-2-rpi2
+Breaks: initramfs-tools (<< 0.120+deb8u2)
+Conflicts: linux-image-4.9.0-2-rpi2
+Description: Linux 4.9 for RaspberryPI2
+ The Linux kernel 4.9 and modules for use on Raspberry PI 2.
+Build-Profiles: <!stage1>
+
+Package: linux-headers-4.9.0-2-rpi2
+Architecture: armhf
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-arm
+Description: Header files for Linux 4.9.0-2-rpi2
+ This package provides the architecture-specific kernel header files for
+ Linux kernel 4.9.0-2-rpi2, generally used for building out-of-tree kernel
+ modules.  These files are going to be installed into
+ /usr/src/linux-headers-4.9.0-2-rpi2, and can be used for building modules
+ that load into the kernel provided by the linux-image-4.9.0-2-rpi2
  package.
 Build-Profiles: <!stage1>
 
-Package: linux-image-4.9.0-2-armmp-dbgsym
+Package: linux-image-4.9.0-2-rpi2-dbgsym
 Architecture: armhf
 Section: debug
 Priority: extra
 Depends: ${misc:Depends}
-Description: Debug symbols for linux-image-4.9.0-2-armmp
-Build-Profiles: <!stage1>
-
-Package: linux-image-4.9.0-2-armmp-lpae-unsigned
-Architecture: armhf
-Provides: linux-image-4.9.0-2-armmp-lpae
-Depends: kmod, linux-base (>= 4.3~), ${misc:Depends}, initramfs-tools (>= 0.120+deb8u2) [armhf] | linux-initramfs-tool [armhf]
-Recommends: firmware-linux-free, ${kernel:Recommends}
-Suggests: linux-doc-4.9, debian-kernel-handbook
-Replaces: linux-image-4.9.0-2-armmp-lpae
-Breaks: initramfs-tools (<< 0.120+deb8u2)
-Conflicts: linux-image-4.9.0-2-armmp-lpae
-Description: Linux 4.9 for ARMv7 multiplatform compatible SoCs supporting LPAE
- The Linux kernel 4.9 and modules for use on ARMv7 multiplatform kernel
- supporting LPAE. See https://wiki.debian.org/DebianKernel/ARMMP for
- details of supported platforms..
-Build-Profiles: <!stage1>
-
-Package: linux-headers-4.9.0-2-armmp-lpae
-Architecture: armhf
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-arm
-Description: Header files for Linux 4.9.0-2-armmp-lpae
- This package provides the architecture-specific kernel header files for
- Linux kernel 4.9.0-2-armmp-lpae, generally used for building out-of-tree
- kernel modules.  These files are going to be installed into
- /usr/src/linux-headers-4.9.0-2-armmp-lpae, and can be used for building
- modules that load into the kernel provided by the
- linux-image-4.9.0-2-armmp-lpae package.
-Build-Profiles: <!stage1>
-
-Package: linux-image-4.9.0-2-armmp-lpae-dbgsym
-Architecture: armhf
-Section: debug
-Priority: extra
-Depends: ${misc:Depends}
-Description: Debug symbols for linux-image-4.9.0-2-armmp-lpae
+Description: Debug symbols for linux-image-4.9.0-2-rpi2
 Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-all-hppa

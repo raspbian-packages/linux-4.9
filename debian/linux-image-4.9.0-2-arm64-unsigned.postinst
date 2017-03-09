@@ -2,10 +2,15 @@
 
 version=4.9.0-2-arm64
 image_path=/boot/vmlinuz-$version
+kimage=vmlinuz
 
 if [ "$1" != configure ]; then
     exit 0
 fi
+
+dpkg-divert --package rpikernelhack --remove --rename /boot/$kimage-$version
+dpkg-divert --package rpikernelhack --remove --rename /boot/config-$version
+dpkg-divert --package rpikernelhack --remove --rename /boot/System.map-$version
 
 depmod $version
 
