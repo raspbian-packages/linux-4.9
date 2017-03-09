@@ -107,7 +107,10 @@ linux-4.9 (4.9.13-1+rpi1) jessie-staging; urgency=medium
     between foundation rpi and rpi2 configs.
   * Move a bunch of stuff from rpi config to rpix config.
 
- -- Raspbian forward porter <root@raspbian.org>  Tue, 07 Mar 2017 02:27:05 +0000
+  [changes introduced in 4.9.13-1+rpi1 by Peter Michael Green]
+  * Cleanup some stuff dgit doesn't like in clean target.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Tue, 07 Mar 2017 02:27:05 +0000
 
 linux (4.9.13-1) unstable; urgency=medium
 
