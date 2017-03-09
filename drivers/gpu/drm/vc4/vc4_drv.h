@@ -12,11 +12,16 @@
 struct vc4_dev {
 	struct drm_device *dev;
 
+	bool firmware_kms;
+	struct rpi_firmware *firmware;
+
 	struct vc4_hdmi *hdmi;
 	struct vc4_hvs *hvs;
 	struct vc4_crtc *crtc[3];
 	struct vc4_v3d *v3d;
 	struct vc4_dpi *dpi;
+	struct vc4_dsi *dsi1;
+	struct vc4_vec *vec;
 
 	struct drm_fbdev_cma *fbdev;
 
@@ -194,6 +199,7 @@ to_vc4_plane(struct drm_plane *plane)
 }
 
 enum vc4_encoder_type {
+	VC4_ENCODER_TYPE_NONE,
 	VC4_ENCODER_TYPE_HDMI,
 	VC4_ENCODER_TYPE_VEC,
 	VC4_ENCODER_TYPE_DSI0,
@@ -381,6 +387,8 @@ struct vc4_validated_shader_info {
 
 	uint32_t num_uniform_addr_offsets;
 	uint32_t *uniform_addr_offsets;
+
+	bool is_threaded;
 };
 
 /**
@@ -440,6 +448,7 @@ int vc4_bo_stats_debugfs(struct seq_file *m, void *arg);
 extern struct platform_driver vc4_crtc_driver;
 int vc4_enable_vblank(struct drm_device *dev, unsigned int crtc_id);
 void vc4_disable_vblank(struct drm_device *dev, unsigned int crtc_id);
+bool vc4_event_pending(struct drm_crtc *crtc);
 int vc4_crtc_debugfs_regs(struct seq_file *m, void *arg);
 int vc4_crtc_get_scanoutpos(struct drm_device *dev, unsigned int crtc_id,
 			    unsigned int flags, int *vpos, int *hpos,
@@ -459,6 +468,14 @@ void __iomem *vc4_ioremap_regs(struct platform_device *dev, int index);
 /* vc4_dpi.c */
 extern struct platform_driver vc4_dpi_driver;
 int vc4_dpi_debugfs_regs(struct seq_file *m, void *unused);
+
+/* vc4_dsi.c */
+extern struct platform_driver vc4_dsi_driver;
+int vc4_dsi_debugfs_regs(struct seq_file *m, void *unused);
+
+/* vc4_firmware_kms.c */
+extern struct platform_driver vc4_firmware_kms_driver;
+void vc4_fkms_cancel_page_flip(struct drm_crtc *crtc, struct drm_file *file);
 
 /* vc4_gem.c */
 void vc4_gem_init(struct drm_device *dev);
@@ -482,6 +499,10 @@ int vc4_queue_seqno_cb(struct drm_device *dev,
 /* vc4_hdmi.c */
 extern struct platform_driver vc4_hdmi_driver;
 int vc4_hdmi_debugfs_regs(struct seq_file *m, void *unused);
+
+/* vc4_hdmi.c */
+extern struct platform_driver vc4_vec_driver;
+int vc4_vec_debugfs_regs(struct seq_file *m, void *unused);
 
 /* vc4_irq.c */
 irqreturn_t vc4_irq(int irq, void *arg);
