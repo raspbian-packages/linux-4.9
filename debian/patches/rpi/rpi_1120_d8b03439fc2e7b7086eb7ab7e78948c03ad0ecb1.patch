@@ -63,14 +63,6 @@ index 2152448c8cf5..7aa03be73fda 100644
  
  always		:= $(dtb-y)
  subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/boot/dts/overlays b/arch/arm64/boot/dts/overlays
-new file mode 120000
-index 000000000000..ded08646b6f6
---- /dev/null
-+++ b/arch/arm64/boot/dts/overlays
-@@ -0,0 +1 @@
-+../../../arm/boot/dts/overlays
-\ No newline at end of file
 diff --git a/arch/arm64/configs/bcmrpi3_defconfig b/arch/arm64/configs/bcmrpi3_defconfig
 index 53da5c7a33e5..c7e891d72969 100644
 --- a/arch/arm64/configs/bcmrpi3_defconfig
