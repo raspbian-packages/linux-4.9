@@ -1,5 +1,5 @@
 ac2a35d9d932aa7c28663b354a8f8397  debian/bin/gencontrol.py
-a04b005a70c1f025c8fb342e9895044e  debian/changelog
+2e8ad1b14355f5c1532e8bc85c89cd7c  debian/changelog
 e492c730e8bc71cc52aa5315391e587e  debian/templates/control.main.in
 51797b6c275eb14e99009e78553904cc  debian/templates/lintian-overrides.perf.in
 a0307842c8c97bd549f3dba7b53a709f  debian/templates/image.preinst.in
@@ -10,7 +10,7 @@ ae49ef5fe8221e8aa846a8dd8faaed0e  debian/templates/control.image.in
 a4a60fc48b3240e46bbac6a1ddcaad30  debian/templates/image.postrm.in
 8ff553ff7232b003c35bdd074913bc8a  debian/templates/control.image-unsigned.in
 aaefe1e8777c46e773f8cc2515eb8d7c  debian/templates/control.image-dbg.in
-f73118b69c24c8014381c1bc65fc5b86  debian/templates/control.source.in
+8814034f0462426628828b98082a473c  debian/templates/control.source.in
 63c0d01ea032d0acfa5e069d31daa938  debian/templates/control.libc-dev.in
 6bf8fd71accd1530c46f3d6887d1ad4c  debian/templates/image-dbg.lintian-override.in
 46cc93799a6214c79efea8084bc9a329  debian/templates/control.headers.featureset.in
@@ -20,7 +20,7 @@ f73118b69c24c8014381c1bc65fc5b86  debian/templates/control.source.in
 c6cea196527a033d3d3bed7c8bc141f4  debian/templates/control.extra.in
 fc3e8629682e63a1858b15d7f3df0ef9  debian/templates/control.docs.in
 5f1df5cd150d7663b81f5c54a604a766  debian/templates/control.headers.arch.in
-616da73d4b6924358a9bf533b4d1bb45  debian/config/defines
+125e05686eb89b180f8e204300260e21  debian/config/defines
 c0f55b1ebb6d0e78559f5bb2a60268c2  debian/config/i386/defines
 6f7d102847d8168a3c71c044ea7127ac  debian/config/tilegx/defines
 6efeb6f3f8ad4ecef3fff0d012fabad0  debian/config/mips64el/defines

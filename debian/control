@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
 Uploaders: Bastian Blank <waldi@debian.org>, maximilian attems <maks@debian.org>, Ben Hutchings <ben@decadent.org.uk>, Salvatore Bonaccorso <carnil@debian.org>
 Standards-Version: 3.9.8
-Build-Depends: debhelper (>= 10.1~), dh-exec, python3:any, quilt, cpio <!stage1>, xz-utils <!stage1>, kernel-wedge (>= 2.93~) <!stage1>, kmod <!stage1>, bc <!stage1>, libssl-dev:native <!stage1>, libssl-dev [linux-any] <!stage1 !pkg.linux.notools cross>, openssl (>= 1.1.0-1~) <!stage1> | openssl:native <!stage1>, asciidoc-base <!stage1 !nodoc !pkg.linux.notools> | asciidoc <!stage1 !nodoc !pkg.linux.notools>, xmlto <!stage1 !nodoc !pkg.linux.notools>, bison <!stage1 !pkg.linux.notools !nopython>, flex (>= 2.6.1-1.1~) <!stage1 !pkg.linux.notools !nopython> | flex:native <!stage1 !pkg.linux.notools !nopython>, gcc-multilib [amd64 ppc64 s390x sparc64] <!stage1 !pkg.linux.notools !nopython>, libaudit-dev <!stage1 !pkg.linux.notools !nopython>, libbabeltrace-dev (>= 1.5.0) <!stage1 !pkg.linux.notools !nopython>, libbabeltrace-ctf-dev (>= 1.5.0) <!stage1 !pkg.linux.notools !nopython>, libdw-dev <!stage1 !pkg.linux.notools !nopython>, libelf-dev <!stage1 !pkg.linux.notools !nopython>, libiberty-dev <!stage1 !pkg.linux.notools !nopython>, libnewt-dev <!stage1 !pkg.linux.notools !nopython>, libnuma-dev [amd64 arm64 hppa i386 mips mips64 mips64el mipsel mipsn32 mipsn32el mipsr6 mipsr6el mipsn32r6 mipsn32r6el mips64r6 mips64r6el powerpc powerpcspe ppc64 ppc64el sparc x32] <!stage1 !pkg.linux.notools !nopython>, libperl-dev <!stage1 !pkg.linux.notools !nopython>, libunwind8-dev [amd64 armel armhf arm64 i386] <!stage1 !pkg.linux.notools !nopython>, python-dev <!stage1 !pkg.linux.notools !nopython>, autoconf <!stage1 !pkg.linux.notools>, automake <!stage1 !pkg.linux.notools>, libtool <!stage1 !pkg.linux.notools>, libglib2.0-dev <!stage1 !pkg.linux.notools>, libudev-dev <!stage1 !pkg.linux.notools>, libwrap0-dev <!stage1 !pkg.linux.notools>, rsync <!stage1 !pkg.linux.notools>, libpci-dev <!stage1 !pkg.linux.notools>, dh-python <!stage1>, gcc-6 [alpha amd64 arm64 armel armhf hppa i386 m68k mips mipsel mips64 mips64el powerpc powerpcspe ppc64 ppc64el s390x sh4 sparc64] <!stage1 !cross>, gcc-6-alpha-linux-gnu:native [alpha] <!stage1 cross>, gcc-6-x86-64-linux-gnu:native [amd64] <!stage1 cross>, gcc-6-aarch64-linux-gnu:native [arm64] <!stage1 cross>, gcc-6-arm-linux-gnueabi:native [armel] <!stage1 cross>, gcc-6-arm-linux-gnueabihf:native [armhf] <!stage1 cross>, binutils-hppa64-linux-gnu [hppa] <!stage1 !cross>, gcc-6-hppa64-linux-gnu [hppa] <!stage1 !cross>, gcc-6-hppa-linux-gnu:native [hppa] <!stage1 cross>, binutils-hppa64-linux-gnu:native [hppa] <!stage1 cross>, gcc-6-hppa64-linux-gnu:native [hppa] <!stage1 cross>, gcc-6-i686-linux-gnu:native [i386] <!stage1 cross>, gcc-6-m68k-linux-gnu:native [m68k] <!stage1 cross>, gcc-6-mips-linux-gnu:native [mips] <!stage1 cross>, gcc-6-mipsel-linux-gnu:native [mipsel] <!stage1 cross>, gcc-6-mips64-linux-gnuabi64:native [mips64] <!stage1 cross>, gcc-6-mips64el-linux-gnuabi64:native [mips64el] <!stage1 cross>, gcc-6-powerpc-linux-gnu:native [powerpc] <!stage1 cross>, gcc-6-powerpc-linux-gnuspe:native [powerpcspe] <!stage1 cross>, gcc-6-powerpc64-linux-gnu:native [ppc64] <!stage1 cross>, gcc-6-powerpc64le-linux-gnu:native [ppc64el] <!stage1 cross>, gcc-6-s390x-linux-gnu:native [s390x] <!stage1 cross>, gcc-6-sh4-linux-gnu:native [sh4] <!stage1 cross>, gcc-6-sparc64-linux-gnu:native [sparc64] <!stage1 cross>
+Build-Depends: debhelper, dh-exec, python3:any, quilt, cpio <!stage1>, xz-utils <!stage1>, kernel-wedge (>= 2.93~) <!stage1>, kmod <!stage1>, bc <!stage1>, libssl-dev:native <!stage1>, libssl-dev [linux-any] <!stage1 !pkg.linux.notools cross>, openssl (>= 1.1.0-1~) <!stage1> | openssl:native <!stage1>, asciidoc <!stage1 !nodoc !pkg.linux.notools> | asciidoc-base <!stage1 !nodoc !pkg.linux.notools>, xmlto <!stage1 !nodoc !pkg.linux.notools>, bison <!stage1 !pkg.linux.notools !nopython>, flex <!stage1 !pkg.linux.notools !nopython> | flex:native <!stage1 !pkg.linux.notools !nopython>, gcc-multilib [amd64 ppc64 s390x sparc64] <!stage1 !pkg.linux.notools !nopython>, libaudit-dev <!stage1 !pkg.linux.notools !nopython>, libbabeltrace-dev <!stage1 !pkg.linux.notools !nopython>, libbabeltrace-ctf-dev <!stage1 !pkg.linux.notools !nopython>, libdw-dev <!stage1 !pkg.linux.notools !nopython>, libelf-dev <!stage1 !pkg.linux.notools !nopython>, libiberty-dev <!stage1 !pkg.linux.notools !nopython>, libnewt-dev <!stage1 !pkg.linux.notools !nopython>, libnuma-dev [amd64 arm64 hppa i386 mips mips64 mips64el mipsel mipsn32 mipsn32el mipsr6 mipsr6el mipsn32r6 mipsn32r6el mips64r6 mips64r6el powerpc powerpcspe ppc64 ppc64el sparc x32] <!stage1 !pkg.linux.notools !nopython>, libperl-dev <!stage1 !pkg.linux.notools !nopython>, libunwind8-dev [amd64 armel armhf arm64 i386] <!stage1 !pkg.linux.notools !nopython>, python-dev <!stage1 !pkg.linux.notools !nopython>, autoconf <!stage1 !pkg.linux.notools>, automake <!stage1 !pkg.linux.notools>, libtool <!stage1 !pkg.linux.notools>, libglib2.0-dev <!stage1 !pkg.linux.notools>, libudev-dev <!stage1 !pkg.linux.notools>, libwrap0-dev <!stage1 !pkg.linux.notools>, rsync <!stage1 !pkg.linux.notools>, libpci-dev <!stage1 !pkg.linux.notools>, dh-python <!stage1>, gcc-4.9 [alpha amd64 arm64 armel armhf hppa i386 m68k mips mipsel mips64 mips64el powerpc powerpcspe ppc64 ppc64el s390x sh4 sparc64] <!stage1 !cross>, gcc-6-alpha-linux-gnu:native [alpha] <!stage1 cross>, gcc-6-x86-64-linux-gnu:native [amd64] <!stage1 cross>, gcc-6-aarch64-linux-gnu:native [arm64] <!stage1 cross>, gcc-6-arm-linux-gnueabi:native [armel] <!stage1 cross>, gcc-6-arm-linux-gnueabihf:native [armhf] <!stage1 cross>, gcc-6-hppa-linux-gnu:native [hppa] <!stage1 cross>, gcc-6-i586-linux-gnu:native [i386] <!stage1 cross>, gcc-6-m68k-linux-gnu:native [m68k] <!stage1 cross>, gcc-6-mips-linux-gnu:native [mips] <!stage1 cross>, gcc-6-mipsel-linux-gnu:native [mipsel] <!stage1 cross>, gcc-6-mips64-linux-gnuabi64:native [mips64] <!stage1 cross>, gcc-6-mips64el-linux-gnuabi64:native [mips64el] <!stage1 cross>, gcc-6-powerpc-linux-gnu:native [powerpc] <!stage1 cross>, gcc-6-powerpc-linux-gnuspe:native [powerpcspe] <!stage1 cross>, gcc-6-powerpc64-linux-gnu:native [ppc64] <!stage1 cross>, gcc-6-powerpc64le-linux-gnu:native [ppc64el] <!stage1 cross>, gcc-6-s390x-linux-gnu:native [s390x] <!stage1 cross>, gcc-6-sh4-linux-gnu:native [sh4] <!stage1 cross>, gcc-6-sparc64-linux-gnu:native [sparc64] <!stage1 cross>
 Build-Depends-Indep: patchutils <!stage1>, python-sphinx <!stage1 !nodoc>, python-sphinx-rtd-theme <!stage1 !nodoc>, xmlto <!stage1 !nodoc>
 Homepage: https://www.kernel.org/
 Vcs-Browser: https://anonscm.debian.org/cgit/kernel/linux.git
@@ -722,7 +722,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-alpha-generic
 Architecture: alpha
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-alpha-generic
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-alpha-generic, generally used for building
@@ -753,7 +753,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-alpha-smp
 Architecture: alpha
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-alpha-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-alpha-smp, generally used for building out-of-tree
@@ -1416,7 +1416,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-amd64
 Architecture: amd64
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-x86
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-amd64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-amd64, generally used for building out-of-tree kernel
@@ -1449,7 +1449,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-rt-amd64
 Architecture: amd64
-Depends: linux-headers-4.9.0-2-common-rt (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-x86
+Depends: linux-headers-4.9.0-2-common-rt (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-rt-amd64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-rt-amd64, generally used for building out-of-tree
@@ -1952,7 +1952,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-arm64
 Architecture: arm64
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-arm64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-arm64, generally used for building out-of-tree kernel
@@ -2455,7 +2455,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-marvell
 Architecture: armel
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-arm
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-marvell
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-marvell, generally used for building out-of-tree
@@ -2978,7 +2978,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-rpi
 Architecture: armhf
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-arm
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-rpi
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-rpi, generally used for building out-of-tree kernel
@@ -3007,7 +3007,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-rpi2
 Architecture: armhf
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-arm
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-rpi2
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-rpi2, generally used for building out-of-tree kernel
@@ -3911,7 +3911,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-parisc
 Architecture: hppa
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6, binutils-hppa64-linux-gnu, gcc-6-hppa64-linux-gnu
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-parisc
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-parisc, generally used for building out-of-tree
@@ -3942,7 +3942,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-parisc64-smp
 Architecture: hppa
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6, binutils-hppa64-linux-gnu, gcc-6-hppa64-linux-gnu
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-parisc64-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-parisc64-smp, generally used for building out-of-tree
@@ -5222,7 +5222,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-686
 Architecture: i386
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-x86
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-686
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-686, generally used for building out-of-tree kernel
@@ -5260,7 +5260,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-686-pae
 Architecture: i386
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-x86
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-686-pae
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-686-pae, generally used for building out-of-tree
@@ -5298,7 +5298,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-rt-686-pae
 Architecture: i386
-Depends: linux-headers-4.9.0-2-common-rt (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-x86
+Depends: linux-headers-4.9.0-2-common-rt (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-rt-686-pae
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-rt-686-pae, generally used for building out-of-tree
@@ -5545,7 +5545,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-m68k
 Architecture: m68k
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-m68k
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-m68k, generally used for building out-of-tree kernel
@@ -6606,7 +6606,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-4kc-malta
 Architecture: mips mipsel
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-4kc-malta
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-4kc-malta, generally used for building out-of-tree
@@ -6636,7 +6636,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-5kc-malta
 Architecture: mips mips64 mips64el mipsel
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-5kc-malta
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-5kc-malta, generally used for building out-of-tree
@@ -6666,7 +6666,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-octeon
 Architecture: mips mips64 mips64el mipsel
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-octeon
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-octeon, generally used for building out-of-tree
@@ -7241,7 +7241,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-loongson-3
 Architecture: mips64el mipsel
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-loongson-3
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-loongson-3, generally used for building out-of-tree
@@ -8881,7 +8881,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-powerpc
 Architecture: powerpc
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-powerpc
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-powerpc, generally used for building out-of-tree
@@ -8911,7 +8911,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-powerpc-smp
 Architecture: powerpc
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-powerpc-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-powerpc-smp, generally used for building out-of-tree
@@ -8941,7 +8941,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-powerpc64
 Architecture: powerpc ppc64
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-powerpc64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-powerpc64, generally used for building out-of-tree
@@ -8981,7 +8981,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-powerpcspe
 Architecture: powerpcspe
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-powerpcspe
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-powerpcspe, generally used for building out-of-tree
@@ -9482,7 +9482,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-powerpc64le
 Architecture: ppc64el
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-powerpc64le
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-powerpc64le, generally used for building out-of-tree
@@ -9791,7 +9791,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-s390x
 Architecture: s390x
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-6-s390
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-s390x
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-s390x, generally used for building out-of-tree kernel
@@ -10571,7 +10571,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-sh7751r
 Architecture: sh4
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-sh7751r
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-sh7751r, generally used for building out-of-tree
@@ -10602,7 +10602,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-sh7785lcr
 Architecture: sh4
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-sh7785lcr
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-sh7785lcr, generally used for building out-of-tree
@@ -10999,7 +10999,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-sparc64
 Architecture: sparc64
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-sparc64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-sparc64, generally used for building out-of-tree
@@ -11030,7 +11030,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-sparc64-smp
 Architecture: sparc64
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-6
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-2-sparc64-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-sparc64-smp, generally used for building out-of-tree

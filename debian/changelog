@@ -108,8 +108,14 @@ linux-4.9 (4.9.13-1+rpi1) jessie-staging; urgency=medium
   * Move a bunch of stuff from rpi config to rpix config.
 
   [changes introduced in 4.9.13-1+rpi1 by Peter Michael Green]
+  * Move to new git rebased based strategy for generating rpi patches
   * Cleanup some stuff dgit doesn't like in clean target.
   * Disable kernel signing.
+  * Deversion debhelper build-dependency.
+  * swap order of asciidoc and asciidoc-base alternative build-depends.
+  * Deversion flex build-dependency
+  * Deversion libbabeltrace-dev and libbabeltrace-ctf-dev build-dependencys
+  * Build with gcc-4.9
 
  -- Peter Michael Green <plugwash@raspbian.org>  Tue, 07 Mar 2017 02:27:05 +0000
 

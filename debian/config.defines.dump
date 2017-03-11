@@ -70,7 +70,7 @@ aVrt
 p36
 asVcompiler
 p37
-Vgcc-6
+Vgcc-4.9
 p38
 ss(Vbuild
 p39
@@ -111,13 +111,13 @@ ss(Vrelations
 p59
 tp60
 (dp61
-Vinitramfs-tools
+Vgcc-4.9
 p62
-Vinitramfs-tools (>= 0.120+deb8u2)
+Vgcc-4.9 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cross>
 p63
-sVgcc-6
+sVinitramfs-tools
 p64
-Vgcc-6 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cross>
+Vinitramfs-tools (>= 0.120+deb8u2)
 p65
 sVinitramfs-fallback
 p66
