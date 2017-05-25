@@ -78,38 +78,6 @@ Description: Kbuild infrastructure for Linux 4.9
 Build-Profiles: <!stage1 !pkg.linux.notools>
 Multi-Arch: foreign
 
-Package: linux-cpupower
-Architecture: linux-any
-Section: admin
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: CPU power management tools for Linux
- The cpupower command allows inspection and control of cpufreq and cpuidle
- tunables for hardware that support these features.  It replaces
- "cpufreq-info" and "cpufreq-set" in cpufrequtils.
- .
- ${cpupower:Arch-Description}
-Build-Profiles: <!stage1 !pkg.linux.notools>
-
-Package: libcpupower1
-Architecture: linux-any
-Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: CPU frequency and voltage scaling tools for Linux (libraries)
- This package contains the shared library.
-Build-Profiles: <!stage1 !pkg.linux.notools>
-
-Package: libcpupower-dev
-Architecture: linux-any
-Section: libdevel
-Provides: libcpufreq-dev
-Depends: ${shlibs:Depends}, ${misc:Depends}, libcpupower1 (= ${binary:Version})
-Replaces: libcpufreq-dev
-Conflicts: libcpufreq-dev
-Description: CPU frequency and voltage scaling tools for Linux (development files)
- This package contains the 'power/cpupower' headers and library shared
- objects.
-Build-Profiles: <!stage1 !pkg.linux.notools>
-
 Package: linux-perf-4.9
 Architecture: alpha amd64 arm64 armel armhf hppa i386 mips mips64 mips64el mips64r6 mips64r6el mipsel mipsn32 mipsn32el mipsn32r6 mipsn32r6el mipsr6 mipsr6el powerpc powerpcspe ppc64 ppc64el s390 s390x sh4 sparc sparc64
 Section: devel
@@ -126,39 +94,6 @@ Description: Performance analysis tools for Linux 4.9
  The linux-base package contains a 'perf' command which will invoke the
  appropriate version for the running kernel.
 Build-Profiles: <!stage1 !pkg.linux.notools !nopython>
-
-Package: libusbip-dev
-Architecture: linux-any
-Section: libdevel
-Depends: ${misc:Depends}
-Description: USB device sharing system over IP network (development files)
- USB/IP is a system for sharing USB devices over the network.
- .
- This package provides headers for the libusbip library and the library
- itself for static linking.
-Build-Profiles: <!stage1 !pkg.linux.notools>
-
-Package: usbip
-Architecture: linux-any
-Section: admin
-Depends: usbutils, ${shlibs:Depends}, ${misc:Depends}
-Description: USB device sharing system over IP network
- USB/IP is a system for sharing USB devices over the network.
- .
- To share USB devices between computers with their full functionality,
- USB/IP encapsulates "USB requests" into IP packets and transmits them
- between computers.
- .
- Original USB device drivers and applications can be used for remote USB
- devices without any modification of them.  A computer can use remote USB
- devices as if they were directly attached.
- .
- Currently USB/IP provides no access control or encryption.  It should only
- be used in trusted environments.
- .
- This package provides the server component 'usbipd' and the client tool
- 'usbip'.
-Build-Profiles: <!stage1 !pkg.linux.notools>
 
 Package: hyperv-daemons
 Architecture: amd64 i386 x32
@@ -2978,7 +2913,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-rpi
 Architecture: armhf
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-4.9-arm
 Description: Header files for Linux 4.9.0-2-rpi
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-rpi, generally used for building out-of-tree kernel
@@ -3007,7 +2942,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-2-rpi2
 Architecture: armhf
-Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-2-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-4.9-arm
 Description: Header files for Linux 4.9.0-2-rpi2
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-2-rpi2, generally used for building out-of-tree kernel
@@ -11050,25 +10985,25 @@ Build-Profiles: <!stage1>
 
 Package: linux-compiler-gcc-6-arm
 Architecture: armel armhf
-Depends: gcc-6, ${misc:Depends}
+Depends: gcc-4.9, ${misc:Depends}
 Description: Compiler for Linux on ARM (meta-package)
  This package depends on gcc 6 of the appropriate architecture for Linux on
  armel and armhf.
 Build-Profiles: <!stage1>
 Multi-Arch: foreign
 
-Package: linux-compiler-gcc-6-s390
+Package: linux-compiler-gcc-4.9-s390
 Architecture: s390 s390x
-Depends: gcc-6, ${misc:Depends}
+Depends: gcc-4.9, ${misc:Depends}
 Description: Compiler for Linux on IBM zSeries (meta-package)
  This package depends on gcc 6 of the appropriate architecture for Linux on
  s390 and s390x.
 Build-Profiles: <!stage1>
 Multi-Arch: foreign
 
-Package: linux-compiler-gcc-6-x86
+Package: linux-compiler-gcc-4.9-x86
 Architecture: amd64 i386 x32
-Depends: gcc-6, ${misc:Depends}
+Depends: gcc-4.9, ${misc:Depends}
 Description: Compiler for Linux on x86 (meta-package)
  This package depends on gcc 6 of the appropriate architecture for Linux on
  amd64, i386 and x32.

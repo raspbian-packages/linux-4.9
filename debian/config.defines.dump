@@ -593,9 +593,9 @@ p318
 g288
 tp319
 (dp320
-Vheaders%gcc-6
+Vheaders%gcc-4.9
 p321
-Vlinux-compiler-gcc-6-arm
+Vlinux-compiler-gcc-4.9-arm
 p322
 ss(Vimage
 p323
@@ -2285,7 +2285,7 @@ V4.9
 p1216
 sVsource
 p1217
-V4.9.13-1+rpi2
+V4.9.13-1+rpi3
 p1218
 sVabiname
 p1219
