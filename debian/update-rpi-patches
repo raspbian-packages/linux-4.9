@@ -1,5 +1,8 @@
 #!/bin/bash -ev
 
+echo this script is not currently in use, kept arround for historic reasons and reference.
+exit 1
+
 #note: useful filterdiff command when bringing stuff forward
 #filterdiff -p1 -xdebian/patches/rpi/* -x*.postinst -x*.preinst -x*.prerm -x*.postrm -x*/config.defines.dump -xdebian/control.md5sum -xdebian/*.templates -xdebian/po/*.po -xdebian/rules.gen linux-3.18.debdiff > linux-3.18.debdiff.filtered
 
