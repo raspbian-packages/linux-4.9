@@ -805,6 +805,9 @@ static int show_smap(struct seq_file *m, void *v, int is_pid)
 		   (vma->vm_flags & VM_LOCKED) ?
 			(unsigned long)(mss.pss >> (10 + PSS_SHIFT)) : 0);
 
+	if (is_stack(m->private, vma))
+		seq_printf(m, "Stack_Gap:      %8lu kB\n", stack_guard_gap >>10);
+
 	arch_show_smap(m, vma);
 	show_smap_vma_flags(m, vma);
 	m_cache_vma(m, vma);
