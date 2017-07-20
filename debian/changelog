@@ -1,3 +1,10 @@
+linux-4.9 (4.9.13-1+rpi2) jessie-staging; urgency=medium
+
+  * Make config changes based on diff between rpi-4.4.y and rpi-4.9.y branches.
+  * Further fixes to clean target.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Thu, 11 May 2017 17:42:57 +0000
+
 linux-4.9 (4.9.13-1+rpi1) jessie-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]
@@ -116,6 +123,8 @@ linux-4.9 (4.9.13-1+rpi1) jessie-staging; urgency=medium
   * Deversion flex build-dependency
   * Deversion libbabeltrace-dev and libbabeltrace-ctf-dev build-dependencys
   * Build with gcc-4.9
+  * Fix build failure with debhelper versions that don't know --no-automatic-dbgsym
+  * Remove ext3 modules from d-i package list.
 
  -- Peter Michael Green <plugwash@raspbian.org>  Tue, 07 Mar 2017 02:27:05 +0000
 
