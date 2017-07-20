@@ -50,15 +50,13 @@ arches:
  sparc64
  tilegx
  x32
-compiler: gcc-6
+compiler: gcc-4.9
 featuresets:
  none
  rt
 
 [build]
 debug-info: true
-# Enable module signing by default (implemented in the linux-signed package)
-signed-modules: true
 
 [featureset-rt_base]
 enabled: true
@@ -74,8 +72,11 @@ initramfs-generators: initramfs-tools initramfs-fallback
 
 [relations]
 # compilers
-gcc-6: gcc-6 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cross>
+gcc-4.9: gcc-4.9 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cross>
 
 # initramfs-generators
 initramfs-fallback: linux-initramfs-tool
 initramfs-tools: initramfs-tools (>= 0.120+deb8u2)
+
+[packages]
+libc-dev: false
