@@ -1,3 +1,10 @@
+linux-4.9 (4.9.13-1+rpi3) jessie-staging; urgency=medium
+
+  * Fix "linux-compiler" packaging stuff for compiler version change.
+  * Remove usbip and cpupower binary packages as they are unversioned.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Thu, 18 May 2017 17:44:34 +0000
+
 linux-4.9 (4.9.13-1+rpi2) jessie-staging; urgency=medium
 
   * Make config changes based on diff between rpi-4.4.y and rpi-4.9.y branches.
