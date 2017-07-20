@@ -491,7 +491,6 @@ CONFIG_TEGRA_IOMMU_SMMU=y
 ## file: drivers/leds/Kconfig
 ##
 CONFIG_LEDS_CLASS=y
-CONFIG_LEDS_GPIO=m
 CONFIG_LEDS_LP5523=m
 CONFIG_LEDS_DA9052=m
 CONFIG_LEDS_PWM=m
@@ -1302,6 +1301,7 @@ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
 ## file: sound/soc/sunxi/Kconfig
 ##
 CONFIG_SND_SUN4I_CODEC=m
+CONFIG_SND_SUN4I_SPDIF=m
 
 ##
 ## file: sound/soc/tegra/Kconfig
