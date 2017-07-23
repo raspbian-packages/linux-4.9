@@ -1,0 +1,26 @@
+commit 72693071247027bc9ade06dc491ee128e0dff854
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Fri Jun 16 11:08:24 2017 +0200
+
+    fs: pass on flags in compat_writev
+    
+    commit 20223f0f39ea9d31ece08f04ac79f8c4e8d98246 upstream.
+    
+    Fixes: 793b80ef14af ("vfs: pass a flags argument to vfs_readv/vfs_writev")
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 7dfd732..2d2fe08 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1256,7 +1256,7 @@ static size_t compat_writev(struct file *file,
+ 	if (!(file->f_mode & FMODE_CAN_WRITE))
+ 		goto out;
+ 
+-	ret = compat_do_readv_writev(WRITE, file, vec, vlen, pos, 0);
++	ret = compat_do_readv_writev(WRITE, file, vec, vlen, pos, flags);
+ 
+ out:
+ 	if (ret > 0)

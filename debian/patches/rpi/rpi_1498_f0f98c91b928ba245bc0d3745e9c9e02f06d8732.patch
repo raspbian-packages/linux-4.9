@@ -1,0 +1,56 @@
+commit f0f98c91b928ba245bc0d3745e9c9e02f06d8732
+Author: Imre Deak <imre.deak@intel.com>
+Date:   Tue May 23 14:18:17 2017 -0500
+
+    PCI/PM: Add needs_resume flag to avoid suspend complete optimization
+    
+    commit 4d071c3238987325b9e50e33051a40d1cce311cc upstream.
+    
+    Some drivers - like i915 - may not support the system suspend direct
+    complete optimization due to differences in their runtime and system
+    suspend sequence.  Add a flag that when set resumes the device before
+    calling the driver's system suspend handlers which effectively disables
+    the optimization.
+    
+    Needed by a future patch fixing suspend/resume on i915.
+    
+    Suggested by Rafael.
+    
+    Signed-off-by: Imre Deak <imre.deak@intel.com>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    Cc: stable@vger.kernel.org
+    (rebased on v4.8, added kernel version to commit message stable tag)
+    Signed-off-by: Imre Deak <imre.deak@intel.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 579c494..e7d4048 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2142,7 +2142,8 @@ bool pci_dev_keep_suspended(struct pci_dev *pci_dev)
+ 
+ 	if (!pm_runtime_suspended(dev)
+ 	    || pci_target_state(pci_dev) != pci_dev->current_state
+-	    || platform_pci_need_resume(pci_dev))
++	    || platform_pci_need_resume(pci_dev)
++	    || (pci_dev->dev_flags & PCI_DEV_FLAGS_NEEDS_RESUME))
+ 		return false;
+ 
+ 	/*
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index a38772a..1b71179 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -178,6 +178,11 @@ enum pci_dev_flags {
+ 	PCI_DEV_FLAGS_NO_PM_RESET = (__force pci_dev_flags_t) (1 << 7),
+ 	/* Get VPD from function 0 VPD */
+ 	PCI_DEV_FLAGS_VPD_REF_F0 = (__force pci_dev_flags_t) (1 << 8),
++	/*
++	 * Resume before calling the driver's system suspend hooks, disabling
++	 * the direct_complete optimization.
++	 */
++	PCI_DEV_FLAGS_NEEDS_RESUME = (__force pci_dev_flags_t) (1 << 11),
+ };
+ 
+ enum pci_irq_reroute_variant {

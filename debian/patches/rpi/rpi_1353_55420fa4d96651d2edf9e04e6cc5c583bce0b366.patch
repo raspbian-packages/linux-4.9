@@ -1,0 +1,35 @@
+commit 55420fa4d96651d2edf9e04e6cc5c583bce0b366
+Author: Darrick J. Wong <darrick.wong@oracle.com>
+Date:   Mon Apr 3 15:17:57 2017 -0700
+
+    xfs: fix over-copying of getbmap parameters from userspace
+    
+    commit be6324c00c4d1e0e665f03ed1fc18863a88da119 upstream.
+    
+    In xfs_ioc_getbmap, we should only copy the fields of struct getbmap
+    from userspace, or else we end up copying random stack contents into the
+    kernel.  struct getbmap is a strict subset of getbmapx, so a partial
+    structure copy should work fine.
+    
+    Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index a391975..73cfc71 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1542,10 +1542,11 @@ xfs_ioc_getbmap(
+ 	unsigned int		cmd,
+ 	void			__user *arg)
+ {
+-	struct getbmapx		bmx;
++	struct getbmapx		bmx = { 0 };
+ 	int			error;
+ 
+-	if (copy_from_user(&bmx, arg, sizeof(struct getbmapx)))
++	/* struct getbmap is a strict subset of struct getbmapx. */
++	if (copy_from_user(&bmx, arg, offsetof(struct getbmapx, bmv_iflags)))
+ 		return -EFAULT;
+ 
+ 	if (bmx.bmv_count < 2)

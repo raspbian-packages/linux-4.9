@@ -1,0 +1,27 @@
+commit 7f69ab3afebbe26edc96835172731a35885f2f9b
+Author: Ben Skeggs <bskeggs@redhat.com>
+Date:   Tue May 23 21:54:08 2017 -0400
+
+    drm/nouveau: prevent userspace from deleting client object
+    
+    
+    [ Upstream commit c966b6279f610a24ac1d42dcbe30e10fa61220b2 ]
+    
+    Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_usif.c b/drivers/gpu/drm/nouveau/nouveau_usif.c
+index 08f9c6f..1fba386 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_usif.c
++++ b/drivers/gpu/drm/nouveau/nouveau_usif.c
+@@ -313,7 +313,8 @@ usif_ioctl(struct drm_file *filp, void __user *user, u32 argc)
+ 	if (!(ret = nvif_unpack(-ENOSYS, &data, &size, argv->v0, 0, 0, true))) {
+ 		/* block access to objects not created via this interface */
+ 		owner = argv->v0.owner;
+-		if (argv->v0.object == 0ULL)
++		if (argv->v0.object == 0ULL &&
++		    argv->v0.type != NVIF_IOCTL_V0_DEL)
+ 			argv->v0.owner = NVDRM_OBJECT_ANY; /* except client */
+ 		else
+ 			argv->v0.owner = NVDRM_OBJECT_USIF;

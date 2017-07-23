@@ -1,0 +1,32 @@
+commit d681baf5957e3f27e51522d7adb2416b863d0cec
+Author: Chen-Yu Tsai <wens@csie.org>
+Date:   Wed May 3 11:13:46 2017 +0800
+
+    clk: sunxi-ng: a31: Correct lcd1-ch1 clock register offset
+    
+    commit 38b8f823864707eb1cf331d2247608c419ed388c upstream.
+    
+    The register offset for the lcd1-ch1 clock was incorrectly pointing to
+    the lcd0-ch1 clock. This resulted in the lcd0-ch1 clock being disabled
+    when the clk core disables unused clocks. This then stops the simplefb
+    HDMI output path.
+    
+    Reported-by: Bob Ham <rah@settrans.net>
+    Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+    Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+    Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 8ca07fe..0cca360 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -556,7 +556,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(lcd0_ch1_clk, "lcd0-ch1", lcd_ch1_parents,
+ 				 0x12c, 0, 4, 24, 3, BIT(31),
+ 				 CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(lcd1_ch1_clk, "lcd1-ch1", lcd_ch1_parents,
+-				 0x12c, 0, 4, 24, 3, BIT(31),
++				 0x130, 0, 4, 24, 3, BIT(31),
+ 				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const csi_sclk_parents[] = { "pll-video0", "pll-video1",

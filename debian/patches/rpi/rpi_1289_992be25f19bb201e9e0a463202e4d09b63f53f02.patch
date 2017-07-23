@@ -1,0 +1,44 @@
+commit 992be25f19bb201e9e0a463202e4d09b63f53f02
+Author: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Date:   Wed May 10 19:07:53 2017 +0200
+
+    s390/qeth: avoid null pointer dereference on OSN
+    
+    
+    [ Upstream commit 25e2c341e7818a394da9abc403716278ee646014 ]
+    
+    Access card->dev only after checking whether's its valid.
+    
+    Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
+index cdb0340..5d010aa 100644
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -1106,7 +1106,6 @@ static int qeth_l2_setup_netdev(struct qeth_card *card)
+ 	case QETH_CARD_TYPE_OSN:
+ 		card->dev = alloc_netdev(0, "osn%d", NET_NAME_UNKNOWN,
+ 					 ether_setup);
+-		card->dev->flags |= IFF_NOARP;
+ 		break;
+ 	default:
+ 		card->dev = alloc_etherdev(0);
+@@ -1119,9 +1118,12 @@ static int qeth_l2_setup_netdev(struct qeth_card *card)
+ 	card->dev->watchdog_timeo = QETH_TX_TIMEOUT;
+ 	card->dev->mtu = card->info.initial_mtu;
+ 	card->dev->netdev_ops = &qeth_l2_netdev_ops;
+-	card->dev->ethtool_ops =
+-		(card->info.type != QETH_CARD_TYPE_OSN) ?
+-		&qeth_l2_ethtool_ops : &qeth_l2_osn_ops;
++	if (card->info.type == QETH_CARD_TYPE_OSN) {
++		card->dev->ethtool_ops = &qeth_l2_osn_ops;
++		card->dev->flags |= IFF_NOARP;
++	} else {
++		card->dev->ethtool_ops = &qeth_l2_ethtool_ops;
++	}
+ 	card->dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
+ 	if (card->info.type == QETH_CARD_TYPE_OSD && !card->info.guestlan) {
+ 		card->dev->hw_features = NETIF_F_SG;

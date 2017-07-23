@@ -1,0 +1,44 @@
+commit aac31238199e7bcb9777cb5b7a11909c8405649c
+Author: Xin Long <lucien.xin@gmail.com>
+Date:   Thu Jun 15 17:49:08 2017 +0800
+
+    sctp: return next obj by passing pos + 1 into sctp_transport_get_idx
+    
+    
+    [ Upstream commit 988c7322116970696211e902b468aefec95b6ec4 ]
+    
+    In sctp_for_each_transport, pos is used to save how many objs it has
+    dumped. Now it gets the last obj by sctp_transport_get_idx, then gets
+    the next obj by sctp_transport_get_next.
+    
+    The issue is that in the meanwhile if some objs in transport hashtable
+    are removed and the objs nums are less than pos, sctp_transport_get_idx
+    would return NULL and hti.walker.tbl is NULL as well. At this moment
+    it should stop hti, instead of continue getting the next obj. Or it
+    would cause a NULL pointer dereference in sctp_transport_get_next.
+    
+    This patch is to pass pos + 1 into sctp_transport_get_idx to get the
+    next obj directly, even if pos > objs nums, it would return NULL and
+    stop hti.
+    
+    Fixes: 626d16f50f39 ("sctp: export some apis or variables for sctp_diag and reuse some for proc")
+    Signed-off-by: Xin Long <lucien.xin@gmail.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index 0c5257e..487c127 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -4506,9 +4506,8 @@ int sctp_for_each_transport(int (*cb)(struct sctp_transport *, void *),
+ 	if (err)
+ 		return err;
+ 
+-	sctp_transport_get_idx(net, &hti, pos);
+-	obj = sctp_transport_get_next(net, &hti);
+-	for (; obj && !IS_ERR(obj); obj = sctp_transport_get_next(net, &hti)) {
++	obj = sctp_transport_get_idx(net, &hti, pos + 1);
++	for (; !IS_ERR_OR_NULL(obj); obj = sctp_transport_get_next(net, &hti)) {
+ 		struct sctp_transport *transport = obj;
+ 
+ 		if (!sctp_transport_hold(transport))

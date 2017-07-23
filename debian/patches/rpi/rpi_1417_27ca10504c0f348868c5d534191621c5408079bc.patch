@@ -1,0 +1,41 @@
+commit 27ca10504c0f348868c5d534191621c5408079bc
+Author: Marc Zyngier <marc.zyngier@arm.com>
+Date:   Tue Jun 6 19:08:35 2017 +0100
+
+    arm: KVM: Allow unaligned accesses at HYP
+    
+    commit 33b5c38852b29736f3b472dd095c9a18ec22746f upstream.
+    
+    We currently have the HSCTLR.A bit set, trapping unaligned accesses
+    at HYP, but we're not really prepared to deal with it.
+    
+    Since the rest of the kernel is pretty happy about that, let's follow
+    its example and set HSCTLR.A to zero. Modern CPUs don't really care.
+    
+    Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+    Signed-off-by: Christoffer Dall <cdall@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/arm/kvm/init.S b/arch/arm/kvm/init.S
+index bf89c91..bd0ee7f 100644
+--- a/arch/arm/kvm/init.S
++++ b/arch/arm/kvm/init.S
+@@ -95,7 +95,6 @@ __do_hyp_init:
+ 	@  - Write permission implies XN: disabled
+ 	@  - Instruction cache: enabled
+ 	@  - Data/Unified cache: enabled
+-	@  - Memory alignment checks: enabled
+ 	@  - MMU: enabled (this code must be run from an identity mapping)
+ 	mrc	p15, 4, r0, c1, c0, 0	@ HSCR
+ 	ldr	r2, =HSCTLR_MASK
+@@ -103,8 +102,8 @@ __do_hyp_init:
+ 	mrc	p15, 0, r1, c1, c0, 0	@ SCTLR
+ 	ldr	r2, =(HSCTLR_EE | HSCTLR_FI | HSCTLR_I | HSCTLR_C)
+ 	and	r1, r1, r2
+- ARM(	ldr	r2, =(HSCTLR_M | HSCTLR_A)			)
+- THUMB(	ldr	r2, =(HSCTLR_M | HSCTLR_A | HSCTLR_TE)		)
++ ARM(	ldr	r2, =(HSCTLR_M)					)
++ THUMB(	ldr	r2, =(HSCTLR_M | HSCTLR_TE)			)
+ 	orr	r1, r1, r2
+ 	orr	r0, r0, r1
+ 	mcr	p15, 4, r0, c1, c0, 0	@ HSCR

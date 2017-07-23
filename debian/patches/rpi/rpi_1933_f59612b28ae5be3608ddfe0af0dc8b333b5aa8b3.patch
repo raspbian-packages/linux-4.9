@@ -1,0 +1,34 @@
+commit f59612b28ae5be3608ddfe0af0dc8b333b5aa8b3
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Thu Feb 9 17:17:52 2017 +0000
+
+    KEYS: Fix an error code in request_master_key()
+    
+    commit 57cb17e764ba0aaa169d07796acce54ccfbc6cae upstream.
+    
+    This function has two callers and neither are able to handle a NULL
+    return.  Really, -EINVAL is the correct thing return here anyway.  This
+    fixes some static checker warnings like:
+    
+    	security/keys/encrypted-keys/encrypted.c:709 encrypted_key_decrypt()
+    	error: uninitialized symbol 'master_key'.
+    
+    Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+    Signed-off-by: James Morris <james.l.morris@oracle.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 56c458d..8d9330a 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -437,7 +437,7 @@ static struct skcipher_request *init_skcipher_req(const u8 *key,
+ static struct key *request_master_key(struct encrypted_key_payload *epayload,
+ 				      const u8 **master_key, size_t *master_keylen)
+ {
+-	struct key *mkey = NULL;
++	struct key *mkey = ERR_PTR(-EINVAL);
+ 
+ 	if (!strncmp(epayload->master_desc, KEY_TRUSTED_PREFIX,
+ 		     KEY_TRUSTED_PREFIX_LEN)) {

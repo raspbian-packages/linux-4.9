@@ -1,0 +1,45 @@
+commit 4ac87a526dc02f1c1dfea5f06ab9c50307380961
+Author: Alvaro G. M <alvaro.gamez@hazent.com>
+Date:   Tue Jan 17 09:08:16 2017 +0100
+
+    net: phy: dp83848: add DP83620 PHY support
+    
+    
+    [ Upstream commit 93b43fd137cd8865adf9978ab9870a344365d3af ]
+    
+    This PHY with fiber support is register compatible with DP83848,
+    so add support for it.
+    
+    Signed-off-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
+index 800b39f..a10d0e7 100644
+--- a/drivers/net/phy/dp83848.c
++++ b/drivers/net/phy/dp83848.c
+@@ -17,6 +17,7 @@
+ #include <linux/phy.h>
+ 
+ #define TI_DP83848C_PHY_ID		0x20005ca0
++#define TI_DP83620_PHY_ID		0x20005ce0
+ #define NS_DP83848C_PHY_ID		0x20005c90
+ #define TLK10X_PHY_ID			0x2000a210
+ #define TI_DP83822_PHY_ID		0x2000a240
+@@ -77,6 +78,7 @@ static int dp83848_config_intr(struct phy_device *phydev)
+ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
+ 	{ TI_DP83848C_PHY_ID, 0xfffffff0 },
+ 	{ NS_DP83848C_PHY_ID, 0xfffffff0 },
++	{ TI_DP83620_PHY_ID, 0xfffffff0 },
+ 	{ TLK10X_PHY_ID, 0xfffffff0 },
+ 	{ TI_DP83822_PHY_ID, 0xfffffff0 },
+ 	{ }
+@@ -106,6 +108,7 @@ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+ static struct phy_driver dp83848_driver[] = {
+ 	DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY"),
+ 	DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY"),
++	DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY"),
+ 	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY"),
+ 	DP83848_PHY_DRIVER(TI_DP83822_PHY_ID, "TI DP83822 10/100 Mbps PHY"),
+ };

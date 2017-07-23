@@ -1,0 +1,41 @@
+commit 864543ded74b34ef8840b3cfe099db0a8951acba
+Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date:   Wed Feb 8 17:01:46 2017 -0300
+
+    tools strfilter: Use __fallthrough
+    
+    commit d64b721d27aef3fbeb16ecda9dd22ee34818ff70 upstream.
+    
+    The implicit fall through case label here is intended, so let us inform
+    that to gcc >= 7:
+    
+      util/strfilter.c: In function 'strfilter_node__sprint':
+      util/strfilter.c:270:6: error: this statement may fall through [-Werror=implicit-fallthrough=]
+         if (len < 0)
+            ^
+      util/strfilter.c:272:2: note: here
+        case '!':
+        ^~~~
+      cc1: all warnings being treated as errors
+    
+    Cc: Adrian Hunter <adrian.hunter@intel.com>
+    Cc: David Ahern <dsahern@gmail.com>
+    Cc: Jiri Olsa <jolsa@kernel.org>
+    Cc: Namhyung Kim <namhyung@kernel.org>
+    Cc: Wang Nan <wangnan0@huawei.com>
+    Link: http://lkml.kernel.org/n/tip-z2dpywg7u8fim000hjfbpyfm@git.kernel.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/tools/perf/util/strfilter.c b/tools/perf/util/strfilter.c
+index bcae659..efb5377 100644
+--- a/tools/perf/util/strfilter.c
++++ b/tools/perf/util/strfilter.c
+@@ -269,6 +269,7 @@ static int strfilter_node__sprint(struct strfilter_node *node, char *buf)
+ 		len = strfilter_node__sprint_pt(node->l, buf);
+ 		if (len < 0)
+ 			return len;
++		__fallthrough;
+ 	case '!':
+ 		if (buf) {
+ 			*(buf + len++) = *node->p;

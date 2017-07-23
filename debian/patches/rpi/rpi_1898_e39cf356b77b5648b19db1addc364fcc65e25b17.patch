@@ -1,0 +1,57 @@
+commit e39cf356b77b5648b19db1addc364fcc65e25b17
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Thu Apr 27 09:42:24 2017 +0200
+
+    fs: add a VALID_OPEN_FLAGS
+    
+    commit 80f18379a7c350c011d30332658aa15fe49a8fa5 upstream.
+    
+    Add a central define for all valid open flags, and use it in the uniqueness
+    check.
+    
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 04fd33c..98851f4 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -744,16 +744,10 @@ static int __init fcntl_init(void)
+ 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+ 	 * is defined as O_NONBLOCK on some platforms and not on others.
+ 	 */
+-	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ != HWEIGHT32(
+-		O_RDONLY	| O_WRONLY	| O_RDWR	|
+-		O_CREAT		| O_EXCL	| O_NOCTTY	|
+-		O_TRUNC		| O_APPEND	| /* O_NONBLOCK	| */
+-		__O_SYNC	| O_DSYNC	| FASYNC	|
+-		O_DIRECT	| O_LARGEFILE	| O_DIRECTORY	|
+-		O_NOFOLLOW	| O_NOATIME	| O_CLOEXEC	|
+-		__FMODE_EXEC	| O_PATH	| __O_TMPFILE	|
+-		__FMODE_NONOTIFY
+-		));
++	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
++		HWEIGHT32(
++			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
++			__FMODE_EXEC | __FMODE_NONOTIFY));
+ 
+ 	fasync_cache = kmem_cache_create("fasync_cache",
+ 		sizeof(struct fasync_struct), 0, SLAB_PANIC, NULL);
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index 76ce329..1b48d9c 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -3,6 +3,12 @@
+ 
+ #include <uapi/linux/fcntl.h>
+ 
++/* list of all valid flags for the open/openat flags argument: */
++#define VALID_OPEN_FLAGS \
++	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
++	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
++	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
++	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+ 
+ #ifndef force_o_largefile
+ #define force_o_largefile() (BITS_PER_LONG != 32)

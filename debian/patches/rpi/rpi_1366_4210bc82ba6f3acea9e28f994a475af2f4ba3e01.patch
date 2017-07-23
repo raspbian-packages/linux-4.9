@@ -1,0 +1,39 @@
+commit 4210bc82ba6f3acea9e28f994a475af2f4ba3e01
+Author: Darrick J. Wong <darrick.wong@oracle.com>
+Date:   Fri May 12 10:44:08 2017 -0700
+
+    xfs: BMAPX shouldn't barf on inline-format directories
+    
+    commit 6eadbf4c8ba816c10d1c97bed9aa861d9fd17809 upstream.
+    
+    When we're fulfilling a BMAPX request, jump out early if the data fork
+    is in local format.  This prevents us from hitting a debugging check in
+    bmapi_read and barfing errors back to userspace.  The on-disk extent
+    count check later isn't sufficient for IF_DELALLOC mode because da
+    extents are in memory and not on disk.
+    
+    Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Reviewed-by: Brian Foster <bfoster@redhat.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+index 8a1a62e..15be2c9 100644
+--- a/fs/xfs/xfs_bmap_util.c
++++ b/fs/xfs/xfs_bmap_util.c
+@@ -588,9 +588,13 @@ xfs_getbmap(
+ 		}
+ 		break;
+ 	default:
++		/* Local format data forks report no extents. */
++		if (ip->i_d.di_format == XFS_DINODE_FMT_LOCAL) {
++			bmv->bmv_entries = 0;
++			return 0;
++		}
+ 		if (ip->i_d.di_format != XFS_DINODE_FMT_EXTENTS &&
+-		    ip->i_d.di_format != XFS_DINODE_FMT_BTREE &&
+-		    ip->i_d.di_format != XFS_DINODE_FMT_LOCAL)
++		    ip->i_d.di_format != XFS_DINODE_FMT_BTREE)
+ 			return -EINVAL;
+ 
+ 		if (xfs_get_extsz_hint(ip) ||

@@ -1,0 +1,32 @@
+commit eb7aa250b03f590da9b31f9c6bd76b624e7c7ff9
+Author: Adam Ford <aford173@gmail.com>
+Date:   Mon Mar 6 12:56:55 2017 -0600
+
+    ARM: dts: OMAP3: Fix MFG ID EEPROM
+    
+    commit 06e1a5cc570703796ff1bd3a712e8e3b15c6bb0d upstream.
+    
+    The manufacturing information is stored in the EEPROM.  This chip
+    is an AT24C64 not not (nor has it ever been) 24C02.  This patch will
+    correctly address the EEPROM to read the entire contents and not just
+    256 bytes (of 0xff).
+    
+    Fixes: 5e3447a29a38 ("ARM: dts: LogicPD Torpedo: Add AT24 EEPROM Support")
+    
+    Signed-off-by: Adam Ford <aford173@gmail.com>
+    Signed-off-by: Tony Lindgren <tony@atomide.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
+index 8f9a69c..efe5399 100644
+--- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
++++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
+@@ -121,7 +121,7 @@
+ &i2c3 {
+ 	clock-frequency = <400000>;
+ 	at24@50 {
+-		compatible = "at24,24c02";
++		compatible = "atmel,24c64";
+ 		readonly;
+ 		reg = <0x50>;
+ 	};

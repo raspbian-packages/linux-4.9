@@ -1,0 +1,32 @@
+commit cb54f37e4ee2101131b8c988fa29451d3325c4c0
+Author: Jiri Slaby <jslaby@suse.cz>
+Date:   Tue Jan 24 15:18:29 2017 -0800
+
+    kernel/panic.c: add missing \n
+    
+    
+    [ Upstream commit ff7a28a074ccbea999dadbb58c46212cf90984c6 ]
+    
+    When a system panics, the "Rebooting in X seconds.." message is never
+    printed because it lacks a new line.  Fix it.
+    
+    Link: http://lkml.kernel.org/r/20170119114751.2724-1-jslaby@suse.cz
+    Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/kernel/panic.c b/kernel/panic.c
+index e6480e2..dbec387 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -249,7 +249,7 @@ void panic(const char *fmt, ...)
+ 		 * Delay timeout seconds before rebooting the machine.
+ 		 * We can't use the "normal" timers since we just panicked.
+ 		 */
+-		pr_emerg("Rebooting in %d seconds..", panic_timeout);
++		pr_emerg("Rebooting in %d seconds..\n", panic_timeout);
+ 
+ 		for (i = 0; i < panic_timeout * 1000; i += PANIC_TIMER_STEP) {
+ 			touch_nmi_watchdog();

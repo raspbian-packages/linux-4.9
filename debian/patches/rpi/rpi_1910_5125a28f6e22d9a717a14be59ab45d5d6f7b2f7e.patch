@@ -1,0 +1,32 @@
+commit 5125a28f6e22d9a717a14be59ab45d5d6f7b2f7e
+Author: Johan Hovold <johan@kernel.org>
+Date:   Tue Jun 6 17:58:58 2017 +0200
+
+    USB: core: fix device node leak
+    
+    commit e271b2c909a22a2c13b2d5f77f2ce0091b74540c upstream.
+    
+    Make sure to release any OF device-node reference taken when creating
+    the USB device.
+    
+    Note that we currently do not hold a reference to the root hub
+    device-tree node (i.e. the parent controller node).
+    
+    Fixes: 69bec7259853 ("USB: core: let USB device know device node")
+    Acked-by: Peter Chen <peter.chen@nxp.com>
+    Signed-off-by: Johan Hovold <johan@kernel.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+index 5921514..eaf1c3b 100644
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -279,6 +279,8 @@ static void usb_release_dev(struct device *dev)
+ 
+ 	usb_destroy_configuration(udev);
+ 	usb_release_bos_descriptor(udev);
++	if (udev->parent)
++		of_node_put(dev->of_node);
+ 	usb_put_hcd(hcd);
+ 	kfree(udev->product);
+ 	kfree(udev->manufacturer);

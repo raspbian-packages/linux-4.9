@@ -1,0 +1,33 @@
+commit 977f587be4dfa41e44c56252b383aa7242a9f6f8
+Author: Matt Ranostay <matt.ranostay@konsulko.com>
+Date:   Thu Apr 27 00:52:32 2017 -0700
+
+    iio: proximity: as3935: fix AS3935_INT mask
+    
+    commit 275292d3a3d62670b1b13484707b74e5239b4bb0 upstream.
+    
+    AS3935 interrupt mask has been incorrect so valid lightning events
+    would never trigger an buffer event. Also noise interrupt should be
+    BIT(0).
+    
+    Fixes: 24ddb0e4bba4 ("iio: Add AS3935 lightning sensor support")
+    Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
+    Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/iio/proximity/as3935.c b/drivers/iio/proximity/as3935.c
+index 0204595..75ba7c7 100644
+--- a/drivers/iio/proximity/as3935.c
++++ b/drivers/iio/proximity/as3935.c
+@@ -40,9 +40,9 @@
+ #define AS3935_AFE_PWR_BIT	BIT(0)
+ 
+ #define AS3935_INT		0x03
+-#define AS3935_INT_MASK		0x07
++#define AS3935_INT_MASK		0x0f
+ #define AS3935_EVENT_INT	BIT(3)
+-#define AS3935_NOISE_INT	BIT(1)
++#define AS3935_NOISE_INT	BIT(0)
+ 
+ #define AS3935_DATA		0x07
+ #define AS3935_DATA_MASK	0x3F

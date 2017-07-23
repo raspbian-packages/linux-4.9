@@ -1,0 +1,41 @@
+commit 51d9e858741ed74d1935ad2fa0d684e4b38484aa
+Author: Or Gerlitz <ogerlitz@mellanox.com>
+Date:   Wed Jan 11 19:39:42 2017 +0200
+
+    net/mlx5: E-Switch, Err when retrieving steering name-space fails
+    
+    
+    [ Upstream commit 5403dc703ff277f8a2a12a83ac820750485f13b3 ]
+    
+    Make sure to return error when we failed retrieving the FDB steering
+    name space. Also, while around, correctly print the error when mode
+    change revert fails in the warning message.
+    
+    Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+    Reported-by: Leon Romanovsky <leonro@mellanox.com>
+    Reviewed-by: Roi Dayan <roid@mellanox.com>
+    Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+index d239f5d..d3f8840 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+@@ -414,6 +414,7 @@ static int esw_create_offloads_fdb_table(struct mlx5_eswitch *esw, int nvports)
+ 	root_ns = mlx5_get_flow_namespace(dev, MLX5_FLOW_NAMESPACE_FDB);
+ 	if (!root_ns) {
+ 		esw_warn(dev, "Failed to get FDB flow namespace\n");
++		err = -EOPNOTSUPP;
+ 		goto ns_err;
+ 	}
+ 
+@@ -639,7 +640,7 @@ static int esw_offloads_start(struct mlx5_eswitch *esw)
+ 		esw_warn(esw->dev, "Failed setting eswitch to offloads, err %d\n", err);
+ 		err1 = mlx5_eswitch_enable_sriov(esw, num_vfs, SRIOV_LEGACY);
+ 		if (err1)
+-			esw_warn(esw->dev, "Failed setting eswitch back to legacy, err %d\n", err);
++			esw_warn(esw->dev, "Failed setting eswitch back to legacy, err %d\n", err1);
+ 	}
+ 	return err;
+ }

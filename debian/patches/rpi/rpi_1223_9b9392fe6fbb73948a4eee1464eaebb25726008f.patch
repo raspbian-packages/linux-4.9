@@ -1,0 +1,22 @@
+commit 9b9392fe6fbb73948a4eee1464eaebb25726008f
+Author: Matt Flax <flatmax@flatmax.org>
+Date:   Tue Apr 4 19:23:04 2017 +1000
+
+    Audioinjector octo : Make the playback and capture symmetric
+    
+    This patch ensures that the sample rate and channel count of the audioinjector
+    octo sound card are symmetric.
+
+diff --git a/sound/soc/bcm/audioinjector-octo-soundcard.c b/sound/soc/bcm/audioinjector-octo-soundcard.c
+index 49115c8..5e79f4e 100644
+--- a/sound/soc/bcm/audioinjector-octo-soundcard.c
++++ b/sound/soc/bcm/audioinjector-octo-soundcard.c
+@@ -204,6 +204,8 @@ static struct snd_soc_dai_link audioinjector_octo_dai[] = {
+ 		.codec_dai_name = "cs42448",
+ 		.ops = &audioinjector_octo_ops,
+ 		.init = audioinjector_octo_dai_init,
++		.symmetric_rates = 1,
++		.symmetric_channels = 1,
+ 	},
+ };
+ 

@@ -1,0 +1,42 @@
+commit 609bde9d1b72bf29b93acb87a037e0488ebb519d
+Author: Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Thu May 18 22:27:40 2017 +0530
+
+    mmc: sdhci-iproc: suppress spurious interrupt with Multiblock read
+    
+    commit f5f968f2371ccdebb8a365487649673c9af68d09 upstream.
+    
+    The stingray SDHCI hardware supports ACMD12 and automatically
+    issues after multi block transfer completed.
+    
+    If ACMD12 in SDHCI is disabled, spurious tx done interrupts are seen
+    on multi block read command with below error message:
+    
+    Got data interrupt 0x00000002 even though no data
+    operation was in progress.
+    
+    This patch uses SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 to enable
+    ACM12 support in SDHCI hardware and suppress spurious interrupt.
+    
+    Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+    Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+    Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+    Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+    Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
+    Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
+index 7262466..50dd6bd 100644
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -157,7 +157,8 @@ static const struct sdhci_ops sdhci_iproc_ops = {
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
+-	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
++	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
++		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
+ 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN,
+ 	.ops = &sdhci_iproc_ops,
+ };

@@ -1,0 +1,36 @@
+commit 441f3ec43fe57baae8bc940fc92b40ab426c732d
+Author: Kejian Yan <yankejian@huawei.com>
+Date:   Tue May 23 21:53:41 2017 -0400
+
+    net: hns: Fix the device being used for dma mapping during TX
+    
+    
+    [ Upstream commit b85ea006b6bebb692628f11882af41c3e12e1e09 ]
+    
+    This patch fixes the device being used to DMA map skb->data.
+    Erroneous device assignment causes the crash when SMMU is enabled.
+    This happens during TX since buffer gets DMA mapped with device
+    correspondign to net_device and gets unmapped using the device
+    related to DSAF.
+    
+    Signed-off-by: Kejian Yan <yankejian@huawei.com>
+    Reviewed-by: Yisen Zhuang <yisen.zhuang@huawei.com>
+    Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+index dff7b60..c06845b 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -304,8 +304,8 @@ int hns_nic_net_xmit_hw(struct net_device *ndev,
+ 			struct hns_nic_ring_data *ring_data)
+ {
+ 	struct hns_nic_priv *priv = netdev_priv(ndev);
+-	struct device *dev = priv->dev;
+ 	struct hnae_ring *ring = ring_data->ring;
++	struct device *dev = ring_to_dev(ring);
+ 	struct netdev_queue *dev_queue;
+ 	struct skb_frag_struct *frag;
+ 	int buf_num;

@@ -1,0 +1,29 @@
+commit 640a981e6c9190aa161f9aed393035b33cbef2d1
+Author: Darrick J. Wong <darrick.wong@oracle.com>
+Date:   Mon Apr 3 12:22:39 2017 -0700
+
+    xfs: fix kernel memory exposure problems
+    
+    commit bf9216f922612d2db7666aae01e65064da2ffb3a upstream.
+    
+    Fix a memory exposure problems in inumbers where we allocate an array of
+    structures with holes, fail to zero the holes, then blindly copy the
+    kernel memory contents (junk and all) into userspace.
+    
+    Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/xfs/xfs_itable.c b/fs/xfs/xfs_itable.c
+index 66e8817..d8a77db 100644
+--- a/fs/xfs/xfs_itable.c
++++ b/fs/xfs/xfs_itable.c
+@@ -585,7 +585,7 @@ xfs_inumbers(
+ 		return error;
+ 
+ 	bcount = MIN(left, (int)(PAGE_SIZE / sizeof(*buffer)));
+-	buffer = kmem_alloc(bcount * sizeof(*buffer), KM_SLEEP);
++	buffer = kmem_zalloc(bcount * sizeof(*buffer), KM_SLEEP);
+ 	do {
+ 		struct xfs_inobt_rec_incore	r;
+ 		int				stat;

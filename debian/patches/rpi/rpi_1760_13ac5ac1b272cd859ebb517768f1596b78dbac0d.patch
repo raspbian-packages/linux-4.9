@@ -1,0 +1,35 @@
+commit 13ac5ac1b272cd859ebb517768f1596b78dbac0d
+Author: Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri Jun 23 13:45:16 2017 +0200
+
+    gpiolib: fix filtering out unwanted events
+    
+    commit ad537b822577fcc143325786cd6ad50d7b9df31c upstream.
+    
+    GPIOEVENT_REQUEST_BOTH_EDGES is not a single flag, but a binary OR of
+    GPIOEVENT_REQUEST_RISING_EDGE and GPIOEVENT_REQUEST_FALLING_EDGE.
+    
+    The expression 'le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES' we'll get
+    evaluated to true even if only one event type was requested.
+    
+    Fix it by checking both RISING & FALLING flags explicitly.
+    
+    Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+    Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9215931..f2bb512 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -707,7 +707,8 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 
+ 	ge.timestamp = ktime_get_real_ns();
+ 
+-	if (le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES) {
++	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
++	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
+ 		int level = gpiod_get_value_cansleep(le->desc);
+ 
+ 		if (level)

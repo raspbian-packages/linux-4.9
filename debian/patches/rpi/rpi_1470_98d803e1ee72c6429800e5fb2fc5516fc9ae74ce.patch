@@ -1,0 +1,33 @@
+commit 98d803e1ee72c6429800e5fb2fc5516fc9ae74ce
+Author: Christophe Leroy <christophe.leroy@c-s.fr>
+Date:   Wed May 24 10:01:55 2017 +0200
+
+    powerpc/sysdev/simple_gpio: Fix oops in gpio save_regs function
+    
+    commit 6f553912eedafae13ff20b322a65e471fe7f5236 upstream.
+    
+    of_mm_gpiochip_add_data() generates an oops for NULL pointer dereference.
+    
+    of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
+    setting the data, therefore ->save_regs() cannot use gpiochip_get_data()
+    
+    Fixes: 937daafca774 ("powerpc: simple-gpio: use gpiochip data pointer")
+    Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+    Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/powerpc/sysdev/simple_gpio.c b/arch/powerpc/sysdev/simple_gpio.c
+index ef470b4..6afddae 100644
+--- a/arch/powerpc/sysdev/simple_gpio.c
++++ b/arch/powerpc/sysdev/simple_gpio.c
+@@ -75,7 +75,8 @@ static int u8_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ static void u8_gpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct u8_gpio_chip *u8_gc = gpiochip_get_data(&mm_gc->gc);
++	struct u8_gpio_chip *u8_gc =
++		container_of(mm_gc, struct u8_gpio_chip, mm_gc);
+ 
+ 	u8_gc->data = in_8(mm_gc->regs);
+ }

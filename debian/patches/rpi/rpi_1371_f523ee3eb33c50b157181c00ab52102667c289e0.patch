@@ -1,0 +1,31 @@
+commit f523ee3eb33c50b157181c00ab52102667c289e0
+Author: Jan Kara <jack@suse.cz>
+Date:   Thu May 18 16:36:23 2017 -0700
+
+    xfs: Fix off-by-in in loop termination in xfs_find_get_desired_pgoff()
+    
+    commit d7fd24257aa60316bf81093f7f909dc9475ae974 upstream.
+    
+    There is an off-by-one error in loop termination conditions in
+    xfs_find_get_desired_pgoff() since 'end' may index a page beyond end of
+    desired range if 'endoff' is page aligned. It doesn't have any visible
+    effects but still it is good to fix it.
+    
+    Signed-off-by: Jan Kara <jack@suse.cz>
+    Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 9292a59..a90ec3f 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1130,7 +1130,7 @@ xfs_find_get_desired_pgoff(
+ 
+ 	index = startoff >> PAGE_SHIFT;
+ 	endoff = XFS_FSB_TO_B(mp, map->br_startoff + map->br_blockcount);
+-	end = endoff >> PAGE_SHIFT;
++	end = (endoff - 1) >> PAGE_SHIFT;
+ 	do {
+ 		int		want;
+ 		unsigned	nr_pages;

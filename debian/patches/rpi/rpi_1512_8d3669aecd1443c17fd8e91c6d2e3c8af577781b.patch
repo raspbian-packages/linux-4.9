@@ -1,0 +1,32 @@
+commit 8d3669aecd1443c17fd8e91c6d2e3c8af577781b
+Author: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Date:   Tue May 23 21:53:38 2017 -0400
+
+    ibmvnic: Call napi_disable instead of napi_enable in failure path
+    
+    
+    [ Upstream commit e722af6391949e8851310441bb0cec157d25611d ]
+    
+    The failure path in ibmvnic_open() mistakenly makes a second call
+    to napi_enable instead of calling napi_disable. This can result
+    in a BUG_ON for any queues that were enabled in the previous call
+    to napi_enable.
+    
+    Signed-off-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index d1cf37d..3831424 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -505,7 +505,7 @@ static int ibmvnic_open(struct net_device *netdev)
+ 	adapter->rx_pool = NULL;
+ rx_pool_arr_alloc_failed:
+ 	for (i = 0; i < adapter->req_rx_queues; i++)
+-		napi_enable(&adapter->napi[i]);
++		napi_disable(&adapter->napi[i]);
+ alloc_napi_failed:
+ 	return -ENOMEM;
+ }

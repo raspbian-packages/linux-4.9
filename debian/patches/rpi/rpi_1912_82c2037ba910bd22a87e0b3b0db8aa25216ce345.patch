@@ -1,0 +1,41 @@
+commit 82c2037ba910bd22a87e0b3b0db8aa25216ce345
+Author: Liping Zhang <zlpnobody@gmail.com>
+Date:   Fri Apr 7 23:51:06 2017 +0800
+
+    sysctl: don't print negative flag for proc_douintvec
+    
+    commit 5380e5644afbba9e3d229c36771134976f05c91e upstream.
+    
+    I saw some very confusing sysctl output on my system:
+      # cat /proc/sys/net/core/xfrm_aevent_rseqth
+      -2
+      # cat /proc/sys/net/core/xfrm_aevent_etime
+      -10
+      # cat /proc/sys/net/ipv4/tcp_notsent_lowat
+      -4294967295
+    
+    Because we forget to set the *negp flag in proc_douintvec, so it will
+    become a garbage value.
+    
+    Since the value related to proc_douintvec is always an unsigned integer,
+    so we can set *negp to false explictily to fix this issue.
+    
+    Fixes: e7d316a02f68 ("sysctl: handle error writing UINT_MAX to u32 fields")
+    Signed-off-by: Liping Zhang <zlpnobody@gmail.com>
+    Cc: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+    Cc: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 9e81ffd..7e97947 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2161,6 +2161,7 @@ static int do_proc_douintvec_conv(bool *negp, unsigned long *lvalp,
+ 		*valp = *lvalp;
+ 	} else {
+ 		unsigned int val = *valp;
++		*negp = false;
+ 		*lvalp = (unsigned long)val;
+ 	}
+ 	return 0;

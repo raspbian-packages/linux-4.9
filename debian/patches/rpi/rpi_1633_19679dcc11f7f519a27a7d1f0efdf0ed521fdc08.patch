@@ -1,0 +1,38 @@
+commit 19679dcc11f7f519a27a7d1f0efdf0ed521fdc08
+Author: Eric Anholt <eric@anholt.net>
+Date:   Wed Mar 1 10:56:02 2017 -0800
+
+    drm/vc4: Fix OOPSes from trying to cache a partially constructed BO.
+    
+    commit ca39b449f6d03e8235969f12f5dd25b8eb4304d6 upstream.
+    
+    If a CMA allocation failed, the partially constructed BO would be
+    unreferenced through the normal path, and we might choose to put it in
+    the BO cache.  If we then reused it before it expired from the cache,
+    the kernel would OOPS.
+    
+    Signed-off-by: Eric Anholt <eric@anholt.net>
+    Fixes: c826a6e10644 ("drm/vc4: Add a BO cache.")
+    Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+    Link: http://patchwork.freedesktop.org/patch/msgid/20170301185602.6873-2-eric@anholt.net
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/vc4/vc4_bo.c b/drivers/gpu/drm/vc4/vc4_bo.c
+index 55bbadc..b20e9c8 100644
+--- a/drivers/gpu/drm/vc4/vc4_bo.c
++++ b/drivers/gpu/drm/vc4/vc4_bo.c
+@@ -322,6 +322,14 @@ void vc4_free_object(struct drm_gem_object *gem_bo)
+ 		goto out;
+ 	}
+ 
++	/* If this object was partially constructed but CMA allocation
++	 * had failed, just free it.
++	 */
++	if (!bo->base.vaddr) {
++		vc4_bo_destroy(bo);
++		goto out;
++	}
++
+ 	cache_list = vc4_get_cache_list_for_size(dev, gem_bo->size);
+ 	if (!cache_list) {
+ 		vc4_bo_destroy(bo);

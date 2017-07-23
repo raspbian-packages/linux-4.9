@@ -1,0 +1,38 @@
+commit dd4f95ca91d3f410668c4271d6175d38999cc06a
+Author: Maor Dickman <maord@mellanox.com>
+Date:   Thu May 18 15:15:08 2017 +0300
+
+    net/mlx5e: Fix timestamping capabilities reporting
+    
+    
+    [ Upstream commit f0b381178b01b831f9907d72f467d6443afdea67 ]
+    
+    Misuse of (BIT) macro caused to report wrong flags for
+    "Hardware Transmit Timestamp Modes" and "Hardware Receive
+    Filter Modes"
+    
+    Fixes: ef9814deafd0 ('net/mlx5e: Add HW timestamping (TS) support')
+    Signed-off-by: Maor Dickman <maord@mellanox.com>
+    Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+index 3744e2f..da1d73f 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1183,11 +1183,11 @@ static int mlx5e_get_ts_info(struct net_device *dev,
+ 				 SOF_TIMESTAMPING_RX_HARDWARE |
+ 				 SOF_TIMESTAMPING_RAW_HARDWARE;
+ 
+-	info->tx_types = (BIT(1) << HWTSTAMP_TX_OFF) |
+-			 (BIT(1) << HWTSTAMP_TX_ON);
++	info->tx_types = BIT(HWTSTAMP_TX_OFF) |
++			 BIT(HWTSTAMP_TX_ON);
+ 
+-	info->rx_filters = (BIT(1) << HWTSTAMP_FILTER_NONE) |
+-			   (BIT(1) << HWTSTAMP_FILTER_ALL);
++	info->rx_filters = BIT(HWTSTAMP_FILTER_NONE) |
++			   BIT(HWTSTAMP_FILTER_ALL);
+ 
+ 	return 0;
+ }

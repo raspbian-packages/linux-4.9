@@ -1,0 +1,52 @@
+commit 00a5c92deea20f472a8d9bf3fdee907f25e1cff5
+Author: hayeswang <hayeswang@realtek.com>
+Date:   Thu Jan 26 09:38:34 2017 +0800
+
+    r8152: check rx after napi is enabled
+    
+    
+    [ Upstream commit 7489bdadb7d17d3c81e39b85688500f700beb790 ]
+    
+    Schedule the napi after napi_enable() for rx, if it is necessary.
+    
+    If the rx is completed when napi is disabled, the sheduling of napi
+    would be lost. Then, no one handles the rx packet until next napi
+    is scheduled.
+    
+    Signed-off-by: Hayes Wang <hayeswang@realtek.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 92c53d6..32f1a4c 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -32,7 +32,7 @@
+ #define NETNEXT_VERSION		"08"
+ 
+ /* Information for net */
+-#define NET_VERSION		"7"
++#define NET_VERSION		"8"
+ 
+ #define DRIVER_VERSION		"v1." NETNEXT_VERSION "." NET_VERSION
+ #define DRIVER_AUTHOR "Realtek linux nic maintainers <nic_swsd@realtek.com>"
+@@ -3552,6 +3552,9 @@ static int rtl8152_post_reset(struct usb_interface *intf)
+ 
+ 	napi_enable(&tp->napi);
+ 
++	if (!list_empty(&tp->rx_done))
++		napi_schedule(&tp->napi);
++
+ 	return 0;
+ }
+ 
+@@ -3691,6 +3694,8 @@ static int rtl8152_resume(struct usb_interface *intf)
+ 			napi_enable(&tp->napi);
+ 			clear_bit(SELECTIVE_SUSPEND, &tp->flags);
+ 			smp_mb__after_atomic();
++			if (!list_empty(&tp->rx_done))
++				napi_schedule(&tp->napi);
+ 		} else {
+ 			tp->rtl_ops.up(tp);
+ 			netif_carrier_off(tp->netdev);

@@ -1,0 +1,45 @@
+commit ae3ce3b39e65eafd13b4640ea63a6ffd32988553
+Author: Juergen Gross <jgross@suse.com>
+Date:   Thu May 18 17:28:48 2017 +0200
+
+    xen/blkback: don't free be structure too early
+    
+    commit 71df1d7ccad1c36f7321d6b3b48f2ea42681c363 upstream.
+    
+    The be structure must not be freed when freeing the blkif structure
+    isn't done. Otherwise a use-after-free of be when unmapping the ring
+    used for communicating with the frontend will occur in case of a
+    late call of xenblk_disconnect() (e.g. due to an I/O still active
+    when trying to disconnect).
+    
+    Signed-off-by: Juergen Gross <jgross@suse.com>
+    Tested-by: Steven Haigh <netwiz@crc.id.au>
+    Acked-by: Roger Pau Monné <roger.pau@citrix.com>
+    Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index d8fc9c5..5dfe6e8 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -315,8 +315,10 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+ static void xen_blkif_free(struct xen_blkif *blkif)
+ {
+ 
+-	xen_blkif_disconnect(blkif);
++	WARN_ON(xen_blkif_disconnect(blkif));
+ 	xen_vbd_free(&blkif->vbd);
++	kfree(blkif->be->mode);
++	kfree(blkif->be);
+ 
+ 	/* Make sure everything is drained before shutting down */
+ 	kmem_cache_free(xen_blkif_cachep, blkif);
+@@ -511,8 +513,6 @@ static int xen_blkbk_remove(struct xenbus_device *dev)
+ 
+ 	/* Put the reference we set in xen_blkif_alloc(). */
+ 	xen_blkif_put(be->blkif);
+-	kfree(be->mode);
+-	kfree(be);
+ 	return 0;
+ }
+ 

@@ -1,0 +1,37 @@
+commit 54c33e7fc2f6ae886cf0c46e6d9c07576d1c19b1
+Author: Yu Zhao <yuzhao@google.com>
+Date:   Fri Jun 16 14:02:31 2017 -0700
+
+    swap: cond_resched in swap_cgroup_prepare()
+    
+    commit ef70762948dde012146926720b70e79736336764 upstream.
+    
+    I saw need_resched() warnings when swapping on large swapfile (TBs)
+    because continuously allocating many pages in swap_cgroup_prepare() took
+    too long.
+    
+    We already cond_resched when freeing page in swap_cgroup_swapoff().  Do
+    the same for the page allocation.
+    
+    Link: http://lkml.kernel.org/r/20170604200109.17606-1-yuzhao@google.com
+    Signed-off-by: Yu Zhao <yuzhao@google.com>
+    Acked-by: Michal Hocko <mhocko@suse.com>
+    Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
+index 310ac0b..454d6d7 100644
+--- a/mm/swap_cgroup.c
++++ b/mm/swap_cgroup.c
+@@ -48,6 +48,9 @@ static int swap_cgroup_prepare(int type)
+ 		if (!page)
+ 			goto not_enough_page;
+ 		ctrl->map[idx] = page;
++
++		if (!(idx % SWAP_CLUSTER_MAX))
++			cond_resched();
+ 	}
+ 	return 0;
+ not_enough_page:

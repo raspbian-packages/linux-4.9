@@ -1,0 +1,55 @@
+commit 648bf8a202aa4b2217dee29e823afec356e895cb
+Author: Marc Zyngier <marc.zyngier@arm.com>
+Date:   Tue Jun 6 19:08:33 2017 +0100
+
+    arm64: KVM: Preserve RES1 bits in SCTLR_EL2
+    
+    commit d68c1f7fd1b7148dab5fe658321d511998969f2d upstream.
+    
+    __do_hyp_init has the rather bad habit of ignoring RES1 bits and
+    writing them back as zero. On a v8.0-8.2 CPU, this doesn't do anything
+    bad, but may end-up being pretty nasty on future revisions of the
+    architecture.
+    
+    Let's preserve those bits so that we don't have to fix this later on.
+    
+    Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+    Signed-off-by: Christoffer Dall <cdall@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 6c80b36..7393cc7 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -94,6 +94,10 @@
+ #define SCTLR_ELx_A	(1 << 1)
+ #define SCTLR_ELx_M	1
+ 
++#define SCTLR_EL2_RES1	((1 << 4)  | (1 << 5)  | (1 << 11) | (1 << 16) | \
++			 (1 << 16) | (1 << 18) | (1 << 22) | (1 << 23) | \
++			 (1 << 28) | (1 << 29))
++
+ #define SCTLR_ELx_FLAGS	(SCTLR_ELx_M | SCTLR_ELx_A | SCTLR_ELx_C | \
+ 			 SCTLR_ELx_SA | SCTLR_ELx_I)
+ 
+diff --git a/arch/arm64/kvm/hyp-init.S b/arch/arm64/kvm/hyp-init.S
+index 6b29d3d..4e460d9 100644
+--- a/arch/arm64/kvm/hyp-init.S
++++ b/arch/arm64/kvm/hyp-init.S
+@@ -102,10 +102,12 @@ __do_hyp_init:
+ 	tlbi	alle2
+ 	dsb	sy
+ 
+-	mrs	x4, sctlr_el2
+-	and	x4, x4, #SCTLR_ELx_EE	// preserve endianness of EL2
+-	ldr	x5, =SCTLR_ELx_FLAGS
+-	orr	x4, x4, x5
++	/*
++	 * Preserve all the RES1 bits while setting the default flags,
++	 * as well as the EE bit on BE.
++	 */
++	ldr	x4, =(SCTLR_EL2_RES1 | SCTLR_ELx_FLAGS)
++CPU_BE(	orr	x4, x4, #SCTLR_ELx_EE)
+ 	msr	sctlr_el2, x4
+ 	isb
+ 

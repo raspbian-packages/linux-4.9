@@ -1,0 +1,28 @@
+commit 9db9b5fc7915ce02608adcd7076ef49751e9f3e9
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Thu Apr 27 12:12:08 2017 +0300
+
+    drm/vmwgfx: Handle vmalloc() failure in vmw_local_fifo_reserve()
+    
+    commit f0c62e9878024300319ba2438adc7b06c6b9c448 upstream.
+    
+    If vmalloc() fails then we need to a bit of cleanup before returning.
+    
+    Fixes: fb1d9738ca05 ("drm/vmwgfx: Add DRM driver for VMware Virtual GPU")
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+index b6a0806..a1c68e6 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+@@ -368,6 +368,8 @@ static void *vmw_local_fifo_reserve(struct vmw_private *dev_priv,
+ 				return fifo_state->static_buffer;
+ 			else {
+ 				fifo_state->dynamic_buffer = vmalloc(bytes);
++				if (!fifo_state->dynamic_buffer)
++					goto out_err;
+ 				return fifo_state->dynamic_buffer;
+ 			}
+ 		}

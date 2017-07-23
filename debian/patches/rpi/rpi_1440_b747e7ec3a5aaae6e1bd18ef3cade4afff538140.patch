@@ -1,0 +1,28 @@
+commit b747e7ec3a5aaae6e1bd18ef3cade4afff538140
+Author: Michael Thalmeier <michael.thalmeier@hale.at>
+Date:   Thu May 18 16:14:14 2017 +0200
+
+    usb: chipidea: debug: check before accessing ci_role
+    
+    commit 0340ff83cd4475261e7474033a381bc125b45244 upstream.
+    
+    ci_role BUGs when the role is >= CI_ROLE_END.
+    
+    Signed-off-by: Michael Thalmeier <michael.thalmeier@hale.at>
+    Signed-off-by: Peter Chen <peter.chen@nxp.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/chipidea/debug.c b/drivers/usb/chipidea/debug.c
+index 6d23eed..1c31e8a 100644
+--- a/drivers/usb/chipidea/debug.c
++++ b/drivers/usb/chipidea/debug.c
+@@ -294,7 +294,8 @@ static int ci_role_show(struct seq_file *s, void *data)
+ {
+ 	struct ci_hdrc *ci = s->private;
+ 
+-	seq_printf(s, "%s\n", ci_role(ci)->name);
++	if (ci->role != CI_ROLE_END)
++		seq_printf(s, "%s\n", ci_role(ci)->name);
+ 
+ 	return 0;
+ }

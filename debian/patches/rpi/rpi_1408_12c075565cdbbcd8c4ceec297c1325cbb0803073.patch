@@ -1,0 +1,37 @@
+commit 12c075565cdbbcd8c4ceec297c1325cbb0803073
+Author: Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Thu May 18 16:29:25 2017 +0300
+
+    crypto: gcm - wait for crypto op not signal safe
+    
+    commit f3ad587070d6bd961ab942b3fd7a85d00dfc934b upstream.
+    
+    crypto_gcm_setkey() was using wait_for_completion_interruptible() to
+    wait for completion of async crypto op but if a signal occurs it
+    may return before DMA ops of HW crypto provider finish, thus
+    corrupting the data buffer that is kfree'ed in this case.
+    
+    Resolve this by using wait_for_completion() instead.
+    
+    Reported-by: Eric Biggers <ebiggers3@gmail.com>
+    Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/crypto/gcm.c b/crypto/gcm.c
+index f624ac9..dd33fbd 100644
+--- a/crypto/gcm.c
++++ b/crypto/gcm.c
+@@ -152,10 +152,8 @@ static int crypto_gcm_setkey(struct crypto_aead *aead, const u8 *key,
+ 
+ 	err = crypto_skcipher_encrypt(&data->req);
+ 	if (err == -EINPROGRESS || err == -EBUSY) {
+-		err = wait_for_completion_interruptible(
+-			&data->result.completion);
+-		if (!err)
+-			err = data->result.err;
++		wait_for_completion(&data->result.completion);
++		err = data->result.err;
+ 	}
+ 
+ 	if (err)

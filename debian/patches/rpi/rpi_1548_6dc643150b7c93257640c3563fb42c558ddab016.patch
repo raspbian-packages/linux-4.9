@@ -1,0 +1,29 @@
+commit 6dc643150b7c93257640c3563fb42c558ddab016
+Author: Jisheng Zhang <jszhang@marvell.com>
+Date:   Mon Jan 23 15:15:32 2017 +0800
+
+    pinctrl: berlin-bg4ct: fix the value for "sd1a" of pin SCRD0_CRD_PRES
+    
+    
+    [ Upstream commit e82d02580af45663fad6d3596e4344c606e81e10 ]
+    
+    This should be a typo.
+    
+    Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/pinctrl/berlin/berlin-bg4ct.c b/drivers/pinctrl/berlin/berlin-bg4ct.c
+index 0917204..c617ec4 100644
+--- a/drivers/pinctrl/berlin/berlin-bg4ct.c
++++ b/drivers/pinctrl/berlin/berlin-bg4ct.c
+@@ -217,7 +217,7 @@ static const struct berlin_desc_group berlin4ct_soc_pinctrl_groups[] = {
+ 	BERLIN_PINCTRL_GROUP("SCRD0_CRD_PRES", 0xc, 0x3, 0x15,
+ 			BERLIN_PINCTRL_FUNCTION(0x0, "gpio"), /* GPIO20 */
+ 			BERLIN_PINCTRL_FUNCTION(0x1, "scrd0"), /* crd pres */
+-			BERLIN_PINCTRL_FUNCTION(0x1, "sd1a")), /* DAT3 */
++			BERLIN_PINCTRL_FUNCTION(0x3, "sd1a")), /* DAT3 */
+ 	BERLIN_PINCTRL_GROUP("SPI1_SS0n", 0xc, 0x3, 0x18,
+ 			BERLIN_PINCTRL_FUNCTION(0x0, "spi1"), /* SS0n */
+ 			BERLIN_PINCTRL_FUNCTION(0x1, "gpio"), /* GPIO37 */

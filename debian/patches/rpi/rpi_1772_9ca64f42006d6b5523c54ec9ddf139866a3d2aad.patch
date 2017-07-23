@@ -1,0 +1,38 @@
+commit 9ca64f42006d6b5523c54ec9ddf139866a3d2aad
+Author: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Date:   Tue May 23 21:54:11 2017 -0400
+
+    sparc64: Zero pages on allocation for mondo and error queues.
+    
+    
+    [ Upstream commit 7a7dc961a28b965a0d0303c2e989df17b411708b ]
+    
+    Error queues use a non-zero first word to detect if the queues are full.
+    Using pages that have not been zeroed may result in false positive
+    overflow events.  These queues are set up once during boot so zeroing
+    all mondo and error queue pages is safe.
+    
+    Note that the false positive overflow does not always occur because the
+    page allocation for these queues is so early in the boot cycle that
+    higher number CPUs get fresh pages.  It is only when traps are serviced
+    with lower number CPUs who were given already used pages that this issue
+    is exposed.
+    
+    Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/sparc/kernel/irq_64.c b/arch/sparc/kernel/irq_64.c
+index e1b1ce6..5cbf03c 100644
+--- a/arch/sparc/kernel/irq_64.c
++++ b/arch/sparc/kernel/irq_64.c
+@@ -1021,7 +1021,7 @@ static void __init alloc_one_queue(unsigned long *pa_ptr, unsigned long qmask)
+ 	unsigned long order = get_order(size);
+ 	unsigned long p;
+ 
+-	p = __get_free_pages(GFP_KERNEL, order);
++	p = __get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
+ 	if (!p) {
+ 		prom_printf("SUN4V: Error, cannot allocate queue.\n");
+ 		prom_halt();

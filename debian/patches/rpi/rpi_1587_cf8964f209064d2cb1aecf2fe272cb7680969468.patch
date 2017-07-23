@@ -1,0 +1,66 @@
+commit cf8964f209064d2cb1aecf2fe272cb7680969468
+Author: Stefan Hajnoczi <stefanha@redhat.com>
+Date:   Thu Jan 19 10:43:53 2017 +0000
+
+    vhost/vsock: handle vhost_vq_init_access() error
+    
+    
+    [ Upstream commit 0516ffd88fa0d006ee80389ce14a9ca5ae45e845 ]
+    
+    Propagate the error when vhost_vq_init_access() fails and set
+    vq->private_data to NULL.
+    
+    Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index a504e2e0..e3fad30 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -368,6 +368,7 @@ static void vhost_vsock_handle_rx_kick(struct vhost_work *work)
+ 
+ static int vhost_vsock_start(struct vhost_vsock *vsock)
+ {
++	struct vhost_virtqueue *vq;
+ 	size_t i;
+ 	int ret;
+ 
+@@ -378,19 +379,20 @@ static int vhost_vsock_start(struct vhost_vsock *vsock)
+ 		goto err;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(vsock->vqs); i++) {
+-		struct vhost_virtqueue *vq = &vsock->vqs[i];
++		vq = &vsock->vqs[i];
+ 
+ 		mutex_lock(&vq->mutex);
+ 
+ 		if (!vhost_vq_access_ok(vq)) {
+ 			ret = -EFAULT;
+-			mutex_unlock(&vq->mutex);
+ 			goto err_vq;
+ 		}
+ 
+ 		if (!vq->private_data) {
+ 			vq->private_data = vsock;
+-			vhost_vq_init_access(vq);
++			ret = vhost_vq_init_access(vq);
++			if (ret)
++				goto err_vq;
+ 		}
+ 
+ 		mutex_unlock(&vq->mutex);
+@@ -400,8 +402,11 @@ static int vhost_vsock_start(struct vhost_vsock *vsock)
+ 	return 0;
+ 
+ err_vq:
++	vq->private_data = NULL;
++	mutex_unlock(&vq->mutex);
++
+ 	for (i = 0; i < ARRAY_SIZE(vsock->vqs); i++) {
+-		struct vhost_virtqueue *vq = &vsock->vqs[i];
++		vq = &vsock->vqs[i];
+ 
+ 		mutex_lock(&vq->mutex);
+ 		vq->private_data = NULL;

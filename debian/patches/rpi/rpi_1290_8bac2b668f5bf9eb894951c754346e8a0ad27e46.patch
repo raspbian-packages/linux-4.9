@@ -1,0 +1,32 @@
+commit 8bac2b668f5bf9eb894951c754346e8a0ad27e46
+Author: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Date:   Wed May 10 19:07:54 2017 +0200
+
+    s390/qeth: add missing hash table initializations
+    
+    
+    [ Upstream commit ebccc7397e4a49ff64c8f44a54895de9d32fe742 ]
+    
+    commit 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+    added new hash tables, but missed to initialize them.
+    
+    Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+    Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+    Reviewed-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index ad4ea58..171be5e 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -3162,6 +3162,8 @@ static int qeth_l3_probe_device(struct ccwgroup_device *gdev)
+ 	rc = qeth_l3_create_device_attributes(&gdev->dev);
+ 	if (rc)
+ 		return rc;
++	hash_init(card->ip_htable);
++	hash_init(card->ip_mc_htable);
+ 	card->options.layer2 = 0;
+ 	card->info.hwtrap = 0;
+ 	return 0;

@@ -1,0 +1,33 @@
+commit 0a0f8c3304749881bcce6112ca2998041d600070
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Thu Apr 27 09:42:25 2017 +0200
+
+    fs: completely ignore unknown open flags
+    
+    commit 629e014bb8349fcf7c1e4df19a842652ece1c945 upstream.
+    
+    Currently we just stash anything we got into file->f_flags, and the
+    report it in fcntl(F_GETFD).  This patch just clears out all unknown
+    flags so that we don't pass them to the fs or report them.
+    
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/open.c b/fs/open.c
+index 20d2494..80d0ce8 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -904,6 +904,12 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
+ 	int lookup_flags = 0;
+ 	int acc_mode = ACC_MODE(flags);
+ 
++	/*
++	 * Clear out all open flags we don't know about so that we don't report
++	 * them in fcntl(F_GETFD) or similar interfaces.
++	 */
++	flags &= VALID_OPEN_FLAGS;
++
+ 	if (flags & (O_CREAT | __O_TMPFILE))
+ 		op->mode = (mode & S_IALLUGO) | S_IFREG;
+ 	else

@@ -1,0 +1,32 @@
+commit 859bbfb612a565a817be29b3d25d4d850351d056
+Author: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+Date:   Tue May 23 21:53:45 2017 -0400
+
+    i2c: piix4: Fix request_region size
+    
+    
+    [ Upstream commit f43128c75202f29ee71aa83e6c320a911137c189 ]
+    
+    Since '701dc207bf55 ("i2c: piix4: Avoid race conditions with IMC")' we
+    are using the SMBSLVCNT register at offset 0x8. We need to request it.
+    
+    Fixes: 701dc207bf55 ("i2c: piix4: Avoid race conditions with IMC")
+    Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+    Signed-off-by: Jean Delvare <jdelvare@suse.de>
+    Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+index 1250e5b..c21ca7b 100644
+--- a/drivers/i2c/busses/i2c-piix4.c
++++ b/drivers/i2c/busses/i2c-piix4.c
+@@ -58,7 +58,7 @@
+ #define SMBSLVDAT	(0xC + piix4_smba)
+ 
+ /* count for request_region */
+-#define SMBIOSIZE	8
++#define SMBIOSIZE	9
+ 
+ /* PCI Address Constants */
+ #define SMBBA		0x090
