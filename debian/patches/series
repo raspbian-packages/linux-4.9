@@ -46,7 +46,6 @@ debian/btrfs-warn-about-raid5-6-being-experimental-at-mount.patch
 debian/amd64-don-t-warn-about-expected-w+x-pages-on-xen.patch
 # Arch bug fixes
 bugfix/arm/arm-dts-kirkwood-fix-sata-pinmux-ing-for-ts419.patch
-bugfix/x86/pinctrl-cherryview-add-a-quirk-to-make-acer-chromebo.patch
 # Arch features
 features/mips/MIPS-increase-MAX-PHYSMEM-BITS-on-Loongson-3-only.patch
 features/mips/MIPS-Loongson-3-Add-Loongson-LS3A-RS780E-1-way-machi.patch
@@ -108,7 +107,6 @@ bugfix/all/sctp-do-not-inherit-ipv6_-mc-ac-fl-_list-from-parent.patch
 bugfix/all/ipv6-dccp-do-not-inherit-ipv6_mc_list-from-parent.patch
 bugfix/all/crypto-skcipher-Add-missing-api-setkey-checks.patch
 bugfix/all/ipv6-fix-out-of-bound-writes-in-__ip6_append_data.patch
-bugfix/all/mm-larger-stack-guard-gap-between-vmas.patch
 bugfix/all/mm-fix-new-crash-in-unmapped_area_topdown.patch
 # Fix exported symbol versions
 bugfix/ia64/revert-ia64-move-exports-to-definitions.patch
