@@ -68,7 +68,9 @@ struct fib6_node {
 	__u16			fn_flags;
 	int			fn_sernum;
 	struct rt6_info		*rr_ptr;
+#ifndef __GENKSYMS__
 	struct rcu_head		rcu;
+#endif
 };
 
 #ifndef CONFIG_IPV6_SUBTREES
