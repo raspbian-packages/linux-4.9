@@ -132,7 +132,7 @@ features/all/rt/arm-kprobe-replace-patch_lock-to-raw-lock.patch
 
 # SIGNALS / POSIXTIMERS
 features/all/rt/posix-timers-no-broadcast.patch
-features/all/rt/signals-allow-rt-tasks-to-cache-one-sigqueue-struct.patch
+#features/all/rt/signals-allow-rt-tasks-to-cache-one-sigqueue-struct.patch
 
 # SCHED
 
@@ -191,8 +191,8 @@ features/all/rt/trace_Use_rcuidle_version_for_preemptoff_hist_trace_point.patch
 ##################################################
 
 # PRINTK
-features/all/rt/printk-kill.patch
-features/all/rt/printk-27force_early_printk-27-boot-param-to-help-with-debugging.patch
+#features/all/rt/printk-kill.patch
+#features/all/rt/printk-27force_early_printk-27-boot-param-to-help-with-debugging.patch
 
 # Enable RT CONFIG
 features/all/rt/rt-preempt-base-config.patch
@@ -302,7 +302,7 @@ features/all/rt/posix-timers-thread-posix-cpu-timers-on-rt.patch
 # SCHEDULER
 features/all/rt/sched-delay-put-task.patch
 features/all/rt/sched-limit-nr-migrate.patch
-features/all/rt/sched-mmdrop-delayed.patch
+#features/all/rt/sched-mmdrop-delayed.patch
 features/all/rt/kernel-sched-move-stack-kprobe-clean-up-to-__put_tas.patch
 features/all/rt/sched-rt-mutex-wakeup.patch
 features/all/rt/sched-might-sleep-do-not-account-rcu-depth.patch

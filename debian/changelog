@@ -127,7 +127,15 @@ linux-4.9 (4.9.30-2+deb9u2+rpi1) jessie-staging; urgency=medium
   * Fix "linux-compiler" packaging stuff for compiler version change.
   * Remove usbip and cpupower binary packages as they are unversioned.
 
- -- Raspbian forward porter <root@raspbian.org>  Thu, 20 Jul 2017 21:17:24 +0000
+  [changes introduced in 4.9.30-2+deb9u2+rpi1 by Peter Michael Green]
+  * Remove the following patches from debian/patches/series-rt
+    + features/all/rt/signals-allow-rt-tasks-to-cache-one-sigqueue-struct.patch
+    + features/all/rt/printk-kill.patch from debian/patches/series-rt
+    + features/all/rt/printk-27force_early_printk-27-boot-param-to-help-with-debugging.patch
+    + features/all/rt/sched-mmdrop-delayed.patch
+  * Remove debian/installer/armhf/modules/armhf-rpi*/ext?-modules
+
+ -- Peter Michal Green <plugwash@raspbian.org>  Thu, 20 Jul 2017 21:17:24 +0000
 
 linux (4.9.30-2+deb9u2) stretch-security; urgency=high
 
