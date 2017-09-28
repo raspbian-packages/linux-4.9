@@ -1,3 +1,10 @@
+linux-4.9 (4.9.30-2+deb9u2+rpi1+stretch) stretch-staging; urgency=medium
+
+  * Rebuild under stretch.
+  * Re-enable libc-dev package.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Wed, 27 Sep 2017 02:45:53 +0000
+
 linux-4.9 (4.9.30-2+deb9u2+rpi1) jessie-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]
