@@ -1,0 +1,48 @@
+commit 3474a1c95daacc39dd8e74fa2e97bfa783099d41
+Author: Bert Kenward <bkenward@solarflare.com>
+Date:   Fri Jun 16 09:45:08 2017 +0100
+
+    sfc: provide dummy definitions of vswitch functions
+    
+    
+    efx_probe_all() calls efx->type->vswitching_probe during probe. For
+    SFC4000 (Falcon) NICs this function is not defined, leading to a BUG
+    with the top of the call stack similar to:
+      ? efx_pci_probe_main+0x29a/0x830
+      efx_pci_probe+0x7d3/0xe70
+    
+    vswitching_restore and vswitching_remove also need to be defined.
+    
+    Fixed in mainline by:
+    commit 5a6681e22c14 ("sfc: separate out SFC4000 ("Falcon") support into new sfc-falcon driver")
+    
+    Fixes: 6d8aaaf6f798 ("sfc: create VEB vswitch and vport above default firmware setup")
+    Signed-off-by: Bert Kenward <bkenward@solarflare.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/sfc/falcon.c b/drivers/net/ethernet/sfc/falcon.c
+index 1a70926..1bfb214 100644
+--- a/drivers/net/ethernet/sfc/falcon.c
++++ b/drivers/net/ethernet/sfc/falcon.c
+@@ -2801,6 +2801,11 @@ const struct efx_nic_type falcon_a1_nic_type = {
+ 	.timer_period_max =  1 << FRF_AB_TC_TIMER_VAL_WIDTH,
+ 	.offload_features = NETIF_F_IP_CSUM,
+ 	.mcdi_max_ver = -1,
++#ifdef CONFIG_SFC_SRIOV
++	.vswitching_probe = efx_port_dummy_op_int,
++	.vswitching_restore = efx_port_dummy_op_int,
++	.vswitching_remove = efx_port_dummy_op_void,
++#endif
+ };
+ 
+ const struct efx_nic_type falcon_b0_nic_type = {
+@@ -2902,4 +2907,9 @@ const struct efx_nic_type falcon_b0_nic_type = {
+ 	.offload_features = NETIF_F_IP_CSUM | NETIF_F_RXHASH | NETIF_F_NTUPLE,
+ 	.mcdi_max_ver = -1,
+ 	.max_rx_ip_filters = FR_BZ_RX_FILTER_TBL0_ROWS,
++#ifdef CONFIG_SFC_SRIOV
++	.vswitching_probe = efx_port_dummy_op_int,
++	.vswitching_restore = efx_port_dummy_op_int,
++	.vswitching_remove = efx_port_dummy_op_void,
++#endif
+ };

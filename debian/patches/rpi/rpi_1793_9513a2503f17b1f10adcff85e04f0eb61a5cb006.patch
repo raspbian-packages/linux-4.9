@@ -1,0 +1,34 @@
+commit 9513a2503f17b1f10adcff85e04f0eb61a5cb006
+Author: Eran Ben Elisha <eranbe@mellanox.com>
+Date:   Tue Jan 17 19:19:17 2017 +0200
+
+    net: ethtool: Initialize buffer when querying device channel settings
+    
+    
+    [ Upstream commit 31a86d137219373c3222ca5f4f912e9a4d8065bb ]
+    
+    Ethtool channels respond struct was uninitialized when querying device
+    channel boundaries settings. As a result, unreported fields by the driver
+    hold garbage.  This may cause sending unsupported params to driver.
+    
+    Fixes: 8bf368620486 ('ethtool: ensure channel counts are within bounds ...')
+    Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+    Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+    CC: John W. Linville <linville@tuxdriver.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/net/core/ethtool.c b/net/core/ethtool.c
+index 072c1f4..e9989b8 100644
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -1704,7 +1704,7 @@ static noinline_for_stack int ethtool_get_channels(struct net_device *dev,
+ static noinline_for_stack int ethtool_set_channels(struct net_device *dev,
+ 						   void __user *useraddr)
+ {
+-	struct ethtool_channels channels, max;
++	struct ethtool_channels channels, max = { .cmd = ETHTOOL_GCHANNELS };
+ 	u32 max_rx_in_use = 0;
+ 
+ 	if (!dev->ethtool_ops->set_channels || !dev->ethtool_ops->get_channels)

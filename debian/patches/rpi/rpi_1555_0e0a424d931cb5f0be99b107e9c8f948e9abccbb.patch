@@ -1,0 +1,28 @@
+commit 0e0a424d931cb5f0be99b107e9c8f948e9abccbb
+Author: Andreas Schultz <aschultz@tpip.net>
+Date:   Fri Jan 27 10:40:56 2017 +0100
+
+    gtp: add genl family modules alias
+    
+    
+    [ Upstream commit ab729823ec16aef384f09fd2cffe0b3d3f6e6cba ]
+    
+    Auto-load the module when userspace asks for the gtp netlink
+    family.
+    
+    Signed-off-by: Andreas Schultz <aschultz@tpip.net>
+    Acked-by: Harald Welte <laforge@netfilter.org>
+    Acked-by: Pablo Neira Ayuso <pablo@netfilter.org>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
+index 97e0cbc..cebde07 100644
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -1372,3 +1372,4 @@ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Harald Welte <hwelte@sysmocom.de>");
+ MODULE_DESCRIPTION("Interface driver for GTP encapsulated traffic");
+ MODULE_ALIAS_RTNL_LINK("gtp");
++MODULE_ALIAS_GENL_FAMILY("gtp");

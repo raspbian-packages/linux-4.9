@@ -1,0 +1,37 @@
+commit 22ac7e53f81c12d1087f14dba4e45ac52ccd8be3
+Author: Tony Lindgren <tony@atomide.com>
+Date:   Sat Apr 15 10:05:08 2017 -0700
+
+    mfd: omap-usb-tll: Fix inverted bit use for USB TLL mode
+    
+    commit 8b8a84c54aff4256d592dc18346c65ecf6811b45 upstream.
+    
+    Commit 16fa3dc75c22 ("mfd: omap-usb-tll: HOST TLL platform driver")
+    added support for USB TLL, but uses OMAP_TLL_CHANNEL_CONF_ULPINOBITSTUFF
+    bit the wrong way. The comments in the code are correct, but the inverted
+    use of OMAP_TLL_CHANNEL_CONF_ULPINOBITSTUFF causes the register to be
+    enabled instead of disabled unlike what the comments say.
+    
+    Without this change the Wrigley 3G LTE modem on droid 4 EHCI bus can
+    be only pinged few times before it stops responding.
+    
+    Fixes: 16fa3dc75c22 ("mfd: omap-usb-tll: HOST TLL platform driver")
+    Signed-off-by: Tony Lindgren <tony@atomide.com>
+    Acked-by: Roger Quadros <rogerq@ti.com>
+    Signed-off-by: Lee Jones <lee.jones@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 1aa74c4..9d167c9 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -377,8 +377,8 @@ int omap_tll_init(struct usbhs_omap_platform_data *pdata)
+ 				 * and use SDR Mode
+ 				 */
+ 				reg &= ~(OMAP_TLL_CHANNEL_CONF_UTMIAUTOIDLE
+-					| OMAP_TLL_CHANNEL_CONF_ULPINOBITSTUFF
+ 					| OMAP_TLL_CHANNEL_CONF_ULPIDDRMODE);
++				reg |= OMAP_TLL_CHANNEL_CONF_ULPINOBITSTUFF;
+ 			} else if (pdata->port_mode[i] ==
+ 					OMAP_EHCI_PORT_MODE_HSIC) {
+ 				/*

@@ -1,0 +1,37 @@
+commit 3567727891a035574ec7cf34ad3d580cc66d361d
+Author: Ram Amrani <Ram.Amrani@Cavium.com>
+Date:   Tue Jan 24 13:50:38 2017 +0200
+
+    RDMA/qedr: Don't reset QP when queues aren't flushed
+    
+    
+    [ Upstream commit 933e6dcaa0f65eb2f624ad760274020874a1f35e ]
+    
+    Fail QP state transition from error to reset if SQ/RQ are not empty
+    and still in the process of flushing out the queued work entries.
+    
+    Signed-off-by: Ram Amrani <Ram.Amrani@cavium.com>
+    Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+    Signed-off-by: Doug Ledford <dledford@redhat.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
+index b78e37e..4e3e157 100644
+--- a/drivers/infiniband/hw/qedr/verbs.c
++++ b/drivers/infiniband/hw/qedr/verbs.c
+@@ -1729,6 +1729,14 @@ static int qedr_update_qp_state(struct qedr_dev *dev,
+ 		/* ERR->XXX */
+ 		switch (new_state) {
+ 		case QED_ROCE_QP_STATE_RESET:
++			if ((qp->rq.prod != qp->rq.cons) ||
++			    (qp->sq.prod != qp->sq.cons)) {
++				DP_NOTICE(dev,
++					  "Error->Reset with rq/sq not empty rq.prod=%x rq.cons=%x sq.prod=%x sq.cons=%x\n",
++					  qp->rq.prod, qp->rq.cons, qp->sq.prod,
++					  qp->sq.cons);
++				status = -EINVAL;
++			}
+ 			break;
+ 		default:
+ 			status = -EINVAL;

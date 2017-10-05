@@ -1,0 +1,29 @@
+commit ffc2a436f4749678f6156eb0b2e61c8e026a9f73
+Author: Chris Brandt <chris.brandt@renesas.com>
+Date:   Thu Apr 27 12:12:49 2017 -0700
+
+    usb: r8a66597-hcd: decrease timeout
+    
+    commit dd14a3e9b92ac6f0918054f9e3477438760a4fa6 upstream.
+    
+    The timeout for BULK packets was 300ms which is a long time if other
+    endpoints or devices are waiting for their turn. Changing it to 50ms
+    greatly increased the overall performance for multi-endpoint devices.
+    
+    Fixes: 5d3043586db4 ("usb: r8a66597-hcd: host controller driver for R8A6659")
+    Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+index 9c3413d..7bf78be 100644
+--- a/drivers/usb/host/r8a66597-hcd.c
++++ b/drivers/usb/host/r8a66597-hcd.c
+@@ -1269,7 +1269,7 @@ static void set_td_timer(struct r8a66597 *r8a66597, struct r8a66597_td *td)
+ 			time = 30;
+ 			break;
+ 		default:
+-			time = 300;
++			time = 50;
+ 			break;
+ 		}
+ 

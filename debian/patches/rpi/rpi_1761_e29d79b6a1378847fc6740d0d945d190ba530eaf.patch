@@ -1,0 +1,32 @@
+commit e29d79b6a1378847fc6740d0d945d190ba530eaf
+Author: Deepak Rawat <drawat@vmware.com>
+Date:   Mon Jun 26 14:39:08 2017 +0200
+
+    drm/vmwgfx: Free hash table allocated by cmdbuf managed res mgr
+    
+    commit 82fcee526ba8ca2c5d378bdf51b21b7eb058fe3a upstream.
+    
+    The hash table created during vmw_cmdbuf_res_man_create was
+    never freed. This causes memory leak in context creation.
+    Added the corresponding drm_ht_remove in vmw_cmdbuf_res_man_destroy.
+    
+    Tested for memory leak by running piglit overnight and kernel
+    memory is not inflated which earlier was.
+    
+    Signed-off-by: Deepak Rawat <drawat@vmware.com>
+    Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+    Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
+index 13db8a2..1f013d4 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
+@@ -321,6 +321,7 @@ void vmw_cmdbuf_res_man_destroy(struct vmw_cmdbuf_res_manager *man)
+ 	list_for_each_entry_safe(entry, next, &man->list, head)
+ 		vmw_cmdbuf_res_free(man, entry);
+ 
++	drm_ht_remove(&man->resources);
+ 	kfree(man);
+ }
+ 

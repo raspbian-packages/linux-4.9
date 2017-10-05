@@ -1,0 +1,55 @@
+commit 57115ff550b9765f6d2988e94a3b314e80118b23
+Author: Ben Skeggs <bskeggs@redhat.com>
+Date:   Mon Jun 5 17:23:32 2017 +1000
+
+    drm/nouveau/tmr: fully separate alarm execution/pending lists
+    
+    commit b4e382ca7586a63b6c1e5221ce0863ff867c2df6 upstream.
+    
+    Reusing the list_head for both is a bad idea.  Callback execution is done
+    with the lock dropped so that alarms can be rescheduled from the callback,
+    which means that with some unfortunate timing, lists can get corrupted.
+    
+    The execution list should not require its own locking, the single function
+    that uses it can only be called from a single context.
+    
+    Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/timer.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/timer.h
+index 82d3e28..7e4f24a 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/timer.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/timer.h
+@@ -4,6 +4,7 @@
+ 
+ struct nvkm_alarm {
+ 	struct list_head head;
++	struct list_head exec;
+ 	u64 timestamp;
+ 	void (*func)(struct nvkm_alarm *);
+ };
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/timer/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/timer/base.c
+index f2a86ea..2437f7d 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/timer/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/timer/base.c
+@@ -50,7 +50,8 @@ nvkm_timer_alarm_trigger(struct nvkm_timer *tmr)
+ 		/* Move to completed list.  We'll drop the lock before
+ 		 * executing the callback so it can reschedule itself.
+ 		 */
+-		list_move_tail(&alarm->head, &exec);
++		list_del_init(&alarm->head);
++		list_add(&alarm->exec, &exec);
+ 	}
+ 
+ 	/* Shut down interrupt if no more pending alarms. */
+@@ -59,8 +60,8 @@ nvkm_timer_alarm_trigger(struct nvkm_timer *tmr)
+ 	spin_unlock_irqrestore(&tmr->lock, flags);
+ 
+ 	/* Execute completed callbacks. */
+-	list_for_each_entry_safe(alarm, atemp, &exec, head) {
+-		list_del_init(&alarm->head);
++	list_for_each_entry_safe(alarm, atemp, &exec, exec) {
++		list_del(&alarm->exec);
+ 		alarm->func(alarm);
+ 	}
+ }

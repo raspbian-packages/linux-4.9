@@ -1,0 +1,34 @@
+commit 8270a708ff48c85c74d2c339b7910125d01219b5
+Author: Chen-Yu Tsai <wens@csie.org>
+Date:   Mon May 22 14:25:49 2017 +0800
+
+    pinctrl: sunxi: Fix SPDIF function name for A83T
+    
+    commit 7903d4f5e1dec53963cba9b1bc472a76a3532e07 upstream.
+    
+    We use well known standard names for functions that have name, such as
+    I2C, SPI, SPDIF, etc..
+    
+    Fix the function name of SPDIF, which was named OWA (One Wire Audio)
+    based on Allwinner datasheets.
+    
+    Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller
+    		      support")
+    Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+    Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+index 90b973e..a7c81e9 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+@@ -394,7 +394,7 @@ static const struct sunxi_desc_pin sun8i_a83t_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 18),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x3, "owa")),		/* DOUT */
++		  SUNXI_FUNCTION(0x3, "spdif")),	/* DOUT */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 19),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out")),

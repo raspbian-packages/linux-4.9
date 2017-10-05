@@ -1,0 +1,33 @@
+commit 2f14bc2d9eaf7a17fea8d6e35bf519e380505f3f
+Author: Robin Murphy <robin.murphy@arm.com>
+Date:   Thu Mar 16 17:00:17 2017 +0000
+
+    iommu/dma: Don't reserve PCI I/O windows
+    
+    commit 938f1bbe35e3a7cb07e1fa7c512e2ef8bb866bdf upstream.
+    
+    Even if a host controller's CPU-side MMIO windows into PCI I/O space do
+    happen to leak into PCI memory space such that it might treat them as
+    peer addresses, trying to reserve the corresponding I/O space addresses
+    doesn't do anything to help solve that problem. Stop doing a silly thing.
+    
+    Fixes: fade1ec055dc ("iommu/dma: Avoid PCI host bridge windows")
+    Reviewed-by: Eric Auger <eric.auger@redhat.com>
+    Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+    Signed-off-by: Joerg Roedel <jroedel@suse.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index c5ab866..1520e7f 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -112,8 +112,7 @@ static void iova_reserve_pci_windows(struct pci_dev *dev,
+ 	unsigned long lo, hi;
+ 
+ 	resource_list_for_each_entry(window, &bridge->windows) {
+-		if (resource_type(window->res) != IORESOURCE_MEM &&
+-		    resource_type(window->res) != IORESOURCE_IO)
++		if (resource_type(window->res) != IORESOURCE_MEM)
+ 			continue;
+ 
+ 		lo = iova_pfn(iovad, window->res->start - window->offset);

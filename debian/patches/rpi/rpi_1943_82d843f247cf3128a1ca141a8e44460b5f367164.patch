@@ -1,0 +1,42 @@
+commit 82d843f247cf3128a1ca141a8e44460b5f367164
+Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date:   Wed Feb 8 17:01:46 2017 -0300
+
+    tools string: Use __fallthrough in perf_atoll()
+    
+    commit 94bdd5edb34e472980d1e18b4600d6fb92bd6b0a upstream.
+    
+    The implicit fall through case label here is intended, so let us inform
+    that to gcc >= 7:
+    
+        CC       /tmp/build/perf/util/string.o
+      util/string.c: In function 'perf_atoll':
+      util/string.c:22:7: error: this statement may fall through [-Werror=implicit-fallthrough=]
+          if (*p)
+             ^
+      util/string.c:24:3: note: here
+         case '\0':
+         ^~~~
+    
+    Cc: Adrian Hunter <adrian.hunter@intel.com>
+    Cc: David Ahern <dsahern@gmail.com>
+    Cc: Jiri Olsa <jolsa@kernel.org>
+    Cc: Namhyung Kim <namhyung@kernel.org>
+    Cc: Wang Nan <wangnan0@huawei.com>
+    Link: http://lkml.kernel.org/n/tip-0ophb30v9apkk6o95el0rqlq@git.kernel.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
+index 7f7e072..f4e3444 100644
+--- a/tools/perf/util/string.c
++++ b/tools/perf/util/string.c
+@@ -21,6 +21,8 @@ s64 perf_atoll(const char *str)
+ 		case 'b': case 'B':
+ 			if (*p)
+ 				goto out_err;
++
++			__fallthrough;
+ 		case '\0':
+ 			return length;
+ 		default:

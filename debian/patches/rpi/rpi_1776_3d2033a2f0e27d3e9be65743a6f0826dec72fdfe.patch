@@ -1,0 +1,36 @@
+commit 3d2033a2f0e27d3e9be65743a6f0826dec72fdfe
+Author: jbrunet <jbrunet@baylibre.com>
+Date:   Mon Dec 19 16:05:36 2016 +0100
+
+    net: phy: fix sign type error in genphy_config_eee_advert
+    
+    
+    [ Upstream commit 3bb9ab63276696988d8224f52db20e87194deb4b ]
+    
+    In genphy_config_eee_advert, the return value of phy_read_mmd_indirect is
+    checked to know if the register could be accessed but the result is
+    assigned to a 'u32'.
+    Changing to 'int' to correctly get errors from phy_read_mmd_indirect.
+    
+    Fixes: d853d145ea3e ("net: phy: add an option to disable EEE advertisement")
+    Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+    Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index b14fcf6..d9ec748 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1155,8 +1155,8 @@ static int genphy_config_advert(struct phy_device *phydev)
+  */
+ static int genphy_config_eee_advert(struct phy_device *phydev)
+ {
+-	u32 broken = phydev->eee_broken_modes;
+-	u32 old_adv, adv;
++	int broken = phydev->eee_broken_modes;
++	int old_adv, adv;
+ 
+ 	/* Nothing to disable */
+ 	if (!broken)

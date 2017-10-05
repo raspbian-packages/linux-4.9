@@ -1,0 +1,34 @@
+commit bd8d1c8da72468b8294e5f1e2e5403e703554f6b
+Author: Michael Chan <michael.chan@broadcom.com>
+Date:   Tue Jan 17 22:07:19 2017 -0500
+
+    bnxt_en: Fix "uninitialized variable" bug in TPA code path.
+    
+    
+    [ Upstream commit 719ca8111402aa6157bd83a3c966d184db0d8956 ]
+    
+    In the TPA GRO code path, initialize the tcp_opt_len variable to 0 so
+    that it will be correct for packets without TCP timestamps.  The bug
+    caused the SKB fields to be incorrectly set up for packets without
+    TCP timestamps, leading to these packets being rejected by the stack.
+    
+    Reported-by: Andy Gospodarek <andrew.gospodarek@broadocm.com>
+    Acked-by: Andy Gospodarek <andrew.gospodarek@broadocm.com>
+    Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 5cc0f8c..20e569b 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1097,7 +1097,7 @@ static struct sk_buff *bnxt_gro_func_5730x(struct bnxt_tpa_info *tpa_info,
+ {
+ #ifdef CONFIG_INET
+ 	struct tcphdr *th;
+-	int len, nw_off, tcp_opt_len;
++	int len, nw_off, tcp_opt_len = 0;
+ 
+ 	if (tcp_ts)
+ 		tcp_opt_len = 12;

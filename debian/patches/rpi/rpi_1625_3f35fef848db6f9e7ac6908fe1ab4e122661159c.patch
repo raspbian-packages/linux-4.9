@@ -1,0 +1,38 @@
+commit 3f35fef848db6f9e7ac6908fe1ab4e122661159c
+Author: Bin Liu <b-liu@ti.com>
+Date:   Thu May 25 13:42:39 2017 -0500
+
+    usb: musb: dsps: keep VBUS on for host-only mode
+    
+    commit b3addcf0d1f04f53fcc302577d5a5e964c18531a upstream.
+    
+    Currently VBUS is turned off while a usb device is detached, and turned
+    on again by the polling routine. This short period VBUS loss prevents
+    usb modem to switch mode.
+    
+    VBUS should be constantly on for host-only mode, so this changes the
+    driver to not turn off VBUS for host-only mode.
+    
+    Fixes: 2f3fd2c5bde1 ("usb: musb: Prepare dsps glue layer for PM runtime support")
+    Reported-by: Moreno Bartalucci <moreno.bartalucci@tecnorama.it>
+    Acked-by: Tony Lindgren <tony@atomide.com>
+    Signed-off-by: Bin Liu <b-liu@ti.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
+index 9f125e1..39666fb 100644
+--- a/drivers/usb/musb/musb_dsps.c
++++ b/drivers/usb/musb/musb_dsps.c
+@@ -213,6 +213,12 @@ static int dsps_check_status(struct musb *musb, void *unused)
+ 				msecs_to_jiffies(wrp->poll_timeout));
+ 		break;
+ 	case OTG_STATE_A_WAIT_BCON:
++		/* keep VBUS on for host-only mode */
++		if (musb->port_mode == MUSB_PORT_MODE_HOST) {
++			mod_timer(&glue->timer, jiffies +
++					msecs_to_jiffies(wrp->poll_timeout));
++			break;
++		}
+ 		musb_writeb(musb->mregs, MUSB_DEVCTL, 0);
+ 		skip_session = 1;
+ 		/* fall */

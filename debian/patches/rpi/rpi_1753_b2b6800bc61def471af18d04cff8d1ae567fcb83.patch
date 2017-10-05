@@ -1,0 +1,38 @@
+commit b2b6800bc61def471af18d04cff8d1ae567fcb83
+Author: Karl Beldan <karl.beldan@gmail.com>
+Date:   Tue Jun 27 19:22:16 2017 +0000
+
+    MIPS: head: Reorder instructions missing a delay slot
+    
+    commit 25d8b92e0af75d72ce8b99e63e5a449cc0888efa upstream.
+    
+    In this sequence the 'move' is assumed in the delay slot of the 'beq',
+    but head.S is in reorder mode and the former gets pushed one 'nop'
+    farther by the assembler.
+    
+    The corrected behavior made booting with an UHI supplied dtb erratic.
+    
+    Fixes: 15f37e158892 ("MIPS: store the appended dtb address in a variable")
+    Signed-off-by: Karl Beldan <karl.beldan+oss@gmail.com>
+    Reviewed-by: James Hogan <james.hogan@imgtec.com>
+    Cc: Jonas Gorski <jogo@openwrt.org>
+    Cc: linux-mips@linux-mips.org
+    Cc: linux-kernel@vger.kernel.org
+    Patchwork: https://patchwork.linux-mips.org/patch/16614/
+    Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
+index cf05220..d1bb506 100644
+--- a/arch/mips/kernel/head.S
++++ b/arch/mips/kernel/head.S
+@@ -106,8 +106,8 @@ NESTED(kernel_entry, 16, sp)			# kernel entry point
+ 	beq		t0, t1, dtb_found
+ #endif
+ 	li		t1, -2
+-	beq		a0, t1, dtb_found
+ 	move		t2, a1
++	beq		a0, t1, dtb_found
+ 
+ 	li		t2, 0
+ dtb_found:

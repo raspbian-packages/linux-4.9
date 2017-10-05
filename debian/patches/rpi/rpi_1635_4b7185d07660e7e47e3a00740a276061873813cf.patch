@@ -1,0 +1,41 @@
+commit 4b7185d07660e7e47e3a00740a276061873813cf
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Tue Mar 28 11:13:45 2017 +0200
+
+    serial: sh-sci: Fix late enablement of AUTORTS
+    
+    commit 5f76895e4c712b1b5af450cf344389b8c53ac2c2 upstream.
+    
+    When changing hardware control flow for a UART with dedicated RTS/CTS
+    pins, the new AUTORTS state is not immediately reflected in the
+    hardware, but only when RTS is raised.  However, the serial core does
+    not call .set_mctrl() after .set_termios(), hence AUTORTS may only
+    become effective when the port is closed, and reopened later.
+    Note that this problem does not happen when manually using stty to
+    change CRTSCTS, as AUTORTS will work fine on next open.
+    
+    To fix this, call .set_mctrl() from .set_termios() when dedicated
+    RTS/CTS pins are present, to refresh the AUTORTS or RTS state.
+    This is similar to what other drivers supporting AUTORTS do (e.g.
+    omap-serial).
+    
+    Reported-by: Baumann, Christoph (C.) <cbaumann@visteon.com>
+    Fixes: 33f50ffc253854cf ("serial: sh-sci: Fix support for hardware-assisted RTS/CTS")
+    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index ee84f89..7e97a1c 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2366,6 +2366,10 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		 */
+ 		udelay(DIV_ROUND_UP(10 * 1000000, baud));
+ 	}
++	if (port->flags & UPF_HARD_FLOW) {
++		/* Refresh (Auto) RTS */
++		sci_set_mctrl(port, port->mctrl);
++	}
+ 
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ 	/*

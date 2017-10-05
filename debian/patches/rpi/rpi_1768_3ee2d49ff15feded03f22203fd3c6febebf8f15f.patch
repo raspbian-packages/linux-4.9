@@ -1,0 +1,39 @@
+commit 3ee2d49ff15feded03f22203fd3c6febebf8f15f
+Author: Guillaume Nault <g.nault@alphalink.fr>
+Date:   Fri Mar 31 13:02:29 2017 +0200
+
+    l2tp: hold session while sending creation notifications
+    
+    commit 5e6a9e5a3554a5b3db09cdc22253af1849c65dff upstream.
+    
+    l2tp_session_find() doesn't take any reference on the returned session.
+    Therefore, the session may disappear while sending the notification.
+    
+    Use l2tp_session_get() instead and decrement session's refcount once
+    the notification is sent.
+    
+    Fixes: 33f72e6f0c67 ("l2tp : multicast notification to the registered listeners")
+    Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/net/l2tp/l2tp_netlink.c b/net/l2tp/l2tp_netlink.c
+index 9f66272..8c0f483 100644
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@ -634,10 +634,12 @@ static int l2tp_nl_cmd_session_create(struct sk_buff *skb, struct genl_info *inf
+ 			session_id, peer_session_id, &cfg);
+ 
+ 	if (ret >= 0) {
+-		session = l2tp_session_find(net, tunnel, session_id);
+-		if (session)
++		session = l2tp_session_get(net, tunnel, session_id, false);
++		if (session) {
+ 			ret = l2tp_session_notify(&l2tp_nl_family, info, session,
+ 						  L2TP_CMD_SESSION_CREATE);
++			l2tp_session_dec_refcount(session);
++		}
+ 	}
+ 
+ out:

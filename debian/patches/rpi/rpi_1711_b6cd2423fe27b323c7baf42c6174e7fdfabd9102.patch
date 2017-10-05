@@ -1,0 +1,43 @@
+commit b6cd2423fe27b323c7baf42c6174e7fdfabd9102
+Author: Joël Esponde <joel.esponde@honeywell.com>
+Date:   Wed Nov 23 12:47:40 2016 +0100
+
+    mtd: spi-nor: fix spansion quad enable
+    
+    commit 807c16253319ee6ccf8873ae64f070f7eb532cd5 upstream.
+    
+    With the S25FL127S nor flash part, each writing to the configuration
+    register takes hundreds of ms. During that  time, no more accesses to
+    the flash should be done (even reads).
+    
+    This commit adds a wait loop after the register writing until the flash
+    finishes its work.
+    
+    This issue could make rootfs mounting fail when the latter was done too
+    much closely to this quad enable bit setting step. And in this case, a
+    driver as UBIFS may try to recover the filesystem and may broke it
+    completely.
+    
+    Signed-off-by: Joël Esponde <joel.esponde@honeywell.com>
+    Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+    Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index d0fc165..21dde52 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1255,6 +1255,13 @@ static int spansion_quad_enable(struct spi_nor *nor)
+ 		return -EINVAL;
+ 	}
+ 
++	ret = spi_nor_wait_till_ready(nor);
++	if (ret) {
++		dev_err(nor->dev,
++			"timeout while writing configuration register\n");
++		return ret;
++	}
++
+ 	/* read back and check it */
+ 	ret = read_cr(nor);
+ 	if (!(ret > 0 && (ret & CR_QUAD_EN_SPAN))) {

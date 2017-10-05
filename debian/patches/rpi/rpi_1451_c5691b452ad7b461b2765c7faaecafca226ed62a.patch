@@ -1,0 +1,45 @@
+commit c5691b452ad7b461b2765c7faaecafca226ed62a
+Author: Waiman Long <longman@redhat.com>
+Date:   Mon May 15 09:34:06 2017 -0400
+
+    cgroup: Prevent kill_css() from being called more than once
+    
+    commit 33c35aa4817864e056fd772230b0c6b552e36ea2 upstream.
+    
+    The kill_css() function may be called more than once under the condition
+    that the css was killed but not physically removed yet followed by the
+    removal of the cgroup that is hosting the css. This patch prevents any
+    harmm from being done when that happens.
+    
+    Signed-off-by: Waiman Long <longman@redhat.com>
+    Signed-off-by: Tejun Heo <tj@kernel.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 5b17de6..6fb1c34 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -46,6 +46,7 @@ enum {
+ 	CSS_ONLINE	= (1 << 1), /* between ->css_online() and ->css_offline() */
+ 	CSS_RELEASED	= (1 << 2), /* refcnt reached zero, released */
+ 	CSS_VISIBLE	= (1 << 3), /* css is visible to userland */
++	CSS_DYING	= (1 << 4), /* css is dying */
+ };
+ 
+ /* bits in struct cgroup flags field */
+diff --git a/kernel/cgroup.c b/kernel/cgroup.c
+index e9ec63d..84f45a3 100644
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -5412,6 +5412,11 @@ static void kill_css(struct cgroup_subsys_state *css)
+ {
+ 	lockdep_assert_held(&cgroup_mutex);
+ 
++	if (css->flags & CSS_DYING)
++		return;
++
++	css->flags |= CSS_DYING;
++
+ 	/*
+ 	 * This must happen before css is disassociated with its cgroup.
+ 	 * See seq_css() for details.

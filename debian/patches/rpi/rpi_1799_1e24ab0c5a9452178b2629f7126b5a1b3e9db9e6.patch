@@ -1,0 +1,39 @@
+commit 1e24ab0c5a9452178b2629f7126b5a1b3e9db9e6
+Author: Eric Dumazet <edumazet@google.com>
+Date:   Wed Jan 18 19:44:42 2017 -0800
+
+    gianfar: Do not reuse pages from emergency reserve
+    
+    
+    [ Upstream commit 69fed99baac186013840ced3524562841296034f ]
+    
+    A driver using dev_alloc_page() must not reuse a page that had to
+    use emergency memory reserve.
+    
+    Otherwise all packets using this page will be immediately dropped,
+    unless for very specific sockets having SOCK_MEMALLOC bit set.
+    
+    This issue might be hard to debug, because only a fraction of the RX
+    ring buffer would suffer from drops.
+    
+    Fixes: 75354148ce69 ("gianfar: Add paged allocation and Rx S/G")
+    Signed-off-by: Eric Dumazet <edumazet@google.com>
+    Cc: Claudiu Manoil <claudiu.manoil@freescale.com>
+    Acked-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index d391bee..3f4e711 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -2951,7 +2951,7 @@ static bool gfar_add_rx_frag(struct gfar_rx_buff *rxb, u32 lstatus,
+ 	}
+ 
+ 	/* try reuse page */
+-	if (unlikely(page_count(page) != 1))
++	if (unlikely(page_count(page) != 1 || page_is_pfmemalloc(page)))
+ 		return false;
+ 
+ 	/* change offset to the other half */

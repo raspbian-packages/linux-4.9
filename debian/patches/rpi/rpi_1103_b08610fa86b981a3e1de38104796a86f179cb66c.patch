@@ -1,0 +1,21 @@
+commit b08610fa86b981a3e1de38104796a86f179cb66c
+Author: Eric Anholt <eric@anholt.net>
+Date:   Wed Sep 14 09:18:09 2016 +0100
+
+    raspberrypi-firmware: Define the MBOX channel in the header.
+    
+    Signed-off-by: Eric Anholt <eric@anholt.net>
+
+diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
+index 09e3d87..2859db0 100644
+--- a/include/soc/bcm2835/raspberrypi-firmware.h
++++ b/include/soc/bcm2835/raspberrypi-firmware.h
+@@ -12,6 +12,8 @@
+ #include <linux/types.h>
+ #include <linux/of_device.h>
+ 
++#define RPI_FIRMWARE_CHAN_FB		1
++
+ struct rpi_firmware;
+ 
+ enum rpi_firmware_property_status {

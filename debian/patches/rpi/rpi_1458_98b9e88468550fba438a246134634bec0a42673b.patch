@@ -1,0 +1,47 @@
+commit 98b9e88468550fba438a246134634bec0a42673b
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu Jun 8 21:15:45 2017 -0400
+
+    ufs: set correct ->s_maxsize
+    
+    commit 6b0d144fa758869bdd652c50aa41aaf601232550 upstream.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index f3469ad..351162f 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -746,6 +746,23 @@ static void ufs_put_super(struct super_block *sb)
+ 	return;
+ }
+ 
++static u64 ufs_max_bytes(struct super_block *sb)
++{
++	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
++	int bits = uspi->s_apbshift;
++	u64 res;
++
++	if (bits > 21)
++		res = ~0ULL;
++	else
++		res = UFS_NDADDR + (1LL << bits) + (1LL << (2*bits)) +
++			(1LL << (3*bits));
++
++	if (res >= (MAX_LFS_FILESIZE >> uspi->s_bshift))
++		return MAX_LFS_FILESIZE;
++	return res << uspi->s_bshift;
++}
++
+ static int ufs_fill_super(struct super_block *sb, void *data, int silent)
+ {
+ 	struct ufs_sb_info * sbi;
+@@ -1211,6 +1228,7 @@ static int ufs_fill_super(struct super_block *sb, void *data, int silent)
+ 			    "fast symlink size (%u)\n", uspi->s_maxsymlinklen);
+ 		uspi->s_maxsymlinklen = maxsymlen;
+ 	}
++	sb->s_maxbytes = ufs_max_bytes(sb);
+ 	sb->s_max_links = UFS_LINK_MAX;
+ 
+ 	inode = ufs_iget(sb, UFS_ROOTINO);

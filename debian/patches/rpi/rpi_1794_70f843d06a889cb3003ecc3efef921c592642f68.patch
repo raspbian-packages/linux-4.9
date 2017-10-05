@@ -1,0 +1,54 @@
+commit 70f843d06a889cb3003ecc3efef921c592642f68
+Author: Igor Druzhinin <igor.druzhinin@citrix.com>
+Date:   Tue Jan 17 20:49:37 2017 +0000
+
+    xen-netback: fix memory leaks on XenBus disconnect
+    
+    
+    [ Upstream commit 9a6cdf52b85ea5fb21d2bb31e4a7bc61b79923a7 ]
+    
+    Eliminate memory leaks introduced several years ago by cleaning the
+    queue resources which are allocated on XenBus connection event. Namely, queue
+    structure array and pages used for IO rings.
+    
+    Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+    Reviewed-by: Paul Durrant <paul.durrant@citrix.com>
+    Acked-by: Wei Liu <wei.liu2@citrix.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+index 8674e18..abffdbd 100644
+--- a/drivers/net/xen-netback/xenbus.c
++++ b/drivers/net/xen-netback/xenbus.c
+@@ -493,11 +493,20 @@ static int backend_create_xenvif(struct backend_info *be)
+ static void backend_disconnect(struct backend_info *be)
+ {
+ 	if (be->vif) {
++		unsigned int queue_index;
++
+ 		xen_unregister_watchers(be->vif);
+ #ifdef CONFIG_DEBUG_FS
+ 		xenvif_debugfs_delif(be->vif);
+ #endif /* CONFIG_DEBUG_FS */
+ 		xenvif_disconnect_data(be->vif);
++		for (queue_index = 0; queue_index < be->vif->num_queues; ++queue_index)
++			xenvif_deinit_queue(&be->vif->queues[queue_index]);
++
++		vfree(be->vif->queues);
++		be->vif->num_queues = 0;
++		be->vif->queues = NULL;
++
+ 		xenvif_disconnect_ctrl(be->vif);
+ 	}
+ }
+@@ -1040,6 +1049,8 @@ static void connect(struct backend_info *be)
+ err:
+ 	if (be->vif->num_queues > 0)
+ 		xenvif_disconnect_data(be->vif); /* Clean up existing queues */
++	for (queue_index = 0; queue_index < be->vif->num_queues; ++queue_index)
++		xenvif_deinit_queue(&be->vif->queues[queue_index]);
+ 	vfree(be->vif->queues);
+ 	be->vif->queues = NULL;
+ 	be->vif->num_queues = 0;

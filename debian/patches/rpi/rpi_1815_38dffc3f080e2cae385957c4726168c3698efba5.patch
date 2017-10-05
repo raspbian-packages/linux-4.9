@@ -1,0 +1,32 @@
+commit 38dffc3f080e2cae385957c4726168c3698efba5
+Author: Balakrishnan Raman <ramanb@cumulusnetworks.com>
+Date:   Mon Jan 23 20:44:33 2017 -0800
+
+    vxlan: do not age static remote mac entries
+    
+    
+    [ Upstream commit efb5f68f32995c146944a9d4257c3cf8eae2c4a1 ]
+    
+    Mac aging is applicable only for dynamically learnt remote mac
+    entries. Check for user configured static remote mac entries
+    and skip aging.
+    
+    Signed-off-by: Balakrishnan Raman <ramanb@cumulusnetworks.com>
+    Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 55c4408..963e533 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -2285,7 +2285,7 @@ static void vxlan_cleanup(unsigned long arg)
+ 				= container_of(p, struct vxlan_fdb, hlist);
+ 			unsigned long timeout;
+ 
+-			if (f->state & NUD_PERMANENT)
++			if (f->state & (NUD_PERMANENT | NUD_NOARP))
+ 				continue;
+ 
+ 			timeout = f->used + vxlan->cfg.age_interval * HZ;

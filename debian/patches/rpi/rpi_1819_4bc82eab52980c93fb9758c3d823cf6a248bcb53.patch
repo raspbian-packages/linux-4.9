@@ -1,0 +1,41 @@
+commit 4bc82eab52980c93fb9758c3d823cf6a248bcb53
+Author: Lucas Stach <l.stach@pengutronix.de>
+Date:   Mon Dec 12 16:15:17 2016 +0100
+
+    drm/etnaviv: trick drm_mm into giving out a low IOVA
+    
+    
+    [ Upstream commit 3546fb0cdac25a79c89d87020566fab52b92867d ]
+    
+    After rollover of the IOVA space, we want to get a low IOVA address,
+    otherwise the the games we play by remembering the last IOVA are
+    pointless. When we search for a free hole with DRM_MM_SEARCH_DEFAULT,
+    drm_mm will pop the next entry from the free holes stack, which will
+    likely be a high IOVA. By using DRM_MM_SEARCH_BELOW we can trick
+    drm_mm into reversing the search and provide us with a low IOVA.
+    
+    Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+    Reviewed-by: Wladimir van der Laan <laanwj@gmail.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+index 169ac96..fe0e85b 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+@@ -116,9 +116,14 @@ static int etnaviv_iommu_find_iova(struct etnaviv_iommu *mmu,
+ 		struct list_head list;
+ 		bool found;
+ 
++		/*
++		 * XXX: The DRM_MM_SEARCH_BELOW is really a hack to trick
++		 * drm_mm into giving out a low IOVA after address space
++		 * rollover. This needs a proper fix.
++		 */
+ 		ret = drm_mm_insert_node_in_range(&mmu->mm, node,
+ 			size, 0, mmu->last_iova, ~0UL,
+-			DRM_MM_SEARCH_DEFAULT);
++			mmu->last_iova ? DRM_MM_SEARCH_DEFAULT : DRM_MM_SEARCH_BELOW);
+ 
+ 		if (ret != -ENOSPC)
+ 			break;

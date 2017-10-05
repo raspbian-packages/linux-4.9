@@ -1,0 +1,72 @@
+commit 7b3a2c50b9982c4b2346d26d357f990f3f2ce539
+Author: Hou Tao <houtao1@huawei.com>
+Date:   Wed Mar 1 09:02:33 2017 +0800
+
+    cfq-iosched: fix the delay of cfq_group's vdisktime under iops mode
+    
+    commit 5be6b75610cefd1e21b98a218211922c2feb6e08 upstream.
+    
+    When adding a cfq_group into the cfq service tree, we use CFQ_IDLE_DELAY
+    as the delay of cfq_group's vdisktime if there have been other cfq_groups
+    already.
+    
+    When cfq is under iops mode, commit 9a7f38c42c2b ("cfq-iosched: Convert
+    from jiffies to nanoseconds") could result in a large iops delay and
+    lead to an abnormal io schedule delay for the added cfq_group. To fix
+    it, we just need to revert to the old CFQ_IDLE_DELAY value: HZ / 5
+    when iops mode is enabled.
+    
+    Despite having the same value, the delay of a cfq_queue in idle class
+    and the delay of cfq_group are different things, so I define two new
+    macros for the delay of a cfq_group under time-slice mode and iops mode.
+    
+    Fixes: 9a7f38c42c2b ("cfq-iosched: Convert from jiffies to nanoseconds")
+    Signed-off-by: Hou Tao <houtao1@huawei.com>
+    Acked-by: Jan Kara <jack@suse.cz>
+    Signed-off-by: Jens Axboe <axboe@fb.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index 3ab6807..c7c3d4e 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -36,9 +36,13 @@ static const u64 cfq_target_latency = (u64)NSEC_PER_SEC * 3/10; /* 300 ms */
+ static const int cfq_hist_divisor = 4;
+ 
+ /*
+- * offset from end of service tree
++ * offset from end of queue service tree for idle class
+  */
+ #define CFQ_IDLE_DELAY		(NSEC_PER_SEC / 5)
++/* offset from end of group service tree under time slice mode */
++#define CFQ_SLICE_MODE_GROUP_DELAY (NSEC_PER_SEC / 5)
++/* offset from end of group service under IOPS mode */
++#define CFQ_IOPS_MODE_GROUP_DELAY (HZ / 5)
+ 
+ /*
+  * below this threshold, we consider thinktime immediate
+@@ -1370,6 +1374,14 @@ cfq_group_service_tree_add(struct cfq_rb_root *st, struct cfq_group *cfqg)
+ 	cfqg->vfraction = max_t(unsigned, vfr, 1);
+ }
+ 
++static inline u64 cfq_get_cfqg_vdisktime_delay(struct cfq_data *cfqd)
++{
++	if (!iops_mode(cfqd))
++		return CFQ_SLICE_MODE_GROUP_DELAY;
++	else
++		return CFQ_IOPS_MODE_GROUP_DELAY;
++}
++
+ static void
+ cfq_group_notify_queue_add(struct cfq_data *cfqd, struct cfq_group *cfqg)
+ {
+@@ -1389,7 +1401,8 @@ cfq_group_notify_queue_add(struct cfq_data *cfqd, struct cfq_group *cfqg)
+ 	n = rb_last(&st->rb);
+ 	if (n) {
+ 		__cfqg = rb_entry_cfqg(n);
+-		cfqg->vdisktime = __cfqg->vdisktime + CFQ_IDLE_DELAY;
++		cfqg->vdisktime = __cfqg->vdisktime +
++			cfq_get_cfqg_vdisktime_delay(cfqd);
+ 	} else
+ 		cfqg->vdisktime = st->min_vdisktime;
+ 	cfq_group_service_tree_add(st, cfqg);

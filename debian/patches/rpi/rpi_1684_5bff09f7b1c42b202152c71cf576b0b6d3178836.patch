@@ -1,0 +1,50 @@
+commit 5bff09f7b1c42b202152c71cf576b0b6d3178836
+Author: Ilya Matveychikov <matvejchikov@gmail.com>
+Date:   Fri Jun 23 15:08:49 2017 -0700
+
+    lib/cmdline.c: fix get_options() overflow while parsing ranges
+    
+    commit a91e0f680bcd9e10c253ae8b62462a38bd48f09f upstream.
+    
+    When using get_options() it's possible to specify a range of numbers,
+    like 1-100500.  The problem is that it doesn't track array size while
+    calling internally to get_range() which iterates over the range and
+    fills the memory with numbers.
+    
+    Link: http://lkml.kernel.org/r/2613C75C-B04D-4BFF-82A6-12F97BA0F620@gmail.com
+    Signed-off-by: Ilya V. Matveychikov <matvejchikov@gmail.com>
+    Cc: Jonathan Corbet <corbet@lwn.net>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/lib/cmdline.c b/lib/cmdline.c
+index 8f13cf7..79069d7 100644
+--- a/lib/cmdline.c
++++ b/lib/cmdline.c
+@@ -22,14 +22,14 @@
+  *	the values[M, M+1, ..., N] into the ints array in get_options.
+  */
+ 
+-static int get_range(char **str, int *pint)
++static int get_range(char **str, int *pint, int n)
+ {
+ 	int x, inc_counter, upper_range;
+ 
+ 	(*str)++;
+ 	upper_range = simple_strtol((*str), NULL, 0);
+ 	inc_counter = upper_range - *pint;
+-	for (x = *pint; x < upper_range; x++)
++	for (x = *pint; n && x < upper_range; x++, n--)
+ 		*pint++ = x;
+ 	return inc_counter;
+ }
+@@ -96,7 +96,7 @@ char *get_options(const char *str, int nints, int *ints)
+ 			break;
+ 		if (res == 3) {
+ 			int range_nums;
+-			range_nums = get_range((char **)&str, ints + i);
++			range_nums = get_range((char **)&str, ints + i, nints - i);
+ 			if (range_nums < 0)
+ 				break;
+ 			/*

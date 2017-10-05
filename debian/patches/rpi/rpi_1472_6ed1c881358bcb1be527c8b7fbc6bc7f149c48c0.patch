@@ -1,0 +1,39 @@
+commit 6ed1c881358bcb1be527c8b7fbc6bc7f149c48c0
+Author: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Date:   Mon May 22 15:44:37 2017 -0500
+
+    powerpc/hotplug-mem: Fix missing endian conversion of aa_index
+    
+    commit dc421b200f91930c9c6a9586810ff8c232cf10fc upstream.
+    
+    When adding or removing memory, the aa_index (affinity value) for the
+    memblock must also be converted to match the endianness of the rest
+    of the 'ibm,dynamic-memory' property.  Otherwise, subsequent retrieval
+    of the attribute will likely lead to non-existent nodes, followed by
+    using the default node in the code inappropriately.
+    
+    Fixes: 5f97b2a0d176 ("powerpc/pseries: Implement memory hotplug add in the kernel")
+    Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+    Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index 76ec104..c0a0947 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -124,6 +124,7 @@ static struct property *dlpar_clone_drconf_property(struct device_node *dn)
+ 	for (i = 0; i < num_lmbs; i++) {
+ 		lmbs[i].base_addr = be64_to_cpu(lmbs[i].base_addr);
+ 		lmbs[i].drc_index = be32_to_cpu(lmbs[i].drc_index);
++		lmbs[i].aa_index = be32_to_cpu(lmbs[i].aa_index);
+ 		lmbs[i].flags = be32_to_cpu(lmbs[i].flags);
+ 	}
+ 
+@@ -147,6 +148,7 @@ static void dlpar_update_drconf_property(struct device_node *dn,
+ 	for (i = 0; i < num_lmbs; i++) {
+ 		lmbs[i].base_addr = cpu_to_be64(lmbs[i].base_addr);
+ 		lmbs[i].drc_index = cpu_to_be32(lmbs[i].drc_index);
++		lmbs[i].aa_index = cpu_to_be32(lmbs[i].aa_index);
+ 		lmbs[i].flags = cpu_to_be32(lmbs[i].flags);
+ 	}
+ 
