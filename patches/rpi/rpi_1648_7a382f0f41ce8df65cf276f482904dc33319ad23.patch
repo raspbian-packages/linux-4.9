@@ -1,0 +1,29 @@
+commit 7a382f0f41ce8df65cf276f482904dc33319ad23
+Author: Anton Bondarenko <anton.bondarenko.sama@gmail.com>
+Date:   Sun May 7 01:53:46 2017 +0200
+
+    usb: core: fix potential memory leak in error path during hcd creation
+    
+    commit 1a744d2eb76aaafb997fda004ae3ae62a1538f85 upstream.
+    
+    Free memory allocated for address0_mutex if allocation of bandwidth_mutex
+    failed.
+    
+    Fixes: feb26ac31a2a ("usb: core: hub: hub_port_init lock controller instead of bus")
+    
+    Signed-off-by: Anton Bondarenko <anton.bondarenko.sama@gmail.com>
+    Acked-by: Alan Stern <stern@rowland.harvard.edu>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 3b9735a..8a7c6bba 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -2535,6 +2535,7 @@ struct usb_hcd *usb_create_shared_hcd(const struct hc_driver *driver,
+ 		hcd->bandwidth_mutex = kmalloc(sizeof(*hcd->bandwidth_mutex),
+ 				GFP_KERNEL);
+ 		if (!hcd->bandwidth_mutex) {
++			kfree(hcd->address0_mutex);
+ 			kfree(hcd);
+ 			dev_dbg(dev, "hcd bandwidth mutex alloc failed\n");
+ 			return NULL;

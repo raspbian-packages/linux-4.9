@@ -1,0 +1,44 @@
+commit 119abc4f9cb38178a8f5409a8fc76e4b85c0ab52
+Author: Ding Pixel <pding@amd.com>
+Date:   Wed Jan 18 17:26:38 2017 +0800
+
+    drm/amdgpu: check ring being ready before using
+    
+    
+    [ Upstream commit c5f21c9f878b8dcd54d0b9739c025ca73cb4c091 ]
+    
+    Return success when the ring is properly initialized, otherwise return
+    failure.
+    
+    Tonga SRIOV VF doesn't have UVD and VCE engines, the initialization of
+    these IPs is bypassed. The system crashes if application submit IB to
+    their rings which are not ready to use. It could be a common issue if
+    IP having ring buffer is disabled for some reason on specific ASIC, so
+    it should check the ring being ready to use.
+    
+    Bug: amdgpu_test crashes system on Tonga VF.
+    
+    Signed-off-by: Ding Pixel <Pixel.Ding@amd.com>
+    Reviewed-by: Christian König <christian.koenig@amd.com>
+    Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index 82dc8d2..bfb4b91 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -83,6 +83,13 @@ int amdgpu_cs_get_ring(struct amdgpu_device *adev, u32 ip_type,
+ 		}
+ 		break;
+ 	}
++
++	if (!(*out_ring && (*out_ring)->adev)) {
++		DRM_ERROR("Ring %d is not initialized on IP %d\n",
++			  ring, ip_type);
++		return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ 

@@ -1,0 +1,29 @@
+commit 8a71d6f8a109430f68268c5c5ef386ef712ac548
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Apr 11 16:45:52 2017 -0700
+
+    xfs: fix integer truncation in xfs_bmap_remap_alloc
+    
+    commit 52813fb13ff90bd9c39a93446cbf1103c290b6e9 upstream.
+    
+    bno should be a xfs_fsblock_t, which is 64-bit wides instead of a
+    xfs_aglock_t, which truncates the value to 32 bits.
+    
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+index 5a508b0..23f2b4b 100644
+--- a/fs/xfs/libxfs/xfs_bmap.c
++++ b/fs/xfs/libxfs/xfs_bmap.c
+@@ -3964,7 +3964,7 @@ xfs_bmap_remap_alloc(
+ {
+ 	struct xfs_trans	*tp = ap->tp;
+ 	struct xfs_mount	*mp = tp->t_mountp;
+-	xfs_agblock_t		bno;
++	xfs_fsblock_t		bno;
+ 	struct xfs_alloc_arg	args;
+ 	int			error;
+ 

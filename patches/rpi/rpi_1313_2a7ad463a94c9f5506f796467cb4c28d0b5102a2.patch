@@ -1,0 +1,32 @@
+commit 2a7ad463a94c9f5506f796467cb4c28d0b5102a2
+Author: Daniel Borkmann <daniel@iogearbox.net>
+Date:   Thu May 25 01:05:07 2017 +0200
+
+    bpf: add bpf_clone_redirect to bpf_helper_changes_pkt_data
+    
+    
+    [ Upstream commit 41703a731066fde79c3e5ccf3391cf77a98aeda5 ]
+    
+    The bpf_clone_redirect() still needs to be listed in
+    bpf_helper_changes_pkt_data() since we call into
+    bpf_try_make_head_writable() from there, thus we need
+    to invalidate prior pkt regs as well.
+    
+    Fixes: 36bbef52c7eb ("bpf: direct packet write and access for helpers for clsact progs")
+    Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/net/core/filter.c b/net/core/filter.c
+index b391209..4eb4ce0 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2198,6 +2198,7 @@ bool bpf_helper_changes_skb_data(void *func)
+ 	    func == bpf_skb_change_proto ||
+ 	    func == bpf_skb_change_tail ||
+ 	    func == bpf_skb_pull_data ||
++	    func == bpf_clone_redirect ||
+ 	    func == bpf_l3_csum_replace ||
+ 	    func == bpf_l4_csum_replace)
+ 		return true;

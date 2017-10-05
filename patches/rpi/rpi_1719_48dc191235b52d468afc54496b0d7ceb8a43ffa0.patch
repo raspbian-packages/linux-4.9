@@ -1,0 +1,18 @@
+commit 48dc191235b52d468afc54496b0d7ceb8a43ffa0
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Thu Jun 29 13:00:49 2017 +0200
+
+    Linux 4.9.35
+
+diff --git a/Makefile b/Makefile
+index bdb3215..9061a23 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 4
+ PATCHLEVEL = 9
+-SUBLEVEL = 34
++SUBLEVEL = 35
+ EXTRAVERSION =
+ NAME = Roaring Lionus
+ 

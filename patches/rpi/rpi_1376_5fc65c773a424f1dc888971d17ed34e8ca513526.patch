@@ -1,0 +1,30 @@
+commit 5fc65c773a424f1dc888971d17ed34e8ca513526
+Author: popcornmix <popcornmix@gmail.com>
+Date:   Mon Jun 12 13:05:43 2017 +0100
+
+    config: Add CONFIG_CAN_GS_USB
+
+diff --git a/arch/arm/configs/bcm2709_defconfig b/arch/arm/configs/bcm2709_defconfig
+index 8962d1b..0fbabb1 100644
+--- a/arch/arm/configs/bcm2709_defconfig
++++ b/arch/arm/configs/bcm2709_defconfig
+@@ -365,6 +365,7 @@ CONFIG_CAN=m
+ CONFIG_CAN_VCAN=m
+ CONFIG_CAN_SLCAN=m
+ CONFIG_CAN_MCP251X=m
++CONFIG_CAN_GS_USB=m
+ CONFIG_IRDA=m
+ CONFIG_IRLAN=m
+ CONFIG_IRNET=m
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 372bfe1..83cfb1e 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -361,6 +361,7 @@ CONFIG_CAN=m
+ CONFIG_CAN_VCAN=m
+ CONFIG_CAN_SLCAN=m
+ CONFIG_CAN_MCP251X=m
++CONFIG_CAN_GS_USB=m
+ CONFIG_IRDA=m
+ CONFIG_IRLAN=m
+ CONFIG_IRNET=m

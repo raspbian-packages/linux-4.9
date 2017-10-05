@@ -1,0 +1,31 @@
+commit 2315f4b7884b132499c5021e3b21472b8829ffac
+Author: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Date:   Mon May 15 17:49:52 2017 +0900
+
+    dmaengine: usb-dmac: Fix DMAOR AE bit definition
+    
+    commit 9a445bbb1607d9f14556a532453dd86d1b7e381e upstream.
+    
+    This patch fixes the register definition of AE (Address Error flag) bit.
+    
+    Fixes: 0c1c8ff32fa2 ("dmaengine: usb-dmac: Add Renesas USB DMA Controller (USB-DMAC) driver")
+    Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+    [Shimoda: add Fixes and Cc tags in the commit log]
+    Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
+index 06ecdc3..6682b3e 100644
+--- a/drivers/dma/sh/usb-dmac.c
++++ b/drivers/dma/sh/usb-dmac.c
+@@ -117,7 +117,7 @@ struct usb_dmac {
+ #define USB_DMASWR			0x0008
+ #define USB_DMASWR_SWR			(1 << 0)
+ #define USB_DMAOR			0x0060
+-#define USB_DMAOR_AE			(1 << 2)
++#define USB_DMAOR_AE			(1 << 1)
+ #define USB_DMAOR_DME			(1 << 0)
+ 
+ #define USB_DMASAR			0x0000

@@ -1,0 +1,44 @@
+commit cf301eeb10938de3e26b9ea61161428a093dacad
+Author: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Date:   Fri Jun 16 09:36:35 2017 +0100
+
+    brcmfmac: fix uninitialized warning in brcmf_usb_probe_phase2()
+    
+    commit 35abcd4f9f303ac4f10f99b3f7e993e5f2e6fa37 upstream.
+    
+    This fixes the following warning:
+    
+      drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c: In function
+      'brcmf_usb_probe_phase2':
+      drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2:
+      warning: 'devinfo' may be used uninitialized in this function
+      [-Wmaybe-uninitialized]
+        mutex_unlock(&devinfo->dev_init_lock);
+    
+    Fixes: 6d0507a777fb ("brcmfmac: add parameter to pass error code in firmware callback")
+    Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+    Reported-by: Kalle Valo <kvalo@codeaurora.org>
+    Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+    Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+index 52b9fc1..053f3b5 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
+@@ -1163,14 +1163,13 @@ static void brcmf_usb_probe_phase2(struct device *dev, int ret,
+ 				   void *nvram, u32 nvlen)
+ {
+ 	struct brcmf_bus *bus = dev_get_drvdata(dev);
+-	struct brcmf_usbdev_info *devinfo;
++	struct brcmf_usbdev_info *devinfo = bus->bus_priv.usb->devinfo;
+ 
+ 	if (ret)
+ 		goto error;
+ 
+ 	brcmf_dbg(USB, "Start fw downloading\n");
+ 
+-	devinfo = bus->bus_priv.usb->devinfo;
+ 	ret = check_file(fw->data);
+ 	if (ret < 0) {
+ 		brcmf_err("invalid firmware\n");

@@ -1,0 +1,36 @@
+commit aa6ad90c8321a5fb4fcdc0f0702afaa96983c574
+Author: Johannes Thumshirn <jthumshirn@suse.de>
+Date:   Tue Jan 10 12:05:54 2017 +0100
+
+    scsi: lpfc: Set elsiocb contexts to NULL after freeing it
+    
+    
+    [ Upstream commit 8667f515952feefebb3c0f8d9a9266c91b101a46 ]
+    
+    Set the elsiocb contexts to NULL after freeing as others depend on it.
+    
+    Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+    Acked-by: Dick Kennedy <dick.kennedy@broadcom.com>
+    Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index b7d54bf..7b696d1 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -3590,12 +3590,14 @@ lpfc_els_free_iocb(struct lpfc_hba *phba, struct lpfc_iocbq *elsiocb)
+ 		} else {
+ 			buf_ptr1 = (struct lpfc_dmabuf *) elsiocb->context2;
+ 			lpfc_els_free_data(phba, buf_ptr1);
++			elsiocb->context2 = NULL;
+ 		}
+ 	}
+ 
+ 	if (elsiocb->context3) {
+ 		buf_ptr = (struct lpfc_dmabuf *) elsiocb->context3;
+ 		lpfc_els_free_bpl(phba, buf_ptr);
++		elsiocb->context3 = NULL;
+ 	}
+ 	lpfc_sli_release_iocbq(phba, elsiocb);
+ 	return 0;

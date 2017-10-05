@@ -1,0 +1,41 @@
+commit 02684e7352aa3fb085b54ef9da37da2379f570a7
+Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+Date:   Wed Dec 28 11:33:48 2016 +0100
+
+    s390/ctl_reg: make __ctl_load a full memory barrier
+    
+    
+    [ Upstream commit e991c24d68b8c0ba297eeb7af80b1e398e98c33f ]
+    
+    We have quite a lot of code that depends on the order of the
+    __ctl_load inline assemby and subsequent memory accesses, like
+    e.g. disabling lowcore protection and the writing to lowcore.
+    
+    Since the __ctl_load macro does not have memory barrier semantics, nor
+    any other dependencies the compiler is, theoretically, free to shuffle
+    code around. Or in other words: storing to lowcore could happen before
+    lowcore protection is disabled.
+    
+    In order to avoid this class of potential bugs simply add a full
+    memory barrier to the __ctl_load macro.
+    
+    Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+    Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/s390/include/asm/ctl_reg.h b/arch/s390/include/asm/ctl_reg.h
+index d7697ab..8e136b8 100644
+--- a/arch/s390/include/asm/ctl_reg.h
++++ b/arch/s390/include/asm/ctl_reg.h
+@@ -15,7 +15,9 @@
+ 	BUILD_BUG_ON(sizeof(addrtype) != (high - low + 1) * sizeof(long));\
+ 	asm volatile(							\
+ 		"	lctlg	%1,%2,%0\n"				\
+-		: : "Q" (*(addrtype *)(&array)), "i" (low), "i" (high));\
++		:							\
++		: "Q" (*(addrtype *)(&array)), "i" (low), "i" (high)	\
++		: "memory");						\
+ }
+ 
+ #define __ctl_store(array, low, high) {					\

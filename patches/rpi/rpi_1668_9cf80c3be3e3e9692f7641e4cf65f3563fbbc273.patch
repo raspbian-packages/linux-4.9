@@ -1,0 +1,39 @@
+commit 9cf80c3be3e3e9692f7641e4cf65f3563fbbc273
+Author: Shuah Khan <shuahkh@osg.samsung.com>
+Date:   Tue Jan 10 16:05:28 2017 -0700
+
+    usb: dwc3: exynos fix axius clock error path to do cleanup
+    
+    commit 8ae584d1951f241efd45499f8774fd7066f22823 upstream.
+    
+    Axius clock error path returns without disabling clock and suspend clock.
+    Fix it to disable them before returning error.
+    
+    Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+    Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+    Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index 2f1fb7e..9eba51b 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -148,7 +148,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
+ 		if (IS_ERR(exynos->axius_clk)) {
+ 			dev_err(dev, "no AXI UpScaler clk specified\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto axius_clk_err;
+ 		}
+ 		clk_prepare_enable(exynos->axius_clk);
+ 	} else {
+@@ -206,6 +207,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 	regulator_disable(exynos->vdd33);
+ err2:
+ 	clk_disable_unprepare(exynos->axius_clk);
++axius_clk_err:
+ 	clk_disable_unprepare(exynos->susp_clk);
+ 	clk_disable_unprepare(exynos->clk);
+ 	return ret;

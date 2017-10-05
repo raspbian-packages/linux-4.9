@@ -1,0 +1,24 @@
+commit 75cf539b2f192d951a73e1a8e784f19fce61966b
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu Jun 8 02:42:03 2017 -0400
+
+    ufs: restore proper tail allocation
+    
+    commit 8785d84d002c2ce0f68fbcd6c2c86be859802c7e upstream.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
+index 190d64b..27f342d 100644
+--- a/fs/ufs/inode.c
++++ b/fs/ufs/inode.c
+@@ -284,7 +284,7 @@ ufs_inode_getfrag(struct inode *inode, unsigned index,
+ 			goal += uspi->s_fpb;
+ 	}
+ 	tmp = ufs_new_fragments(inode, p, ufs_blknum(new_fragment),
+-				goal, uspi->s_fpb, err, locked_page);
++				goal, nfrags, err, locked_page);
+ 
+ 	if (!tmp) {
+ 		*err = -ENOSPC;

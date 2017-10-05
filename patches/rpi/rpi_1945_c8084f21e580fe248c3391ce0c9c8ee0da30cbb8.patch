@@ -1,0 +1,42 @@
+commit c8084f21e580fe248c3391ce0c9c8ee0da30cbb8
+Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date:   Wed Feb 8 17:01:46 2017 -0300
+
+    perf top: Use __fallthrough
+    
+    commit 7b0214b702ad8e124e039a317beeebb3f020d125 upstream.
+    
+    The implicit fall through case label here is intended, so let us inform
+    that to gcc >= 7:
+    
+        CC       /tmp/build/perf/builtin-top.o
+      builtin-top.c: In function 'display_thread':
+      builtin-top.c:644:7: error: this statement may fall through [-Werror=implicit-fallthrough=]
+          if (errno == EINTR)
+             ^
+      builtin-top.c:647:3: note: here
+         default:
+       ^~~~~~~
+    
+    Cc: Adrian Hunter <adrian.hunter@intel.com>
+    Cc: David Ahern <dsahern@gmail.com>
+    Cc: Jiri Olsa <jolsa@kernel.org>
+    Cc: Namhyung Kim <namhyung@kernel.org>
+    Cc: Wang Nan <wangnan0@huawei.com>
+    Link: http://lkml.kernel.org/n/tip-lmcfnnyx9ic0m6j0aud98p4e@git.kernel.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index fe3af95..0b613e7 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -643,7 +643,7 @@ static void *display_thread(void *arg)
+ 		case -1:
+ 			if (errno == EINTR)
+ 				continue;
+-			/* Fall trhu */
++			__fallthrough;
+ 		default:
+ 			c = getc(stdin);
+ 			tcsetattr(0, TCSAFLUSH, &save);

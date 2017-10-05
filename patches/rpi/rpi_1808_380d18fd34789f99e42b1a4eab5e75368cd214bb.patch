@@ -1,0 +1,50 @@
+commit 380d18fd34789f99e42b1a4eab5e75368cd214bb
+Author: Lendacky, Thomas <Thomas.Lendacky@amd.com>
+Date:   Fri Jan 20 12:14:13 2017 -0600
+
+    amd-xgbe: Check xgbe_init() return code
+    
+    
+    [ Upstream commit 738f7f647371ff4cfc9646c99dba5b58ad142db3 ]
+    
+    The xgbe_init() routine returns a return code indicating success or
+    failure, but the return code is not checked. Add code to xgbe_init()
+    to issue a message when failures are seen and add code to check the
+    xgbe_init() return code.
+    
+    Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+index ca106d4..3424435 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -2825,8 +2825,10 @@ static int xgbe_init(struct xgbe_prv_data *pdata)
+ 
+ 	/* Flush Tx queues */
+ 	ret = xgbe_flush_tx_queues(pdata);
+-	if (ret)
++	if (ret) {
++		netdev_err(pdata->netdev, "error flushing TX queues\n");
+ 		return ret;
++	}
+ 
+ 	/*
+ 	 * Initialize DMA related features
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+index 0f0f3014..1e4e8b2 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+@@ -877,7 +877,9 @@ static int xgbe_start(struct xgbe_prv_data *pdata)
+ 
+ 	DBGPR("-->xgbe_start\n");
+ 
+-	hw_if->init(pdata);
++	ret = hw_if->init(pdata);
++	if (ret)
++		return ret;
+ 
+ 	ret = phy_if->phy_start(pdata);
+ 	if (ret)

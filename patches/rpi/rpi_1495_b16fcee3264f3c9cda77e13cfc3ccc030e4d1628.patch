@@ -1,0 +1,52 @@
+commit b16fcee3264f3c9cda77e13cfc3ccc030e4d1628
+Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Date:   Sun Mar 19 14:30:02 2017 +0100
+
+    cpufreq: schedutil: Fix per-CPU structure initialization in sugov_start()
+    
+    commit 4296f23ed49a15d36949458adcc66ff993dee2a8 upstream.
+    
+    sugov_start() only initializes struct sugov_cpu per-CPU structures
+    for shared policies, but it should do that for single-CPU policies too.
+    
+    That in particular makes the IO-wait boost mechanism work in the
+    cases when cpufreq policies correspond to individual CPUs.
+    
+    Fixes: 21ca6d2c52f8 (cpufreq: schedutil: Add iowait boosting)
+    Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+    Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 6415c04..cb771c7 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -507,20 +507,14 @@ static int sugov_start(struct cpufreq_policy *policy)
+ 	for_each_cpu(cpu, policy->cpus) {
+ 		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
+ 
++		memset(sg_cpu, 0, sizeof(*sg_cpu));
+ 		sg_cpu->sg_policy = sg_policy;
+-		if (policy_is_shared(policy)) {
+-			sg_cpu->util = 0;
+-			sg_cpu->max = 0;
+-			sg_cpu->flags = SCHED_CPUFREQ_RT;
+-			sg_cpu->last_update = 0;
+-			sg_cpu->iowait_boost = 0;
+-			sg_cpu->iowait_boost_max = policy->cpuinfo.max_freq;
+-			cpufreq_add_update_util_hook(cpu, &sg_cpu->update_util,
+-						     sugov_update_shared);
+-		} else {
+-			cpufreq_add_update_util_hook(cpu, &sg_cpu->update_util,
+-						     sugov_update_single);
+-		}
++		sg_cpu->flags = SCHED_CPUFREQ_RT;
++		sg_cpu->iowait_boost_max = policy->cpuinfo.max_freq;
++		cpufreq_add_update_util_hook(cpu, &sg_cpu->update_util,
++					     policy_is_shared(policy) ?
++							sugov_update_shared :
++							sugov_update_single);
+ 	}
+ 	return 0;
+ }

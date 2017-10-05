@@ -1,0 +1,51 @@
+commit b0600a913c9f8bb7cdee50dbdd7f2d817370afe9
+Author: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Date:   Mon Jun 12 12:47:34 2017 +0100
+
+    brcmfmac: unbind all devices upon failure in firmware callback
+    
+    commit 7a51461fc2da82a6c565a3ee65c41c197f28225d upstream.
+    
+    When request firmware fails, brcmf_ops_sdio_remove is being called and
+    brcmf_bus freed. In such circumstancies if you do a suspend/resume cycle
+    the kernel hangs on resume due a NULL pointer dereference in resume
+    function. So in brcmf_sdio_firmware_callback() we need to unbind the
+    driver from both sdio_func devices when firmware load failure is indicated.
+    
+    Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+    Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+    Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+    Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+    Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+    Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+index fb05e3f..3a993a5 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -3987,14 +3987,14 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ 	u8 saveclk;
+ 
+ 	brcmf_dbg(TRACE, "Enter: dev=%s, err=%d\n", dev_name(dev), err);
++	bus_if = dev_get_drvdata(dev);
++	sdiodev = bus_if->bus_priv.sdio;
+ 	if (err)
+ 		goto fail;
+ 
+-	bus_if = dev_get_drvdata(dev);
+ 	if (!bus_if->drvr)
+ 		return;
+ 
+-	sdiodev = bus_if->bus_priv.sdio;
+ 	bus = sdiodev->bus;
+ 
+ 	/* try to download image and nvram to the dongle */
+@@ -4083,6 +4083,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ fail:
+ 	brcmf_dbg(TRACE, "failed: dev=%s, err=%d\n", dev_name(dev), err);
+ 	device_release_driver(dev);
++	device_release_driver(&sdiodev->func[2]->dev);
+ }
+ 
+ struct brcmf_sdio *brcmf_sdio_probe(struct brcmf_sdio_dev *sdiodev)

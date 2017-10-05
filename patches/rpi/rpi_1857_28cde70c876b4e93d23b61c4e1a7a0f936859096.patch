@@ -1,0 +1,31 @@
+commit 28cde70c876b4e93d23b61c4e1a7a0f936859096
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Wed Jun 14 13:35:37 2017 +0300
+
+    xfrm: NULL dereference on allocation failure
+    
+    commit e747f64336fc15e1c823344942923195b800aa1e upstream.
+    
+    The default error code in pfkey_msg2xfrm_state() is -ENOBUFS.  We
+    added a new call to security_xfrm_state_alloc() which sets "err" to zero
+    so there several places where we can return ERR_PTR(0) if kmalloc()
+    fails.  The caller is expecting error pointers so it leads to a NULL
+    dereference.
+    
+    Fixes: df71837d5024 ("[LSM-IPSec]: Security association restriction.")
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index f9c9ecb..4f59929 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -1135,6 +1135,7 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 			goto out;
+ 	}
+ 
++	err = -ENOBUFS;
+ 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
+ 	if (sa->sadb_sa_auth) {
+ 		int keysize = 0;

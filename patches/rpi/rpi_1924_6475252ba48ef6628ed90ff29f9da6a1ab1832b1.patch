@@ -1,0 +1,31 @@
+commit 6475252ba48ef6628ed90ff29f9da6a1ab1832b1
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Thu Mar 9 19:20:48 2017 +0100
+
+    pinctrl: sh-pfc: Update info pointer after SoC-specific init
+    
+    commit 3091ae775fae17084013021d01513bc1ad274e6a upstream.
+    
+    Update the sh_pfc_soc_info pointer after calling the SoC-specific
+    initialization function, as it may have been updated to e.g. handle
+    different SoC revisions.  This makes sure the correct subdriver name is
+    printed later.
+    
+    Fixes: 0c151062f32c9db8 ("sh-pfc: Add support for SoC-specific initialization")
+    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index cf80ce1..4a5a0fe 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -586,6 +586,9 @@ static int sh_pfc_probe(struct platform_device *pdev)
+ 		ret = info->ops->init(pfc);
+ 		if (ret < 0)
+ 			return ret;
++
++		/* .init() may have overridden pfc->info */
++		info = pfc->info;
+ 	}
+ 
+ 	/* Enable dummy states for those platforms without pinctrl support */

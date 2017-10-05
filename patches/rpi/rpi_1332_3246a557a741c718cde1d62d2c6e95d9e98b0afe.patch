@@ -1,0 +1,36 @@
+commit 3246a557a741c718cde1d62d2c6e95d9e98b0afe
+Author: Alex Deucher <alexander.deucher@amd.com>
+Date:   Thu May 11 13:14:14 2017 -0400
+
+    drm/radeon/ci: disable mclk switching for high refresh rates (v2)
+    
+    commit 58d7e3e427db1bd68f33025519a9468140280a75 upstream.
+    
+    Even if the vblank period would allow it, it still seems to
+    be problematic on some cards.
+    
+    v2: fix logic inversion (Nils)
+    
+    bug: https://bugs.freedesktop.org/show_bug.cgi?id=96868
+    
+    Acked-by: Christian König <christian.koenig@amd.com>
+    Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dpm.c
+index 7ba4508..ea36dc4 100644
+--- a/drivers/gpu/drm/radeon/ci_dpm.c
++++ b/drivers/gpu/drm/radeon/ci_dpm.c
+@@ -776,6 +776,12 @@ bool ci_dpm_vblank_too_short(struct radeon_device *rdev)
+ 	u32 vblank_time = r600_dpm_get_vblank_time(rdev);
+ 	u32 switch_limit = pi->mem_gddr5 ? 450 : 300;
+ 
++	/* disable mclk switching if the refresh is >120Hz, even if the
++        * blanking period would allow it
++        */
++	if (r600_dpm_get_vrefresh(rdev) > 120)
++		return true;
++
+ 	if (vblank_time < switch_limit)
+ 		return true;
+ 	else

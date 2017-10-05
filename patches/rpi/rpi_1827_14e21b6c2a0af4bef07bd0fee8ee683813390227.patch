@@ -1,0 +1,39 @@
+commit 14e21b6c2a0af4bef07bd0fee8ee683813390227
+Author: Kevin Hilman <khilman@baylibre.com>
+Date:   Wed Jan 11 18:18:40 2017 -0800
+
+    spi: davinci: use dma_mapping_error()
+    
+    
+    [ Upstream commit c5a2a394835f473ae23931eda5066d3771d7b2f8 ]
+    
+    The correct error checking for dma_map_single() is to use
+    dma_mapping_error().
+    
+    Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index d36c11b..02fb967 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -646,7 +646,7 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 			buf = t->rx_buf;
+ 		t->rx_dma = dma_map_single(&spi->dev, buf,
+ 				t->len, DMA_FROM_DEVICE);
+-		if (!t->rx_dma) {
++		if (dma_mapping_error(&spi->dev, !t->rx_dma)) {
+ 			ret = -EFAULT;
+ 			goto err_rx_map;
+ 		}
+@@ -660,7 +660,7 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 			buf = (void *)t->tx_buf;
+ 		t->tx_dma = dma_map_single(&spi->dev, buf,
+ 				t->len, DMA_TO_DEVICE);
+-		if (!t->tx_dma) {
++		if (dma_mapping_error(&spi->dev, t->tx_dma)) {
+ 			ret = -EFAULT;
+ 			goto err_tx_map;
+ 		}

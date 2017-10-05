@@ -1,0 +1,44 @@
+commit a1696ab2a8b3c8688c7f30f52095b2fe3608d2a5
+Author: Rex Zhu <Rex.Zhu@amd.com>
+Date:   Tue Jan 10 19:26:49 2017 +0800
+
+    drm/amd/powerplay: fix vce cg logic error on CZ/St.
+    
+    
+    [ Upstream commit 3731d12dce83d47b357753ffc450ce03f1b49688 ]
+    
+    can fix Bug 191281: vce ib test failed.
+    
+    when vce idle, set vce clock gate, so the clock
+    in vce domain will be disabled.
+    when need to encode, disable vce clock gate,
+    enable the clocks to vce engine.
+    
+    Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+    Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+    Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
+index 2028980..5b261c1 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
+@@ -200,7 +200,7 @@ int cz_dpm_powergate_vce(struct pp_hwmgr *hwmgr, bool bgate)
+ 				cgs_set_clockgating_state(
+ 							hwmgr->device,
+ 							AMD_IP_BLOCK_TYPE_VCE,
+-							AMD_CG_STATE_UNGATE);
++							AMD_CG_STATE_GATE);
+ 				cgs_set_powergating_state(
+ 							hwmgr->device,
+ 							AMD_IP_BLOCK_TYPE_VCE,
+@@ -218,7 +218,7 @@ int cz_dpm_powergate_vce(struct pp_hwmgr *hwmgr, bool bgate)
+ 				cgs_set_clockgating_state(
+ 							hwmgr->device,
+ 							AMD_IP_BLOCK_TYPE_VCE,
+-							AMD_PG_STATE_GATE);
++							AMD_PG_STATE_UNGATE);
+ 				cz_dpm_update_vce_dpm(hwmgr);
+ 				cz_enable_disable_vce_dpm(hwmgr, true);
+ 				return 0;

@@ -1,0 +1,54 @@
+commit 01f65aad08112d7e41df01a65cc60da2d86e1c77
+Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Tue Jan 24 15:18:21 2017 -0800
+
+    frv: add atomic64_add_unless()
+    
+    
+    [ Upstream commit 545d58f677b21401f6de1ac12c25cc109f903ace ]
+    
+    The build of frv allmodconfig was failing with the error:
+    lib/atomic64_test.c:209:9: error:
+    
+    	implicit declaration of function 'atomic64_add_unless'
+    
+    All the atomic64 operations were defined in frv, but
+    atomic64_add_unless() was not done.
+    
+    Implement atomic64_add_unless() as done in other arches.
+    
+    Link: http://lkml.kernel.org/r/1484781236-6698-1-git-send-email-sudipm.mukherjee@gmail.com
+    Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+    Cc: David Howells <dhowells@redhat.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/frv/include/asm/atomic.h b/arch/frv/include/asm/atomic.h
+index 1c2a5e2..994ed3d 100644
+--- a/arch/frv/include/asm/atomic.h
++++ b/arch/frv/include/asm/atomic.h
+@@ -161,6 +161,22 @@ static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
+ 	return c;
+ }
+ 
++static inline int atomic64_add_unless(atomic64_t *v, long long i, long long u)
++{
++	long long c, old;
++
++	c = atomic64_read(v);
++	for (;;) {
++		if (unlikely(c == u))
++			break;
++		old = atomic64_cmpxchg(v, c, c + i);
++		if (likely(old == c))
++			break;
++		c = old;
++	}
++	return c != u;
++}
++
+ #define ATOMIC_OP(op)							\
+ static inline int atomic_fetch_##op(int i, atomic_t *v)			\
+ {									\

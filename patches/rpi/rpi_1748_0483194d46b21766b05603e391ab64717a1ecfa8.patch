@@ -1,0 +1,42 @@
+commit 0483194d46b21766b05603e391ab64717a1ecfa8
+Author: Eric Leblond <eric@regit.org>
+Date:   Thu May 11 18:56:38 2017 +0200
+
+    netfilter: synproxy: fix conntrackd interaction
+    
+    commit 87e94dbc210a720a34be5c1174faee5c84be963e upstream.
+    
+    This patch fixes the creation of connection tracking entry from
+    netlink when synproxy is used. It was missing the addition of
+    the synproxy extension.
+    
+    This was causing kernel crashes when a conntrack entry created by
+    conntrackd was used after the switch of traffic from active node
+    to the passive node.
+    
+    Signed-off-by: Eric Leblond <eric@regit.org>
+    Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+index 2754045..04111c1 100644
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -45,6 +45,8 @@
+ #include <net/netfilter/nf_conntrack_zones.h>
+ #include <net/netfilter/nf_conntrack_timestamp.h>
+ #include <net/netfilter/nf_conntrack_labels.h>
++#include <net/netfilter/nf_conntrack_seqadj.h>
++#include <net/netfilter/nf_conntrack_synproxy.h>
+ #ifdef CONFIG_NF_NAT_NEEDED
+ #include <net/netfilter/nf_nat_core.h>
+ #include <net/netfilter/nf_nat_l4proto.h>
+@@ -1800,6 +1802,8 @@ ctnetlink_create_conntrack(struct net *net,
+ 	nf_ct_tstamp_ext_add(ct, GFP_ATOMIC);
+ 	nf_ct_ecache_ext_add(ct, 0, 0, GFP_ATOMIC);
+ 	nf_ct_labels_ext_add(ct);
++	nfct_seqadj_ext_add(ct);
++	nfct_synproxy_ext_add(ct);
+ 
+ 	/* we must add conntrack extensions before confirmation. */
+ 	ct->status |= IPS_CONFIRMED;

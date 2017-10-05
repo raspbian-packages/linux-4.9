@@ -1,0 +1,29 @@
+commit 24efadea7b1a5dc6d8dfbcafe63aa393f371ef1c
+Author: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Mon Jan 9 11:20:16 2017 +0300
+
+    misc: mic: double free on ioctl error path
+    
+    commit 816c9311f1144a03da1fdc4feb2f6b0d3299fca0 upstream.
+    
+    This function only has one caller.  Freeing "vdev" here leads to a use
+    after free bug.  There are several other error paths in this function
+    but this is the only one which frees "vdev".  It looks like the kfree()
+    can be safely removed.
+    
+    Fixes: 61e9c905df78 ("misc: mic: Enable VOP host side functionality")
+    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/misc/mic/vop/vop_vringh.c b/drivers/misc/mic/vop/vop_vringh.c
+index 88e4523..fed992e 100644
+--- a/drivers/misc/mic/vop/vop_vringh.c
++++ b/drivers/misc/mic/vop/vop_vringh.c
+@@ -292,7 +292,6 @@ static int vop_virtio_add_device(struct vop_vdev *vdev,
+ 	if (ret) {
+ 		dev_err(vop_dev(vdev), "%s %d err %d\n",
+ 			__func__, __LINE__, ret);
+-		kfree(vdev);
+ 		return ret;
+ 	}
+ 

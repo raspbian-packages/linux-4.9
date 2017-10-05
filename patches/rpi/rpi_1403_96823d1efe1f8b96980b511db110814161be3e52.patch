@@ -1,0 +1,33 @@
+commit 96823d1efe1f8b96980b511db110814161be3e52
+Author: Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Thu May 18 16:29:23 2017 +0300
+
+    crypto: asymmetric_keys - handle EBUSY due to backlog correctly
+    
+    commit e68368aed56324e2e38d4f6b044bb8cf82077fc2 upstream.
+    
+    public_key_verify_signature() was passing the CRYPTO_TFM_REQ_MAY_BACKLOG
+    flag to akcipher_request_set_callback() but was not handling correctly
+    the case where a -EBUSY error could be returned from the call to
+    crypto_akcipher_verify() if backlog was used, possibly casuing
+    data corruption due to use-after-free of buffers.
+    
+    Resolve this by handling -EBUSY correctly.
+    
+    Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index fd76b5f..4955eb6 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -140,7 +140,7 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	 * signature and returns that to us.
+ 	 */
+ 	ret = crypto_akcipher_verify(req);
+-	if (ret == -EINPROGRESS) {
++	if ((ret == -EINPROGRESS) || (ret == -EBUSY)) {
+ 		wait_for_completion(&compl.completion);
+ 		ret = compl.err;
+ 	}

@@ -1,0 +1,30 @@
+commit c1b14948214f33a39fb6d652b658a3cbbb109f91
+Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date:   Mon Apr 24 11:58:54 2017 -0300
+
+    tools arch: Sync arch/x86/lib/memcpy_64.S with the kernel
+    
+    commit e883d09c9eb2ffddfd057c17e6a0cef446ec8c9b upstream.
+    
+    Just a minor fix done in:
+    
+      Fixes: 26a37ab319a2 ("x86/mce: Fix copy/paste error in exception table entries")
+    
+    Cc: Tony Luck <tony.luck@intel.com>
+    Link: http://lkml.kernel.org/n/tip-ni9jzdd5yxlail6pq8cuexw2@git.kernel.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/tools/arch/x86/lib/memcpy_64.S b/tools/arch/x86/lib/memcpy_64.S
+index 49e6eba..98dcc11 100644
+--- a/tools/arch/x86/lib/memcpy_64.S
++++ b/tools/arch/x86/lib/memcpy_64.S
+@@ -286,7 +286,7 @@ ENDPROC(memcpy_mcsafe_unrolled)
+ 	_ASM_EXTABLE_FAULT(.L_copy_leading_bytes, .L_memcpy_mcsafe_fail)
+ 	_ASM_EXTABLE_FAULT(.L_cache_w0, .L_memcpy_mcsafe_fail)
+ 	_ASM_EXTABLE_FAULT(.L_cache_w1, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_w3, .L_memcpy_mcsafe_fail)
++	_ASM_EXTABLE_FAULT(.L_cache_w2, .L_memcpy_mcsafe_fail)
+ 	_ASM_EXTABLE_FAULT(.L_cache_w3, .L_memcpy_mcsafe_fail)
+ 	_ASM_EXTABLE_FAULT(.L_cache_w4, .L_memcpy_mcsafe_fail)
+ 	_ASM_EXTABLE_FAULT(.L_cache_w5, .L_memcpy_mcsafe_fail)

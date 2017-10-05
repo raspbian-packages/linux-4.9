@@ -1,0 +1,37 @@
+commit 9feab6b99a977fee8567ee884a4dd440bc7c452e
+Author: Devin Heitmueller <dheitmueller@kernellabs.com>
+Date:   Tue Jun 27 13:08:51 2017 -0400
+
+    Add USB quirk for HVR-950q to avoid intermittent device resets
+    
+    commit 6836796de4019944f4ba4c99a360e8250fd2e735 upstream.
+    
+    The USB core and sysfs will attempt to enumerate certain parameters
+    which are unsupported by the au0828 - causing inconsistent behavior
+    and sometimes causing the chip to reset.  Avoid making these calls.
+    
+    This problem manifested as intermittent cases where the au8522 would
+    be reset on analog video startup, in particular when starting up ALSA
+    audio streaming in parallel - the sysfs entries created by
+    snd-usb-audio on streaming startup would result in unsupported control
+    messages being sent during tuning which would put the chip into an
+    unknown state.
+    
+    Signed-off-by: Devin Heitmueller <dheitmueller@kernellabs.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 96b21b0..3116edf 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -223,6 +223,10 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	/* Blackmagic Design UltraStudio SDI */
+ 	{ USB_DEVICE(0x1edb, 0xbd4f), .driver_info = USB_QUIRK_NO_LPM },
+ 
++	/* Hauppauge HVR-950q */
++	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
++			USB_QUIRK_CONFIG_INTF_STRINGS },
++
+ 	/* INTEL VALUE SSD */
+ 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
+ 

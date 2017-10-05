@@ -1,0 +1,40 @@
+commit fa93343705ad9e77e656bb37f36623e5d341e4c0
+Author: Russell King <rmk+kernel@armlinux.org.uk>
+Date:   Tue Jan 10 23:13:45 2017 +0000
+
+    net: phy: marvell: fix Marvell 88E1512 used in SGMII mode
+    
+    
+    [ Upstream commit a13c06525ab9ff442924e67df9393a5efa914c56 ]
+    
+    When an Marvell 88E1512 PHY is connected to a nic in SGMII mode, the
+    fiber page is used for the SGMII host-side connection.  The PHY driver
+    notices that SUPPORTED_FIBRE is set, so it tries reading the fiber page
+    for the link status, and ends up reading the MAC-side status instead of
+    the outgoing (copper) link.  This leads to incorrect results reported
+    via ethtool.
+    
+    If the PHY is connected via SGMII to the host, ignore the fiber page.
+    However, continue to allow the existing power management code to
+    suspend and resume the fiber page.
+    
+    Fixes: 6cfb3bcc0641 ("Marvell phy: check link status in case of fiber link.")
+    Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 7f01099..9dbda20 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -1204,7 +1204,8 @@ static int marvell_read_status(struct phy_device *phydev)
+ 	int err;
+ 
+ 	/* Check the fiber mode first */
+-	if (phydev->supported & SUPPORTED_FIBRE) {
++	if (phydev->supported & SUPPORTED_FIBRE &&
++	    phydev->interface != PHY_INTERFACE_MODE_SGMII) {
+ 		err = phy_write(phydev, MII_MARVELL_PHY_PAGE, MII_M1111_FIBER);
+ 		if (err < 0)
+ 			goto error;

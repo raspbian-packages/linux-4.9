@@ -1,0 +1,36 @@
+commit dacb3778486a55f39da84bd83db3fdd3f291d527
+Author: Ivan Vecera <cera@cera.cz>
+Date:   Fri Jan 13 22:38:27 2017 +0100
+
+    be2net: fix status check in be_cmd_pmac_add()
+    
+    
+    [ Upstream commit fe68d8bfe59c561664aa87d827aa4b320eb08895 ]
+    
+    Return value from be_mcc_notify_wait() contains a base completion status
+    together with an additional status. The base_status() macro need to be
+    used to access base status.
+    
+    Fixes: e3a7ae2 be2net: Changing MAC Address of a VF was broken
+    Cc: Sathya Perla <sathya.perla@broadcom.com>
+    Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>
+    Cc: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+    Cc: Somnath Kotur <somnath.kotur@broadcom.com>
+    Signed-off-by: Ivan Vecera <cera@cera.cz>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.c b/drivers/net/ethernet/emulex/benet/be_cmds.c
+index 0e74529..30e8550 100644
+--- a/drivers/net/ethernet/emulex/benet/be_cmds.c
++++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
+@@ -1118,7 +1118,7 @@ int be_cmd_pmac_add(struct be_adapter *adapter, u8 *mac_addr,
+ err:
+ 	mutex_unlock(&adapter->mcc_lock);
+ 
+-	 if (status == MCC_STATUS_UNAUTHORIZED_REQUEST)
++	 if (base_status(status) == MCC_STATUS_UNAUTHORIZED_REQUEST)
+ 		status = -EPERM;
+ 
+ 	return status;

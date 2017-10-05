@@ -1,0 +1,27 @@
+commit 54f58e2bcd177215373a573d31da6fd471cb91c4
+Author: Bjørn Mork <bjorn@mork.no>
+Date:   Tue Jun 13 19:11:42 2017 +0200
+
+    USB: serial: qcserial: new Sierra Wireless EM7305 device ID
+    
+    commit 996fab55d864ed604158f71724ff52db1c2454a3 upstream.
+    
+    A new Sierra Wireless EM7305 device ID used in a Toshiba laptop.
+    
+    Reported-by: Petr Kloc <petr_kloc@yahoo.com>
+    Signed-off-by: Bjørn Mork <bjorn@mork.no>
+    Signed-off-by: Johan Hovold <johan@kernel.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/usb/serial/qcserial.c b/drivers/usb/serial/qcserial.c
+index fd509ed6c..652b433 100644
+--- a/drivers/usb/serial/qcserial.c
++++ b/drivers/usb/serial/qcserial.c
+@@ -158,6 +158,7 @@ static const struct usb_device_id id_table[] = {
+ 	{DEVICE_SWI(0x1199, 0x9056)},	/* Sierra Wireless Modem */
+ 	{DEVICE_SWI(0x1199, 0x9060)},	/* Sierra Wireless Modem */
+ 	{DEVICE_SWI(0x1199, 0x9061)},	/* Sierra Wireless Modem */
++	{DEVICE_SWI(0x1199, 0x9063)},	/* Sierra Wireless EM7305 */
+ 	{DEVICE_SWI(0x1199, 0x9070)},	/* Sierra Wireless MC74xx */
+ 	{DEVICE_SWI(0x1199, 0x9071)},	/* Sierra Wireless MC74xx */
+ 	{DEVICE_SWI(0x1199, 0x9078)},	/* Sierra Wireless EM74xx */

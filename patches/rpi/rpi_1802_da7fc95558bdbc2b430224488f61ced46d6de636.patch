@@ -1,0 +1,39 @@
+commit da7fc95558bdbc2b430224488f61ced46d6de636
+Author: G. Campana <gcampana@quarkslab.com>
+Date:   Thu Jan 19 23:37:46 2017 +0200
+
+    virtio_console: fix a crash in config_work_handler
+    
+    
+    [ Upstream commit 8379cadf71c3ee8173a1c6fc1ea7762a9638c047 ]
+    
+    Using control_work instead of config_work as the 3rd argument to
+    container_of results in an invalid portdev pointer. Indeed, the work
+    structure is initialized as below:
+    
+        INIT_WORK(&portdev->config_work, &config_work_handler);
+    
+    It leads to a crash when portdev->vdev is dereferenced later. This
+    bug
+    is triggered when the guest uses a virtio-console without multiport
+    feature and receives a config_changed virtio interrupt.
+    
+    Signed-off-by: G. Campana <gcampana@quarkslab.com>
+    Reviewed-by: Amit Shah <amit.shah@redhat.com>
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+    Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 471a301..8f890c1 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1870,7 +1870,7 @@ static void config_work_handler(struct work_struct *work)
+ {
+ 	struct ports_device *portdev;
+ 
+-	portdev = container_of(work, struct ports_device, control_work);
++	portdev = container_of(work, struct ports_device, config_work);
+ 	if (!use_multiport(portdev)) {
+ 		struct virtio_device *vdev;
+ 		struct port *port;

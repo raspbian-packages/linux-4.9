@@ -1,0 +1,44 @@
+commit 2cfe1bcd9116477c3c8c9bf0bbb421e6ba0e5562
+Author: Eli Cohen <eli@mellanox.com>
+Date:   Tue Jan 3 23:55:19 2017 +0200
+
+    IB/mlx5: Fix kernel to user leak prevention logic
+    
+    commit de8d6e02efbdb259c67832ccf027d7ace9b91d5d upstream.
+    
+    The logic was broken as it failed to update the response length for
+    architectures with PAGE_SIZE larger than 4kB. As a result further
+    extension of the ucontext response struct would fail.
+    
+    Fixes: d69e3bcf7976 ('IB/mlx5: Mmap the HCA's core clock register to user-space')
+    Signed-off-by: Eli Cohen <eli@mellanox.com>
+    Reviewed-by: Matan Barak <matanb@mellanox.com>
+    Signed-off-by: Leon Romanovsky <leon@kernel.org>
+    Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 11bfa27..282c9fb 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -1105,13 +1105,13 @@ static struct ib_ucontext *mlx5_ib_alloc_ucontext(struct ib_device *ibdev,
+ 	 * pretend we don't support reading the HCA's core clock. This is also
+ 	 * forced by mmap function.
+ 	 */
+-	if (PAGE_SIZE <= 4096 &&
+-	    field_avail(typeof(resp), hca_core_clock_offset, udata->outlen)) {
+-		resp.comp_mask |=
+-			MLX5_IB_ALLOC_UCONTEXT_RESP_MASK_CORE_CLOCK_OFFSET;
+-		resp.hca_core_clock_offset =
+-			offsetof(struct mlx5_init_seg, internal_timer_h) %
+-			PAGE_SIZE;
++	if (field_avail(typeof(resp), hca_core_clock_offset, udata->outlen)) {
++		if (PAGE_SIZE <= 4096) {
++			resp.comp_mask |=
++				MLX5_IB_ALLOC_UCONTEXT_RESP_MASK_CORE_CLOCK_OFFSET;
++			resp.hca_core_clock_offset =
++				offsetof(struct mlx5_init_seg, internal_timer_h) % PAGE_SIZE;
++		}
+ 		resp.response_length += sizeof(resp.hca_core_clock_offset) +
+ 					sizeof(resp.reserved2);
+ 	}

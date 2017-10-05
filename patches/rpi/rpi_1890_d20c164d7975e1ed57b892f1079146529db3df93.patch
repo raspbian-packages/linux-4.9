@@ -1,0 +1,32 @@
+commit d20c164d7975e1ed57b892f1079146529db3df93
+Author: Radim Krčmář <rkrcmar@redhat.com>
+Date:   Thu May 18 19:37:30 2017 +0200
+
+    KVM: x86: zero base3 of unusable segments
+    
+    commit f0367ee1d64d27fa08be2407df5c125442e885e3 upstream.
+    
+    Static checker noticed that base3 could be used uninitialized if the
+    segment was not present (useable).  Random stack values probably would
+    not pass VMCS entry checks.
+    
+    Reported-by:  Dan Carpenter <dan.carpenter@oracle.com>
+    Fixes: 1aa366163b8b ("KVM: x86 emulator: consolidate segment accessors")
+    Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+    Reviewed-by: David Hildenbrand <david@redhat.com>
+    Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e1c1003..3dbcb09 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4999,6 +4999,8 @@ static bool emulator_get_segment(struct x86_emulate_ctxt *ctxt, u16 *selector,
+ 
+ 	if (var.unusable) {
+ 		memset(desc, 0, sizeof(*desc));
++		if (base3)
++			*base3 = 0;
+ 		return false;
+ 	}
+ 

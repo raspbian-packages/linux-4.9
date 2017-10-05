@@ -1,0 +1,39 @@
+commit 2b0106aad3571fb2fb959100ed4605e1ce3b383a
+Author: Marc Zyngier <marc.zyngier@arm.com>
+Date:   Tue May 2 14:30:39 2017 +0100
+
+    KVM: arm/arm64: vgic-v2: Do not use Active+Pending state for a HW interrupt
+    
+    commit ddf42d068f8802de122bb7efdfcb3179336053f1 upstream.
+    
+    When an interrupt is injected with the HW bit set (indicating that
+    deactivation should be propagated to the physical distributor),
+    special care must be taken so that we never mark the corresponding
+    LR with the Active+Pending state (as the pending state is kept in
+    the physycal distributor).
+    
+    Cc: stable@vger.kernel.org
+    Fixes: 140b086dd197 ("KVM: arm/arm64: vgic-new: Add GICv2 world switch backend")
+    Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+    Reviewed-by: Christoffer Dall <cdall@linaro.org>
+    Signed-off-by: Christoffer Dall <cdall@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+index 834137e..1ab58f7 100644
+--- a/virt/kvm/arm/vgic/vgic-v2.c
++++ b/virt/kvm/arm/vgic/vgic-v2.c
+@@ -168,6 +168,13 @@ void vgic_v2_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq *irq, int lr)
+ 	if (irq->hw) {
+ 		val |= GICH_LR_HW;
+ 		val |= irq->hwintid << GICH_LR_PHYSID_CPUID_SHIFT;
++		/*
++		 * Never set pending+active on a HW interrupt, as the
++		 * pending state is kept at the physical distributor
++		 * level.
++		 */
++		if (irq->active && irq->pending)
++			val &= ~GICH_LR_PENDING_BIT;
+ 	} else {
+ 		if (irq->config == VGIC_CONFIG_LEVEL)
+ 			val |= GICH_LR_EOI;

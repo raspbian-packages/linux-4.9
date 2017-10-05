@@ -1,0 +1,37 @@
+commit 65792e48079173f7ceede82cca4987031283b530
+Author: Russell King <rmk+kernel@armlinux.org.uk>
+Date:   Tue May 30 16:21:51 2017 +0100
+
+    net: phy: fix marvell phy status reading
+    
+    commit 898805e0cdf7fd860ec21bf661d3a0285a3defbd upstream.
+    
+    The Marvell driver incorrectly provides phydev->lp_advertising as the
+    logical and of the link partner's advert and our advert.  This is
+    incorrect - this field is supposed to store the link parter's unmodified
+    advertisment.
+    
+    This allows ethtool to report the correct link partner auto-negotiation
+    status.
+    
+    Fixes: be937f1f89ca ("Marvell PHY m88e1111 driver fix")
+    Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+    Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+    Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 21e116e..7f01099 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -1118,8 +1118,6 @@ static int marvell_read_status_page(struct phy_device *phydev, int page)
+ 		if (adv < 0)
+ 			return adv;
+ 
+-		lpa &= adv;
+-
+ 		if (status & MII_M1011_PHY_STATUS_FULLDUPLEX)
+ 			phydev->duplex = DUPLEX_FULL;
+ 		else
