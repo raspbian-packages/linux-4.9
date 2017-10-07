@@ -1112,3 +1112,4 @@ rpi/rpi_1966_a5d104e0d646f5acb7f68311ee840839b00e36e5.patch
 rpi/rpi_1967_7b5897e889d8acb181b61ff09eeb22fb14eb04da.patch
 rpi/rpi_9999_other_changes.patch
 #rpi/rpi_9999_other_changes.patch
+rpmanualusbip-format-overflow.patch

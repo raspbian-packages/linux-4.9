@@ -1,4 +1,4 @@
-Package: linux-compiler-gcc-6-arm
+Package: linux-compiler-gcc-4.9-arm
 Build-Profiles: <!stage1>
 Depends: gcc-4.9, ${misc:Depends}
 Architecture: armel armhf
