@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-version=4.9.0-4-s390x
+version=4.9.0-4-rpi2
 image_path=/boot/vmlinuz-$version
 kimage=vmlinuz
 
