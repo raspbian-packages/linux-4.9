@@ -19,12 +19,12 @@ git config --local user.email root@raspbian.org
 git config merge.conflictstyle diff3
 
 #remove some debian patches that conflict with rpi stuff
-patch -p1 -R < debian/patches/bugfix/all/mm-larger-stack-guard-gap-between-vmas.patch
-grep -v bugfix/all/mm-larger-stack-guard-gap-between-vmas.patch debian/patches/series | sponge debian/patches/series
-patch -p1 -R < debian/patches/bugfix/x86/pinctrl-cherryview-add-a-quirk-to-make-acer-chromebo.patch
-grep -v bugfix/x86/pinctrl-cherryview-add-a-quirk-to-make-acer-chromebo.patch debian/patches/series | sponge debian/patches/series
+#patch -p1 -R < debian/patches/bugfix/all/mm-larger-stack-guard-gap-between-vmas.patch
+#grep -v bugfix/all/mm-larger-stack-guard-gap-between-vmas.patch debian/patches/series | sponge debian/patches/series
+#patch -p1 -R < debian/patches/bugfix/x86/pinctrl-cherryview-add-a-quirk-to-make-acer-chromebo.patch
+#grep -v bugfix/x86/pinctrl-cherryview-add-a-quirk-to-make-acer-chromebo.patch debian/patches/series | sponge debian/patches/series
 
-git commit -a -m 'remove some debian patches that conflict with rpi stuff'
+#git commit -a -m 'remove some debian patches that conflict with rpi stuff'
 
 #pseudomerge in upstream history
 #annoyingly newer versions of git require --allow-unrelated-histories while older versions do not recognise it

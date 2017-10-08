@@ -43,6 +43,18 @@ unset QUILT_PATCHES
 cd ..
 rm -rf usextract
 
-git commit -a -m 'defuzz patches'
+if ! git diff --quiet; then
+	git commit -a -m 'defuzz patches'
+fi
+
+#apply manual downstream patches, otherwise dgit will remove them.
+MANUALDOWNSTREAMPATCHES=`git diff buildnewlinuxpackage-deb buildnewlinuxpackage-pkgmerge debian/patches/series | grep -E '^\+' | grep -Ev '^\+#'  | grep -Ev '^\+rpi/' | grep -Ev '^\+\+' | sed s/^.//`
+for FILE in $MANUALDOWNSTREAMPATCHES ; do
+	patch -p1 < debian/patches/$FILE
+done
+
+if ! git diff --quiet; then
+	git commit -a -m 'apply manual raspbian patches'
+fi
 
 dgit --quilt=auto quilt-fixup
