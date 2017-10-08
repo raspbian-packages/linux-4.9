@@ -176,6 +176,9 @@ int main(int argc, char *argv[])
 			break;
 		case '?':
 			printf("usbip: invalid option\n");
+			usbip_usage();
+			goto out;
+			break;
 		default:
 			usbip_usage();
 			goto out;

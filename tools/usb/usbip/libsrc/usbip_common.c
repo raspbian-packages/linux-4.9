@@ -214,10 +214,11 @@ int read_usb_device(struct udev_device *sdev, struct usbip_usb_device *udev)
 int read_usb_interface(struct usbip_usb_device *udev, int i,
 		       struct usbip_usb_interface *uinf)
 {
-	char busid[SYSFS_BUS_ID_SIZE];
+	char busid[SYSFS_BUS_ID_SIZE*2];
 	struct udev_device *sif;
 
-	sprintf(busid, "%s:%d.%d", udev->busid, udev->bConfigurationValue, i);
+	snprintf(busid,SYSFS_BUS_ID_SIZE*2, "%s:%d.%d", udev->busid, udev->bConfigurationValue, i);
+	busid[SYSFS_BUS_ID_SIZE-1] = 0;
 
 	sif = udev_device_new_from_subsystem_sysname(udev_context, "usb", busid);
 	if (!sif) {
