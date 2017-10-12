@@ -1,4 +1,4 @@
-linux-4.9 (4.9.51-1+rpi1) buster-staging; urgency=medium
+linux-4.9 (4.9.51-1+rpi1) stretch-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]
   [Vagrant Cascadian <vagrant@debian.org>]
@@ -136,15 +136,18 @@ linux-4.9 (4.9.51-1+rpi1) buster-staging; urgency=medium
   * Remove debian/installer/armhf/modules/armhf-rpi*/ext?-modules
 
   [changes brought forward from 4.9.30-2+deb9u2+rpi1+stretch by Peter Michael Green <plugwash@raspbian.org> at Wed, 27 Sep 2017 02:45:53 +0000]
-  * Rebuild under stretch.
   * Re-enable libc-dev package.
 
   [changes brought forward from 4.9.30-2+deb9u2+rpi1+stretch+buster by Peter Michael Green <plugwash@raspbian.org> at Thu, 05 Oct 2017 02:53:12 +0000]
-  * Rebuild under buster
   * Fix linux-compiler package generation.
   * Fix usbip "format-overflow" failure.
 
- -- Raspbian forward porter <root@raspbian.org>  Sun, 08 Oct 2017 00:26:45 +0000
+  [changes introduced in 4.9.51-1+rpi1 by Peter Michael Green]
+  * Make usbip gcc 7 fix work with gcc 6 too.
+  * Remove features/all/rt/0207-block-Turn-off-warning-which-is-bogus-on-RT.patch from debian/patches/series-rt as it conflicts
+    with rpi patches.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Sun, 08 Oct 2017 00:26:45 +0000
 
 linux (4.9.51-1) stretch; urgency=medium
 

@@ -204,7 +204,6 @@ features/all/rt/0203-hrtimer-Move-schedule_work-call-to-helper-thread.patch
 features/all/rt/0204-locking-percpu-rwsem-Remove-preempt_disable-variants.patch
 features/all/rt/0205-fs-namespace-preemption-fix.patch
 features/all/rt/0206-mm-Protect-activate_mm-by-preempt_-disable-enable-_r.patch
-features/all/rt/0207-block-Turn-off-warning-which-is-bogus-on-RT.patch
 features/all/rt/0208-fs-ntfs-disable-interrupt-only-on-RT.patch
 features/all/rt/0209-fs-jbd2-pull-your-plug-when-waiting-for-space.patch
 features/all/rt/0210-x86-Convert-mce-timer-to-hrtimer.patch
