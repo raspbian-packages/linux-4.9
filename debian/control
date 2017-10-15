@@ -668,7 +668,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-alpha-generic
 Architecture: alpha
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-alpha-generic
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-alpha-generic, generally used for building
@@ -701,7 +701,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-alpha-smp
 Architecture: alpha
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-alpha-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-alpha-smp, generally used for building out-of-tree
@@ -1366,7 +1366,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-amd64
 Architecture: amd64
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-amd64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-amd64, generally used for building out-of-tree kernel
@@ -1401,7 +1401,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-rt-amd64
 Architecture: amd64
-Depends: linux-headers-4.9.0-4-common-rt (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common-rt (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-rt-amd64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-rt-amd64, generally used for building out-of-tree
@@ -1906,7 +1906,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-arm64
 Architecture: arm64
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-arm64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-arm64, generally used for building out-of-tree kernel
@@ -2411,7 +2411,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-marvell
 Architecture: armel
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-marvell
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-marvell, generally used for building out-of-tree
@@ -2936,7 +2936,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-rpi
 Architecture: armhf
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-4.9-arm
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-4.9-arm
 Description: Header files for Linux 4.9.0-4-rpi
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-rpi, generally used for building out-of-tree kernel
@@ -2967,7 +2967,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-rpi2
 Architecture: armhf
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-4.9-arm
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, linux-compiler-gcc-4.9-arm
 Description: Header files for Linux 4.9.0-4-rpi2
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-rpi2, generally used for building out-of-tree kernel
@@ -3873,7 +3873,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-parisc
 Architecture: hppa
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-parisc
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-parisc, generally used for building out-of-tree
@@ -3906,7 +3906,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-parisc64-smp
 Architecture: hppa
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-parisc64-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-parisc64-smp, generally used for building out-of-tree
@@ -5188,7 +5188,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-686
 Architecture: i386
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-686
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-686, generally used for building out-of-tree kernel
@@ -5228,7 +5228,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-686-pae
 Architecture: i386
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-686-pae
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-686-pae, generally used for building out-of-tree
@@ -5268,7 +5268,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-rt-686-pae
 Architecture: i386
-Depends: linux-headers-4.9.0-4-common-rt (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common-rt (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-rt-686-pae
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-rt-686-pae, generally used for building out-of-tree
@@ -5529,7 +5529,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-m68k
 Architecture: m68k
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-m68k
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-m68k, generally used for building out-of-tree kernel
@@ -6592,7 +6592,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-4kc-malta
 Architecture: mips mipsel
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-4kc-malta
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-4kc-malta, generally used for building out-of-tree
@@ -6624,7 +6624,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-5kc-malta
 Architecture: mips mips64 mips64el mipsel
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-5kc-malta
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-5kc-malta, generally used for building out-of-tree
@@ -6656,7 +6656,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-octeon
 Architecture: mips mips64 mips64el mipsel
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-octeon
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-octeon, generally used for building out-of-tree
@@ -7233,7 +7233,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-loongson-3
 Architecture: mips64el mipsel
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-loongson-3
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-loongson-3, generally used for building out-of-tree
@@ -8875,7 +8875,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-powerpc
 Architecture: powerpc
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-powerpc
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-powerpc, generally used for building out-of-tree
@@ -8907,7 +8907,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-powerpc-smp
 Architecture: powerpc
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-powerpc-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-powerpc-smp, generally used for building out-of-tree
@@ -8939,7 +8939,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-powerpc64
 Architecture: powerpc ppc64
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-powerpc64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-powerpc64, generally used for building out-of-tree
@@ -8981,7 +8981,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-powerpcspe
 Architecture: powerpcspe
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-powerpcspe
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-powerpcspe, generally used for building out-of-tree
@@ -9484,7 +9484,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-powerpc64le
 Architecture: ppc64el
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-powerpc64le
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-powerpc64le, generally used for building out-of-tree
@@ -9795,7 +9795,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-s390x
 Architecture: s390x
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-s390x
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-s390x, generally used for building out-of-tree kernel
@@ -10577,7 +10577,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-sh7751r
 Architecture: sh4
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-sh7751r
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-sh7751r, generally used for building out-of-tree
@@ -10610,7 +10610,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-sh7785lcr
 Architecture: sh4
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-sh7785lcr
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-sh7785lcr, generally used for building out-of-tree
@@ -11021,7 +11021,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-sparc64
 Architecture: sparc64
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-sparc64
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-sparc64, generally used for building out-of-tree
@@ -11054,7 +11054,7 @@ Build-Profiles: <!stage1>
 
 Package: linux-headers-4.9.0-4-sparc64-smp
 Architecture: sparc64
-Depends: linux-headers-4.9.0-4-common (= ${binary:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
+Depends: linux-headers-4.9.0-4-common (= ${source:Version}), linux-kbuild-4.9, ${misc:Depends}, gcc-4.9
 Description: Header files for Linux 4.9.0-4-sparc64-smp
  This package provides the architecture-specific kernel header files for
  Linux kernel 4.9.0-4-sparc64-smp, generally used for building out-of-tree
