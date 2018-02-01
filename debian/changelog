@@ -1,3 +1,10 @@
+linux-4.9 (4.9.51-1+rpi1~jessie) jessie-staging; urgency=medium
+
+  * Rebuild for jessie.
+  * Disable libc-dev package.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Thu, 12 Oct 2017 21:51:09 +0000
+
 linux-4.9 (4.9.51-1+rpi1) stretch-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]
