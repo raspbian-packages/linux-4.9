@@ -3422,6 +3422,12 @@ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask)
 }
 
 /*
+ * Maximum number of reclaim retries without any progress before OOM killer
+ * is consider as the only way to move forward.
+ */
+#define MAX_RECLAIM_RETRIES 16
+
+/*
  * Checks whether it makes sense to retry the reclaim to make a forward progress
  * for the given allocation request.
  * The reclaim feedback represented by did_some_progress (any progress during
@@ -4379,8 +4385,7 @@ void show_free_areas(unsigned int filter)
 			K(node_page_state(pgdat, NR_WRITEBACK_TEMP)),
 			K(node_page_state(pgdat, NR_UNSTABLE_NFS)),
 			node_page_state(pgdat, NR_PAGES_SCANNED),
-			pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ?
-				"yes" : "no");
+			!pgdat_reclaimable(pgdat) ? "yes" : "no");
 	}
 
 	for_each_populated_zone(zone) {
