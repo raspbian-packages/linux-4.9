@@ -1,7 +1,7 @@
 From: Peter Zijlstra <peterz@infradead.org>
 Date: Thu, 23 Mar 2017 15:56:11 +0100
-Subject: [PATCH 022/332] sched/rtmutex: Refactor rt_mutex_setprio()
-Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=5327988a7e22cbea84ad4aa43e4cee5e1b9dd794
+Subject: [PATCH 022/351] sched/rtmutex: Refactor rt_mutex_setprio()
+Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=3ff82e8189c758a01961537730b076c9c1a64aa4
 
 Upstream commit acd58620e415aee4a43a808d7d2fd87259ee0001
 
@@ -269,7 +269,7 @@ index 7ca8407e865a..6eb6a8a9dd61 100644
  
  	return true; /* call rt_mutex_postunlock() */
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2db43f49f8cd..77631ab98e3a 100644
+index 7c4614c54a26..3d2bcd9d4c88 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
 @@ -3629,10 +3629,25 @@ EXPORT_SYMBOL(default_wake_function);

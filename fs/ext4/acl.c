@@ -213,9 +213,8 @@ __ext4_set_acl(handle_t *handle, struct inode *inode, int type,
 				      value, size, 0);
 
 	kfree(value);
-	if (!error) {
+	if (!error)
 		set_cached_acl(inode, type, acl);
-	}
 
 	return error;
 }

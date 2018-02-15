@@ -56,6 +56,8 @@ bugfix/x86/platform-x86-ideapad-laptop-add-y720-15ikbn-to-no_hw.patch
 bugfix/x86/platform-x86-ideapad-laptop-add-ideapad-v510-15ikb-t.patch
 bugfix/x86/platform-x86-ideapad-laptop-add-several-models-to-no.patch
 bugfix/powerpc/powerpc-invalidate-erat-on-powersave-wakeup-for-power9.patch
+bugfix/arm/arm-dts-exynos-add-dwc3-susphy-quirk.patch
+bugfix/mips/mips-remove-pt_regs-adjustments-in-indirect-syscall-.patch
 # Arch features
 features/mips/MIPS-increase-MAX-PHYSMEM-BITS-on-Loongson-3-only.patch
 features/mips/MIPS-Loongson-3-Add-Loongson-LS3A-RS780E-1-way-machi.patch
@@ -87,8 +89,10 @@ bugfix/all/fs-add-module_softdep-declarations-for-hard-coded-cr.patch
 bugfix/all/kbuild-do-not-use-hyphen-in-exported-variable-name.patch
 bugfix/all/partially-revert-usb-kconfig-using-select-for-usb_co.patch
 bugfix/all/kbuild-include-addtree-remove-quotes-before-matching-path.patch
-bugfix/all/ext4-preserve-i_mode-if-__ext4_set_acl-fails.patch
-bugfix/all/ext4-don-t-clear-sgid-when-inheriting-acls.patch
+bugfix/all/mm-mmap.c-expand_downwards-don-t-require-the-gap-if-.patch
+bugfix/x86/mmap-remember-the-map_fixed-flag-as-vm_fixed.patch
+bugfix/x86/mmap-add-an-exception-to-the-stack-gap-for-hotspot-jvm.patch
+bugfix/all/xen-time-do-not-decrease-steal-time-after-live-migra.patch
 # Miscellaneous features
 features/all/netfilter-nft_ct-add-notrack-support.patch
 # Securelevel patchset from mjg59
@@ -118,19 +122,13 @@ features/all/securelevel/arm64-add-kernel-config-option-to-set-securelevel-wh.pa
 debian/i386-686-pae-pci-set-pci-nobios-by-default.patch
 debian/time-mark-timer_stats-as-broken.patch
 bugfix/all/tracing-Use-strlcpy-instead-of-strcpy-in-__trace_fin.patch
-bugfix/all/sunrpc-refactor-svc_set_num_threads.patch
-bugfix/all/nfsv4-fix-callback-server-shutdown.patch
-bugfix/x86/kvm-x86-fix-singlestepping-over-syscall.patch
-bugfix/all/nl80211-check-for-the-required-netlink-attributes-presence.patch
-bugfix/x86/kvm-nvmx-don-t-allow-l2-to-access-the-hardware-cr8.patch
-bugfix/all/scsi-qla2xxx-fix-an-integer-overflow-in-sysfs-code.patch
-bugfix/all/video-fbdev-aty-do-not-leak-uninitialized-padding-in.patch
-bugfix/all/scsi-fix-the-issue-that-iscsi_if_rx-doesn-t-parse-nlmsg-properly.patch
-bugfix/x86/kvm-vmx-do-not-bug-on-out-of-bounds-guest-irq.patch
+bugfix/all/dccp-cve-2017-8824-use-after-free-in-dccp-code.patch
+bugfix/all/media-dvb-usb-v2-lmedm04-Improve-logic-checking-of-w.patch
+bugfix/all/media-dvb-usb-v2-lmedm04-move-ts2020-attach-to-dm04_.patch
+bugfix/all/media-hdpvr-fix-an-error-handling-path-in-hdpvr_prob.patch
 # Fix exported symbol versions
 bugfix/ia64/revert-ia64-move-exports-to-definitions.patch
 bugfix/sparc/revert-sparc-move-exports-to-definitions.patch
-bugfix/s390/revert-s390-move-exports-to-definitions.patch
 bugfix/m68k/revert-m68k-move-exports-to-definitions.patch
 bugfix/alpha/revert-alpha-move-exports-to-actual-definitions.patch
 bugfix/powerpc/powerpc-remove-mac-on-linux-hooks.patch
@@ -151,7 +149,6 @@ bugfix/x86/revert-perf-build-fix-libunwind-feature-detection-on.patch
 bugfix/all/tools-build-remove-bpf-run-time-check-at-build-time.patch
 bugfix/all/tools-lib-traceevent-fix-use-of-uninitialized-variables.patch
 bugfix/all/cpupower-bump-soname-version.patch
-bugfix/all/cpupower-fix-checks-for-cpu-existence.patch
 bugfix/all/liblockdep-fix-undefined-symbol-prandom_u32.patch
 bugfix/all/liblockdep-define-the-array_size-macro.patch
 bugfix/all/liblockdep-enable-wall-by-default.patch
@@ -160,6 +157,22 @@ bugfix/all/liblockdep-fix-set-but-not-used-warnings.patch
 bugfix/all/liblockdep-fix-defined-but-not-used-warning-for-init.patch
 debian/ip6_fib-avoid-abi-change-in-4.9.51.patch
 debian/inet_frag-limit-abi-change-in-4.9.51.patch
+debian/s390-mm-avoid-abi-change-in-4.9.52.patch
+debian/mac80211-avoid-abi-change-in-4.9.53.patch
+debian/mmc-sdio-avoid-abi-change-in-4.9.54.patch
+debian/keys-limit-abi-change-in-4.9.59.patch
+debian/netfilter-nat-avoid-abi-change-in-4.9.63.patch
+debian/mm-page_alloc-avoid-abi-change-in-4.9.65.patch
+debian/revert-phy-increase-size-of-mii_bus_id_size-and-bus_id.patch
+debian/revert-bpf-one-perf-event-close-won-t-free-bpf-program-atta.patch
+debian/revert-mm-hugetlbfs-introduce-split-to-vm_operations.patch
+debian/revert-dma-fence-Introduce-drm_fence_set_error-helpe.patch
+debian/revert-lib-genalloc.c-make-the-avail-variable-an-ato.patch
+debian/revert-tcp-invalidate-rate-samples-during-SACK-reneg.patch
+debian/revert-bpf-avoid-false-sharing-of-map-refcount-with-.patch
+debian/bpf-avoid-abi-change-in-4.9.77.patch
+debian/revert-sched-rt-Simplify-the-IPI-based-RT-balancing-.patch
+debian/revert-mm-fix-100-CPU-kswapd-busyloop-on-unreclaimab.patch
 rpi/rpi_1000_366c7c52661464604f6434ec55b0732aea4b2f17.patch
 rpi/rpi_1001_df16d1cbfdc54ecea51471226f98fc5ea63bc7f6.patch
 rpi/rpi_1002_b370f1e071beb6fa3f6835ff32ac90cc53251626.patch

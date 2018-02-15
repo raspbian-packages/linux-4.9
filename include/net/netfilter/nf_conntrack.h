@@ -101,7 +101,11 @@ struct nf_conn {
 	possible_net_t ct_net;
 
 #if IS_ENABLED(CONFIG_NF_NAT)
-	struct rhlist_head nat_bysource;
+#ifndef __GENKSYMS__
+	struct hlist_node	nat_bysource;
+#else
+	struct rhlist_head	nat_bysource;
+#endif
 #endif
 	/* all members below initialized via memset */
 	u8 __nfct_init_offset[0];

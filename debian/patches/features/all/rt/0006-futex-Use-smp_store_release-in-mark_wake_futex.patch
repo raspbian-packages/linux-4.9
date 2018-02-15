@@ -1,7 +1,7 @@
 From: Peter Zijlstra <peterz@infradead.org>
 Date: Wed, 22 Mar 2017 11:35:49 +0100
-Subject: [PATCH 006/332] futex: Use smp_store_release() in mark_wake_futex()
-Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=790ca46d2e3b54450f824dc2ef8b74084d5e8fad
+Subject: [PATCH 006/351] futex: Use smp_store_release() in mark_wake_futex()
+Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=a941bea864a5898af72decaedca96d54217657ad
 
 Upstream commit  1b367ece0d7e696cab1c8501bab282cc6a538b3f
 

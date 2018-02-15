@@ -1,7 +1,7 @@
 From: Thomas Gleixner <tglx@linutronix.de>
 Date: Mon, 10 Apr 2017 18:03:36 +0200
-Subject: [PATCH 027/332] futex: Avoid freeing an active timer
-Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=5046327db9d652ecc673475d9e1df3d56426e4ce
+Subject: [PATCH 027/351] futex: Avoid freeing an active timer
+Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=0c3e8a46724a7f0f23f4c52713ca509a4fc4c2b0
 
 Upstream commit 97181f9bd57405b879403763284537e27d46963d
 

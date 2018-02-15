@@ -1,7 +1,7 @@
 From: Peter Zijlstra <peterz@infradead.org>
 Date: Wed, 22 Mar 2017 11:35:48 +0100
-Subject: [PATCH 005/332] futex: Cleanup variable names for futex_top_waiter()
-Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=b56396d64780b170272107e8310cc8b6b061bcab
+Subject: [PATCH 005/351] futex: Cleanup variable names for futex_top_waiter()
+Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=e508a6de022c6e24f364e2a0b6f4f8143408994e
 
 Upstream commit 499f5aca2cdd5e958b27e2655e7e7f82524f46b1
 

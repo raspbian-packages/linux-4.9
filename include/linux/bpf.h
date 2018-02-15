@@ -43,9 +43,20 @@ struct bpf_map {
 	u32 max_entries;
 	u32 map_flags;
 	u32 pages;
+
 	struct user_struct *user;
 	const struct bpf_map_ops *ops;
+#ifdef __GENKSYMS__
 	struct work_struct work;
+#else
+	union {
+		struct work_struct work;
+		struct {
+			bool unpriv_array;
+			u32 index_mask;
+		};
+	};
+#endif
 	atomic_t usercnt;
 };
 

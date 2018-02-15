@@ -1,7 +1,7 @@
 From: Peter Zijlstra <peterz@infradead.org>
 Date: Wed, 22 Mar 2017 11:35:52 +0100
-Subject: [PATCH 009/332] futex: Change locking rules
-Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=5ec34a39d28dd16e1ef6d096a4f9ae8bd0f32cb8
+Subject: [PATCH 009/351] futex: Change locking rules
+Origin: https://git.kernel.org/cgit/linux/kernel/git/rt/linux-stable-rt.git/commit?id=3df179d9d97ca3616702e8ba3ebf97d5b5c2e8fa
 
 Upstream commit 734009e96d1983ad739e5b656e03430b3660c913
 
