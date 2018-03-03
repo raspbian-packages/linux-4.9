@@ -15,6 +15,9 @@ git config --local user.name "Raspbian kernel package updater"
 git config --local user.email root@raspbian.org
 git config merge.conflictstyle diff3
 
+#merge any changes from "packaging" branch
+git merge --no-edit packaging
+
 #merge in existing packaging
 git merge buildnewlinuxpackage-deb || true
 
