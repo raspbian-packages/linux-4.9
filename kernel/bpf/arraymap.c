@@ -99,7 +99,7 @@ static struct bpf_map *array_map_alloc(union bpf_attr *attr)
 	array = bpf_map_area_alloc(array_size);
 	if (!array)
 		return ERR_PTR(-ENOMEM);
-	array->map.index_mask = index_mask;
+	array->index_mask = index_mask;
 	array->map.unpriv_array = unpriv;
 
 	/* copy mandatory map attributes */
@@ -134,7 +134,7 @@ static void *array_map_lookup_elem(struct bpf_map *map, void *key)
 	if (unlikely(index >= array->map.max_entries))
 		return NULL;
 
-	return array->value + array->elem_size * (index & array->map.index_mask);
+	return array->value + array->elem_size * (index & array->index_mask);
 }
 
 /* Called from eBPF program */
@@ -146,7 +146,7 @@ static void *percpu_array_map_lookup_elem(struct bpf_map *map, void *key)
 	if (unlikely(index >= array->map.max_entries))
 		return NULL;
 
-	return this_cpu_ptr(array->pptrs[index & array->map.index_mask]);
+	return this_cpu_ptr(array->pptrs[index & array->index_mask]);
 }
 
 int bpf_percpu_array_copy(struct bpf_map *map, void *key, void *value)
@@ -166,7 +166,7 @@ int bpf_percpu_array_copy(struct bpf_map *map, void *key, void *value)
 	 */
 	size = round_up(map->value_size, 8);
 	rcu_read_lock();
-	pptr = array->pptrs[index & array->map.index_mask];
+	pptr = array->pptrs[index & array->index_mask];
 	for_each_possible_cpu(cpu) {
 		bpf_long_memcpy(value + off, per_cpu_ptr(pptr, cpu), size);
 		off += size;
@@ -214,11 +214,11 @@ static int array_map_update_elem(struct bpf_map *map, void *key, void *value,
 		return -EEXIST;
 
 	if (array->map.map_type == BPF_MAP_TYPE_PERCPU_ARRAY)
-		memcpy(this_cpu_ptr(array->pptrs[index & array->map.index_mask]),
+		memcpy(this_cpu_ptr(array->pptrs[index & array->index_mask]),
 		       value, map->value_size);
 	else
 		memcpy(array->value +
-		       array->elem_size * (index & array->map.index_mask),
+		       array->elem_size * (index & array->index_mask),
 		       value, map->value_size);
 	return 0;
 }
@@ -252,7 +252,7 @@ int bpf_percpu_array_update(struct bpf_map *map, void *key, void *value,
 	 */
 	size = round_up(map->value_size, 8);
 	rcu_read_lock();
-	pptr = array->pptrs[index & array->map.index_mask];
+	pptr = array->pptrs[index & array->index_mask];
 	for_each_possible_cpu(cpu) {
 		bpf_long_memcpy(per_cpu_ptr(pptr, cpu), value + off, size);
 		off += size;

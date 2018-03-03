@@ -58,6 +58,7 @@ bugfix/x86/platform-x86-ideapad-laptop-add-several-models-to-no.patch
 bugfix/powerpc/powerpc-invalidate-erat-on-powersave-wakeup-for-power9.patch
 bugfix/arm/arm-dts-exynos-add-dwc3-susphy-quirk.patch
 bugfix/mips/mips-remove-pt_regs-adjustments-in-indirect-syscall-.patch
+bugfix/powerpc/powerpc-64s-simple-rfi-macro-conversions.patch
 # Arch features
 features/mips/MIPS-increase-MAX-PHYSMEM-BITS-on-Loongson-3-only.patch
 features/mips/MIPS-Loongson-3-Add-Loongson-LS3A-RS780E-1-way-machi.patch
@@ -122,10 +123,6 @@ features/all/securelevel/arm64-add-kernel-config-option-to-set-securelevel-wh.pa
 debian/i386-686-pae-pci-set-pci-nobios-by-default.patch
 debian/time-mark-timer_stats-as-broken.patch
 bugfix/all/tracing-Use-strlcpy-instead-of-strcpy-in-__trace_fin.patch
-bugfix/all/dccp-cve-2017-8824-use-after-free-in-dccp-code.patch
-bugfix/all/media-dvb-usb-v2-lmedm04-Improve-logic-checking-of-w.patch
-bugfix/all/media-dvb-usb-v2-lmedm04-move-ts2020-attach-to-dm04_.patch
-bugfix/all/media-hdpvr-fix-an-error-handling-path-in-hdpvr_prob.patch
 # Fix exported symbol versions
 bugfix/ia64/revert-ia64-move-exports-to-definitions.patch
 bugfix/sparc/revert-sparc-move-exports-to-definitions.patch
@@ -155,24 +152,6 @@ bugfix/all/liblockdep-enable-wall-by-default.patch
 bugfix/all/liblockdep-fix-unused-value-warnings.patch
 bugfix/all/liblockdep-fix-set-but-not-used-warnings.patch
 bugfix/all/liblockdep-fix-defined-but-not-used-warning-for-init.patch
-debian/ip6_fib-avoid-abi-change-in-4.9.51.patch
-debian/inet_frag-limit-abi-change-in-4.9.51.patch
-debian/s390-mm-avoid-abi-change-in-4.9.52.patch
-debian/mac80211-avoid-abi-change-in-4.9.53.patch
-debian/mmc-sdio-avoid-abi-change-in-4.9.54.patch
-debian/keys-limit-abi-change-in-4.9.59.patch
-debian/netfilter-nat-avoid-abi-change-in-4.9.63.patch
-debian/mm-page_alloc-avoid-abi-change-in-4.9.65.patch
-debian/revert-phy-increase-size-of-mii_bus_id_size-and-bus_id.patch
-debian/revert-bpf-one-perf-event-close-won-t-free-bpf-program-atta.patch
-debian/revert-mm-hugetlbfs-introduce-split-to-vm_operations.patch
-debian/revert-dma-fence-Introduce-drm_fence_set_error-helpe.patch
-debian/revert-lib-genalloc.c-make-the-avail-variable-an-ato.patch
-debian/revert-tcp-invalidate-rate-samples-during-SACK-reneg.patch
-debian/revert-bpf-avoid-false-sharing-of-map-refcount-with-.patch
-debian/bpf-avoid-abi-change-in-4.9.77.patch
-debian/revert-sched-rt-Simplify-the-IPI-based-RT-balancing-.patch
-debian/revert-mm-fix-100-CPU-kswapd-busyloop-on-unreclaimab.patch
 rpi/rpi_1000_238175c78a3eb27a980b609767db75b3e69d91e6.patch
 rpi/rpi_1001_cf0ff20fbc5b70096e40ffed402f01727271943e.patch
 rpi/rpi_1002_de430440d932cadd4585c99ee1311b1e2e4aa997.patch

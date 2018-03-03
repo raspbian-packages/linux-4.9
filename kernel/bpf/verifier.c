@@ -3456,7 +3456,9 @@ static int fixup_bpf_calls(struct bpf_verifier_env *env)
 			insn_buf[0] = BPF_JMP_IMM(BPF_JGE, BPF_REG_3,
 						  map_ptr->max_entries, 2);
 			insn_buf[1] = BPF_ALU32_IMM(BPF_AND, BPF_REG_3,
-						    map_ptr->index_mask);
+						    container_of(map_ptr,
+								 struct bpf_array,
+								 map)->index_mask);
 			insn_buf[2] = *insn;
 			cnt = 3;
 			new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);

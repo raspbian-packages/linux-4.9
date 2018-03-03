@@ -1,4 +1,4 @@
-linux-4.9 (4.9.80-2+rpi1) stretch-staging; urgency=medium
+linux-4.9 (4.9.82-1+deb9u2+rpi1) stretch-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]
   [Vagrant Cascadian <vagrant@debian.org>]
@@ -153,7 +153,106 @@ linux-4.9 (4.9.80-2+rpi1) stretch-staging; urgency=medium
   [changes brought forward from 4.9.51-1+rpi3 by Peter Michael Green <plugwash@raspbian.org> at Sun, 22 Oct 2017 11:49:09 +0000]
   * Re-enable usbip and cpupower packages.
 
- -- Raspbian forward porter <root@raspbian.org>  Thu, 15 Feb 2018 17:27:08 +0000
+ -- Raspbian forward porter <root@raspbian.org>  Sat, 03 Mar 2018 14:16:40 +0000
+
+linux (4.9.82-1+deb9u2) stretch-security; urgency=high
+
+  * [x86] linux-headers: use correct version in linux-compiler-gcc-6-x86
+    dependency.
+
+ -- Yves-Alexis Perez <corsac@debian.org>  Wed, 21 Feb 2018 16:29:03 +0100
+
+linux (4.9.82-1+deb9u1) stretch-security; urgency=high
+
+  [ Yves-Alexis Perez ]
+  * New upstream stable update:
+    https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.9.81
+    - [powerpc*] powerpc/64s: Add support for RFI flush of L1-D cache
+      (CVE-2017-5754, Meltdown)
+    - [powerpc*] powerpc/64s: Support disabling RFI flush with no_rfi_flush and nopti
+    - [powerpc*] powerpc/64s: Allow control of RFI flush via debugfs
+    - [x86] kaiser: fix intel_bts perf crashes
+    - [x86] x86/pti: Make unpoison of pgd for trusted boot work for real
+    - kaiser: allocate pgd with order 0 when pti=off
+    - serial: core: mark port as initialized after successful IRQ change
+    - ip6mr: fix stale iterator
+    - net: igmp: add a missing rcu locking section
+    - qlcnic: fix deadlock bug
+    - tcp: release sk_frag.page in tcp_disconnect
+    - soreuseport: fix mem leak in reuseport_add_sock()
+    - KEYS: encrypted: fix buffer overread in valid_master_desc()
+    - [x86] x86/retpoline: Remove the esp/rsp thunk
+    - [x86] KVM: x86: Make indirect calls in emulator speculation safe
+      (CVE-2017-5715, Spectre#2)
+    - KVM: VMX: Make indirect call speculation safe
+    - module/retpoline: Warn about missing retpoline in module
+    - [x86] x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
+    - [x86] x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes
+    - [x86] x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support
+    - [x86] x86/entry/64: Remove the SYSCALL64 fast path
+    - [x86] x86/asm: Move 'status' from thread_struct to thread_info
+    - Documentation: Document array_index_nospec
+    - [x86] x86: Implement array_index_mask_nospec
+    - [x86] x86: Introduce barrier_nospec
+    - [x86] x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
+    - [x86] x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+    - [x86] x86/get_user: Use pointer masking to limit speculation
+    - [x86] x86/syscall: Sanitize syscall table de-references under speculation
+    - vfs, fdtable: Prevent bounds-check bypass via speculative execution
+      (CVE-2017-5753, Spectre#1)
+    - nl80211: Sanitize array index in parse_txq_params
+      (CVE-2017-5753, Spectre#1)
+    - [x86] x86/spectre: Report get_user mitigation for spectre_v1
+    - x86/paravirt: Remove 'noreplace-paravirt' cmdline option
+    - x86/kvm: Update spectre-v1 mitigation
+      (CVE-2017-5753, Spectre#1)
+    - KVM: nVMX: mark vmcs12 pages dirty on L2 exit
+    - KVM/x86: Add IBPB support
+      (CVE-2017-5715, Spectre#2)
+    - KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
+    - KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+    - KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+    - [x86] x86/microcode: Do the family check first
+  * [x86] Rewrite "Make x32 syscall support conditional on a kernel parameter"
+    to use a static key
+  * [x86] linux-compiler-gcc-6-x86: Add versioned dependency on gcc-6 for
+    retpoline support
+  * [powerpc] powerpc/64s: Simple RFI macro conversions (fix FTBFS)
+  * Add myself to Uploaders since I did the last few uploads to Stretch.
+    https://www.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.9.82
+    - CIFS: zero sensitive data when freeing
+    - posix-timer: Properly check sigevent->sigev_notify
+    - dccp: CVE-2017-8824: use-after-free in DCCP code
+    - media: dvb-usb-v2: lmedm04: Improve logic checking of warm start
+    - media: dvb-usb-v2: lmedm04: move ts2020 attach to dm04_lme2510_tuner
+    - ubi: fastmap: Erase outdated anchor PEBs during attach
+    - ubi: block: Fix locking for idr_alloc/idr_remove
+    - nsfs: mark dentry with DCACHE_RCUACCESS
+    - media: v4l2-compat-ioctl32.c: refactor compat ioctl32 logic
+    - crypto: caam - fix endless loop when DECO acquire fails
+    - crypto: sha512-mb - initialize pending lengths correctly
+    - KVM: nVMX: Fix races when sending nested PI while dest enters/leaves L2
+    - KVM: arm/arm64: Handle CPU_PM_ENTER_FAILED
+    - media: dvb-frontends: fix i2c access helpers for KASAN
+    - media: ts2020: avoid integer overflows on 32 bit machines
+    - fs/proc/kcore.c: use probe_kernel_read() instead of memcpy()
+    - kernel/relay.c: revert "kernel/relay.c: fix potential memory leak"
+    - pipe: actually allow root to exceed the pipe buffer limits
+    - ACPI: sbshc: remove raw pointer from printk() message (CVE-2018-5750)
+    - acpi, nfit: fix register dimm error handling
+  * Remove patches included in 4.9.82
+  * Bump ABI to 6, remove all ignored ABI changes since ABI 5.
+  * Remove all patches handling or reverting ABI changes.
+  * [x86] linux-headers: Depend on updated linux-compiler-gcc-6-x86 for
+    retpoline support.
+  * [x86] Add versioned build-dependency on gcc-6 for retpoline support.
+  * [rt] Update to 4.9.76-rt61 except patches refreshed locally since 4.9.76.
+  * [rt] Add gpg key for Julia Cartwright (0x0A120DD923EEDD5F) to upstream
+    keyring
+  [ Ben Hutchings ]
+  * abiupdate.py: Add support for security mirrors
+
+ -- Yves-Alexis Perez <corsac@debian.org>  Mon, 19 Feb 2018 16:10:58 +0100
 
 linux (4.9.80-2) stretch; urgency=medium
 

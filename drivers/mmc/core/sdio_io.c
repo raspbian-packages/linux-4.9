@@ -530,14 +530,14 @@ u16 sdio_readw(struct sdio_func *func, unsigned int addr, int *err_ret)
 	if (err_ret)
 		*err_ret = 0;
 
-	ret = sdio_memcpy_fromio(func, func->core_tmpbuf, addr, 2);
+	ret = sdio_memcpy_fromio(func, func->tmpbuf, addr, 2);
 	if (ret) {
 		if (err_ret)
 			*err_ret = ret;
 		return 0xFFFF;
 	}
 
-	return le16_to_cpup((__le16 *)func->core_tmpbuf);
+	return le16_to_cpup((__le16 *)func->tmpbuf);
 }
 EXPORT_SYMBOL_GPL(sdio_readw);
 
@@ -556,9 +556,9 @@ void sdio_writew(struct sdio_func *func, u16 b, unsigned int addr, int *err_ret)
 {
 	int ret;
 
-	*(__le16 *)func->core_tmpbuf = cpu_to_le16(b);
+	*(__le16 *)func->tmpbuf = cpu_to_le16(b);
 
-	ret = sdio_memcpy_toio(func, addr, func->core_tmpbuf, 2);
+	ret = sdio_memcpy_toio(func, addr, func->tmpbuf, 2);
 	if (err_ret)
 		*err_ret = ret;
 }
@@ -582,14 +582,14 @@ u32 sdio_readl(struct sdio_func *func, unsigned int addr, int *err_ret)
 	if (err_ret)
 		*err_ret = 0;
 
-	ret = sdio_memcpy_fromio(func, func->core_tmpbuf, addr, 4);
+	ret = sdio_memcpy_fromio(func, func->tmpbuf, addr, 4);
 	if (ret) {
 		if (err_ret)
 			*err_ret = ret;
 		return 0xFFFFFFFF;
 	}
 
-	return le32_to_cpup((__le32 *)func->core_tmpbuf);
+	return le32_to_cpup((__le32 *)func->tmpbuf);
 }
 EXPORT_SYMBOL_GPL(sdio_readl);
 
@@ -608,9 +608,9 @@ void sdio_writel(struct sdio_func *func, u32 b, unsigned int addr, int *err_ret)
 {
 	int ret;
 
-	*(__le32 *)func->core_tmpbuf = cpu_to_le32(b);
+	*(__le32 *)func->tmpbuf = cpu_to_le32(b);
 
-	ret = sdio_memcpy_toio(func, addr, func->core_tmpbuf, 4);
+	ret = sdio_memcpy_toio(func, addr, func->tmpbuf, 4);
 	if (err_ret)
 		*err_ret = ret;
 }

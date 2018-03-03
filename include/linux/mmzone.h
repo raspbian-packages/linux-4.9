@@ -633,6 +633,8 @@ typedef struct pglist_data {
 	int kswapd_order;
 	enum zone_type kswapd_classzone_idx;
 
+	int kswapd_failures;		/* Number of 'reclaimed == 0' runs */
+
 #ifdef CONFIG_COMPACTION
 	int kcompactd_max_order;
 	enum zone_type kcompactd_classzone_idx;
@@ -674,11 +676,7 @@ typedef struct pglist_data {
 	 */
 	unsigned long first_deferred_pfn;
 	/* Number of non-deferred pages */
-#ifndef __GENKSYMS__
 	unsigned long static_init_pgcnt;
-#else
-	unsigned long static_init_size;
-#endif
 #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
 
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE

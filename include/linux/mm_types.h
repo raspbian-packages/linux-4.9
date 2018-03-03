@@ -523,12 +523,6 @@ struct mm_struct {
 	atomic_long_t hugetlb_usage;
 #endif
 	struct work_struct async_put_work;
-#ifndef __GENKSYMS__
-#ifdef CONFIG_S390
-	/* bwh: This should be in s390's mm_context_t but that breaks ABI */
-	spinlock_t s390_flush_lock;
-#endif
-#endif
 };
 
 static inline void mm_init_cpumask(struct mm_struct *mm)
