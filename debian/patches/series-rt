@@ -349,3 +349,7 @@ features/all/rt/0348-rt-locking-allow-recursive-local_trylock.patch
 features/all/rt/0349-locking-rtmutex-don-t-drop-the-wait_lock-twice.patch
 features/all/rt/0350-net-use-trylock-in-icmp_sk.patch
 features/all/rt/0351-Linux-4.9.68-rt60-REBASE.patch
+#features/all/rt/signals-allow-rt-tasks-to-cache-one-sigqueue-struct.patch
+#features/all/rt/printk-kill.patch
+#features/all/rt/printk-27force_early_printk-27-boot-param-to-help-with-debugging.patch
+#features/all/rt/sched-mmdrop-delayed.patch
