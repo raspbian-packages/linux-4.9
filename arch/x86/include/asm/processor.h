@@ -113,7 +113,11 @@ struct cpuinfo_x86 {
 	char			x86_vendor_id[16];
 	char			x86_model_id[64];
 	/* in KB - valid for CPUS which support this call: */
+#ifndef __GENKSYMS__
 	unsigned int		x86_cache_size;
+#else
+	int			x86_cache_size;
+#endif
 	int			x86_cache_alignment;	/* In bytes */
 	/* Cache QoS architectural values: */
 	int			x86_cache_max_rmid;	/* max index */
