@@ -1,4 +1,4 @@
-linux-4.9 (4.9.82-1+deb9u2+rpi1) stretch-staging; urgency=medium
+linux-4.9 (4.9.82-1+deb9u3+rpi1) stretch-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]
   [Vagrant Cascadian <vagrant@debian.org>]
@@ -153,7 +153,15 @@ linux-4.9 (4.9.82-1+deb9u2+rpi1) stretch-staging; urgency=medium
   [changes brought forward from 4.9.51-1+rpi3 by Peter Michael Green <plugwash@raspbian.org> at Sun, 22 Oct 2017 11:49:09 +0000]
   * Re-enable usbip and cpupower packages.
 
- -- Raspbian forward porter <root@raspbian.org>  Sat, 03 Mar 2018 14:16:40 +0000
+ -- Raspbian forward porter <root@raspbian.org>  Sat, 31 Mar 2018 14:43:51 +0000
+
+linux (4.9.82-1+deb9u3) stretch-security; urgency=medium
+
+  * [powerpc] Backport more RFI flush related patches from 4.9.84.  Closes:
+    #891249.
+  * [powerpc] Ignore ABI change in paca.
+
+ -- Aurelien Jarno <aurel32@debian.org>  Fri, 02 Mar 2018 08:52:22 +0100
 
 linux (4.9.82-1+deb9u2) stretch-security; urgency=high
 
