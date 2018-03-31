@@ -1,0 +1,66 @@
+#!/bin/bash -ev
+scriptdir=`dirname $(readlink -f "$BASH_SOURCE")`
+
+git reset --hard
+
+#git checkout buildnewlinuxpackage-deb
+#DEBVERSION=`dpkg-parsechangelog -S version`
+#PACKAGE=linux-`echo $NEWVERSION | cut -d '.' -f 1`.`echo $NEWVERSION | cut -d '.' -f 2`
+#git checkout buildnewlinuxpackage-oldpkgonly
+#OLDVERSION=`dpkg-parsechangelog -S version`
+#
+#git checkout buildnewlinuxpackage-pkgmerge
+#NEWVERSION=`dpkg-parsechangelog -S version`
+#TARGETSUITE=`dpkg-parsechangelog -S distribution`
+
+
+git config --local user.name "Raspbian kernel package updater"
+git config --local user.email root@raspbian.org
+git config merge.conflictstyle diff3
+
+git checkout buildnewlinuxpackage-stage2
+touch debian/changelog
+
+debian/rules clean || debian/rules clean
+git add -f debian/*
+git commit -a -m 'run clean target to update generated files in debian packaging and possiblly file permissions'
+
+PACKAGE=`dpkg-parsechangelog -S source`
+UPSTREAM=`dpkg-parsechangelog -S version | cut -d '-' -f 1`
+rm -rf usextract
+mkdir usextract
+cd usextract
+tar -xf ../../${PACKAGE}_${UPSTREAM}.orig.tar.*
+mv linux-${UPSTREAM}/{,.[^.]}* .
+rmdir linux-$UPSTREAM
+export QUILT_PATCHES=../debian/patches                                             
+quilt push -a --fuzz 0 || true                                                  
+while quilt push; do                                                            
+	quilt refresh                                                           
+	quilt push -a --fuzz 0 || true                                          
+done
+unset QUILT_PATCHES
+cd ..
+rm -rf usextract
+
+if ! git diff --quiet; then
+	git commit -a -m 'defuzz patches'
+fi
+
+#apply manual downstream patches, otherwise dgit will remove them.
+MANUALDOWNSTREAMPATCHES=`git diff buildnewlinuxpackage-deb buildnewlinuxpackage-pkgmerge debian/patches/series | grep -E '^\+' | grep -Ev '^\+#'  | grep -Ev '^\+rpi/' | grep -Ev '^\+\+' | sed s/^.//`
+for FILE in $MANUALDOWNSTREAMPATCHES ; do
+	patch -p1 < debian/patches/$FILE
+done
+
+if ! git diff --quiet; then
+	git commit -a -m 'apply manual raspbian patches'
+fi
+
+chmod 644 arch/arm/boot/dts/overlays/*
+if ! git diff --quiet; then
+	git commit -a -m 'Remove executable bits from device tree overlays'
+fi
+
+
+dgit --quilt=auto quilt-fixup
