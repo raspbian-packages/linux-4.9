@@ -1,3 +1,11 @@
+linux-4.9 (4.9.82-1+deb9u3+rpi1~jessie) jessie-staging; urgency=medium
+
+  [Changes brought forward from 4.9.51-1+rpi1~jessie by Peter Michael Green]
+  * Rebuild for jessie.
+  * Disable libc-dev package.
+
+ -- Raspbian automatic kernel updater <root@raspbian.org>  Thu, 12 Apr 2018 16:28:32 +0000
+
 linux-4.9 (4.9.82-1+deb9u3+rpi1) stretch-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]

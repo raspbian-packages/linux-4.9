@@ -118,3 +118,6 @@ gcc-4.9: gcc-4.9 <!stage1 !cross>, gcc-6-@gnu-type-package@:native <!stage1 cros
 # initramfs-generators
 initramfs-fallback: linux-initramfs-tool
 initramfs-tools: initramfs-tools (>= 0.120+deb8u2)
+
+[packages]
+libc-dev: false
