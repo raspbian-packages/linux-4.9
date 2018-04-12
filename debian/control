@@ -203,17 +203,6 @@ Description: Common header files for Linux 4.9.0-6-rt
 Build-Profiles: <!stage1>
 Multi-Arch: foreign
 
-Package: linux-libc-dev
-Architecture: alpha amd64 arm64 armel armhf hppa i386 m68k mips mips64 mips64el mipsel mipsn32 mipsn32el powerpc powerpcspe ppc64 ppc64el s390 s390x sh3 sh4 sparc sparc64 tilegx x32
-Section: devel
-Provides: linux-kernel-headers
-Depends: ${misc:Depends}
-Description: Linux support headers for userspace development
- This package provides userspaces headers from the Linux kernel.  These
- headers are used by the installed headers for GNU libc and other system
- libraries.
-Multi-Arch: same
-
 Package: linux-headers-4.9.0-6-all
 Architecture: alpha amd64 arm64 armel armhf hppa i386 m68k mips mips64 mips64el mipsel powerpc powerpcspe ppc64 ppc64el s390x sh4 sparc64
 Depends: linux-headers-4.9.0-6-all-${kernel:Arch} (= ${binary:Version}), ${misc:Depends}
