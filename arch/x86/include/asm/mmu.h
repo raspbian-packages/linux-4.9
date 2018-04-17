@@ -9,12 +9,6 @@
  * x86 has arch-specific MMU state beyond what lives in mm_struct.
  */
 typedef struct {
-	/*
-	 * ctx_id uniquely identifies this mm_struct.  A ctx_id will never
-	 * be reused, and zero is not a valid ctx_id.
-	 */
-	u64 ctx_id;
-
 #ifdef CONFIG_MODIFY_LDT_SYSCALL
 	struct ldt_struct *ldt;
 #endif
@@ -40,9 +34,7 @@ typedef struct {
 } mm_context_t;
 
 #define INIT_MM_CONTEXT(mm)						\
-	.context = {							\
-		.ctx_id = 1,						\
-	}
+	.x86_ctx_id = 1
 
 void leave_mm(int cpu);
 

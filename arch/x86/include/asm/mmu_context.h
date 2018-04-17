@@ -109,7 +109,7 @@ static inline void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
 static inline int init_new_context(struct task_struct *tsk,
 				   struct mm_struct *mm)
 {
-	mm->context.ctx_id = atomic64_inc_return(&last_mm_ctx_id);
+	mm->x86_ctx_id = atomic64_inc_return(&last_mm_ctx_id);
 
 	#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {

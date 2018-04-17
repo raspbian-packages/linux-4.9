@@ -125,7 +125,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
 		 * switch to a different non-dumpable process.
 		 */
 		if (tsk && tsk->mm &&
-		    tsk->mm->context.ctx_id != last_ctx_id &&
+		    tsk->mm->x86_ctx_id != last_ctx_id &&
 		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
 			indirect_branch_prediction_barrier();
 
@@ -149,7 +149,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
 		 * to the same user.
 		 */
 		if (next != &init_mm)
-			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+			this_cpu_write(cpu_tlbstate.last_ctx_id, next->x86_ctx_id);
 
 		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
 		this_cpu_write(cpu_tlbstate.active_mm, next);
