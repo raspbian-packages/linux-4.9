@@ -523,6 +523,16 @@ struct mm_struct {
 	atomic_long_t hugetlb_usage;
 #endif
 	struct work_struct async_put_work;
+
+#ifndef __GENKSYMS__
+#ifdef CONFIG_X86
+	/*
+	 * ctx_id uniquely identifies this mm_struct.  A ctx_id will never
+	 * be reused, and zero is not a valid ctx_id.
+	 */
+	u64 x86_ctx_id;
+#endif
+#endif
 };
 
 static inline void mm_init_cpumask(struct mm_struct *mm)
