@@ -18,7 +18,9 @@
 #include <linux/bug.h>
 #include <linux/mutex.h>
 #include <linux/rwsem.h>
+#ifndef __GENKSYMS__
 #include <linux/mm_types.h>
+#endif
 #include <linux/capability.h>
 #include <linux/semaphore.h>
 #include <linux/fiemap.h>
