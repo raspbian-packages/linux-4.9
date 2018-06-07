@@ -1,3 +1,160 @@
+linux-4.9 (4.9.82-1+deb9u3+rpi1) stretch-staging; urgency=medium
+
+  [Changes from 3.18.5-1~exp1+rpi1 or earlier]
+  [Vagrant Cascadian <vagrant@debian.org>]
+  * disable other armhf variants. 
+  * disable other armhf debian-installer variants.
+  * attempt to enable debian-installer udebs for rpi.
+  * try harder to enable debian-installer udebs. 
+  [Peter Michael Green]
+  * Include patches to support RaspberryPI from:
+    https://github.com/raspberrypi/linux.git
+    branch: rpi-3.16.y
+  * add script to automatically regenerate rpi patches from git repos
+  * add hack to allow upgrading of kernel located on fat partition to succeed
+  * Fix clean target
+  * Merge config changes from 3.10.11-1+rpi4 packaging.
+  * Build hardware rng module.
+  * Build pps module for gps timeserver support.
+  * Disable fat modules udeb because we are compiling fat support in.
+  * Disable patches that conflict with or duplicate rpi patches
+    - features/all/cgroups-Allow-memory-cgroup-support-to-be-included-b.patch
+  * Add various kernel config changes that the raspberry pi foundation made between
+    3.14 and 3.16 kernel series.
+  * Changes forward ported from 3.12 packaging
+    + optimise update-rpi-patches script a bit (reduce the number of calls to
+      quilt refresh).
+    + apply GPIO related configuration changes requested by Diederik
+      (LP: 1403865)
+  * Rename source package and don't build libc-dev package
+  * Add support for raspberry pi 2
+    + also turn on some stuff for pi1 that was noticed during the pi1/pi2
+      config comparison.
+
+  [Changes introduced in 3.18.5-1~exp1+rpi10 by Peter Michael Green]
+  * Fix kernel configuration for keyboard
+  * split out config.rpix containing config containing settings that
+    are used for both pi1 and pi2.
+
+  [Changes introduced in 3.18.5-1~exp1+rpi11 by Peter Michael Green]
+  * add copyright header to mkknling.
+  * enable I2S modules now we have device tree support.
+
+  [Changes introduced in 3.18.5-1~exp1+rpi17 by Peter Micheal Green]
+  * Add RTC drivers requested by Diederik
+  * Update mmc/dma settings to hopefully fix build failure.
+
+  [Changes introduced in 4.4.6-1+rpi1 by Peter Michael Green]
+  * Disable patches that conflict or potentially conflict with rpi patches.
+    + all patches under features/arm/rpi/ 
+    + features/all/cgroups-Allow-memory-cgroup-support-to-be-included-b.patch
+    + bugfix/all/uas-fix-high-order-alloc.patch 
+    + bugfix/all/firmware-remove-redundant-log-messages-from-drivers.patch
+  * Disable rpi_9999_other_changes.patch, it seems to contain only garbage.
+  * add device tree trailer using scripts/mkknlimg (previously we used our own copy of mkknlimg)
+
+
+  [changes brought forward from 4.4.6-1+rpi2 by Peter Michael Green <plugwash@raspbian.org> at Sun, 17 Apr 2016 01:49:37 +0000]
+  * Add a load of rpf config settings to try and fix boot failure 
+    (if it works a cleanup process will be started afterwards)
+
+  [changes brought forward from 4.4.6-1+rpi3 by Peter Michael Green <plugwash@raspbian.org> at Tue, 19 Apr 2016 14:24:19 +0000]
+  * Don't specity an ext3-modules udeb for rpi and rpi2 flavors, debian no
+    longer seems to provide a template for it
+  * Don't specity an ext2-modules udeb for rpi and rpi2 flavors, debian no
+    longer seems to provide a template for it
+  * Remove some of the rpf config settings added in 4.4.6-1+rpi2
+
+  [changes brought forward from 4.4.6-1+rpi4 by Peter Michael Green <plugwash@raspbian.org> at Thu, 21 Apr 2016 21:08:58 +0000]
+  * With previous version rpi2 kernel booted but rpi kernel didn't.
+    try some more config changes.
+
+  [changes brought forward from 4.4.6-1+rpi5 by Peter Michael Green <plugwash@raspbian.org> at Tue, 26 Apr 2016 15:34:06 +0000]
+  * Unshelve some more config settings.
+
+  [changes brought forward from 4.4.6-1+rpi6 by Peter Michael Green <plugwash@raspbian.org> at Thu, 28 Apr 2016 13:30:55 +0000]
+  * Unshelve some more config settings.
+
+  [changes brought forward from 4.4.6-1+rpi7 by Peter Michael Green <plugwash@raspbian.org> at Thu, 28 Apr 2016 18:09:56 +0000]
+  * unshelve some more config settings.
+
+  [changes brought forward from 4.4.6-1+rpi8 by Peter Michael Green <plugwash@raspbian.org> at Thu, 28 Apr 2016 23:00:11 +0000]
+  * unshelve yet more config settings.
+
+  [changes brought forward from 4.4.6-1+rpi9 by Peter Michael Green <plugwash@raspbian.org> at Sat, 30 Apr 2016 23:47:50 +0000]
+  * Unshelve remaining config settings (this should make us equivilent to +rpi2)
+
+  [changes brought forward from 4.4.6-1+rpi10 by Peter Michael Green <plugwash@raspbian.org> at Sun, 01 May 2016 21:47:14 +0000]
+  * Remove config settings unshelved in +rpi7 and +rpi8
+
+  [changes brought forward from 4.4.6-1+rpi11 by Peter Michael Green <plugwash@raspbian.org> at Mon, 02 May 2016 01:51:47 +0000]
+  * Remove settings unshelved in +rpi5 and +rpi6
+
+  [changes brought forward from 4.4.6-1+rpi12 by Peter Michael Green <plugwash@raspbian.org> at Mon, 02 May 2016 14:59:12 +0000]
+  * Merge config.test into config.rpi
+  * Allow loop drivers to be built as modules so udeb build succeeds.
+  * Remove CONFIG_FIRMWARE_IN_KERNEL from config.rpi
+
+  [changes brought forward from 4.4.6-1+rpi13 by Peter Michael Green <plugwash@raspbian.org> at Tue, 03 May 2016 02:16:27 +0000]
+  * Remove more stuff from config.rpi because it's breaking udeb generation
+    + Remove "# CONFIG_CRYPTO_BLOWFISH is not set"
+    + Remove "# CONFIG_CRYPTO_SERPENT is not set"
+    + Remove "# CONFIG_CRYPTO_TWOFISH is not set"
+    + Remove "# CONFIG_MINIX_FS is not set"
+
+  [changes brought forward from 4.4.6-1+rpi14 by Peter Michael Green <plugwash@raspbian.org> at Thu, 05 May 2016 19:38:10 +0000]
+  * Add a couple of settings to the rpi2 config based on looking at difference
+    between foundation rpi and rpi2 configs.
+  * Move a bunch of stuff from rpi config to rpix config.
+
+  [changes introduced in 4.9.13-1+rpi1 by Peter Michael Green]
+  * Move to new git rebased based strategy for generating rpi patches
+  * Cleanup some stuff dgit doesn't like in clean target.
+  * Disable kernel signing.
+  * Deversion debhelper build-dependency.
+  * swap order of asciidoc and asciidoc-base alternative build-depends.
+  * Deversion flex build-dependency
+  * Deversion libbabeltrace-dev and libbabeltrace-ctf-dev build-dependencys
+  * Build with gcc-4.9
+  * Fix build failure with debhelper versions that don't know --no-automatic-dbgsym
+  * Remove ext3 modules from d-i package list.
+
+  [changes brought forward from 4.9.13-1+rpi2 by Peter Michael Green <plugwash@raspbian.org> at Thu, 11 May 2017 17:42:57 +0000]
+  * Make config changes based on diff between rpi-4.4.y and rpi-4.9.y branches.
+  * Further fixes to clean target.
+
+  [changes brought forward from 4.9.13-1+rpi3 by Peter Michael Green <plugwash@raspbian.org> at Thu, 18 May 2017 17:44:34 +0000]
+  * Fix "linux-compiler" packaging stuff for compiler version change.
+  * Remove usbip and cpupower binary packages as they are unversioned.
+
+  [changes introduced in 4.9.30-2+deb9u2+rpi1 by Peter Michael Green]
+  * Remove the following patches from debian/patches/series-rt
+    + features/all/rt/signals-allow-rt-tasks-to-cache-one-sigqueue-struct.patch
+    + features/all/rt/printk-kill.patch from debian/patches/series-rt
+    + features/all/rt/printk-27force_early_printk-27-boot-param-to-help-with-debugging.patch
+    + features/all/rt/sched-mmdrop-delayed.patch
+  * Remove debian/installer/armhf/modules/armhf-rpi*/ext?-modules
+
+  [changes brought forward from 4.9.30-2+deb9u2+rpi1+stretch by Peter Michael Green <plugwash@raspbian.org> at Wed, 27 Sep 2017 02:45:53 +0000]
+  * Re-enable libc-dev package.
+
+  [changes brought forward from 4.9.30-2+deb9u2+rpi1+stretch+buster by Peter Michael Green <plugwash@raspbian.org> at Thu, 05 Oct 2017 02:53:12 +0000]
+  * Fix linux-compiler package generation.
+  * Fix usbip "format-overflow" failure.
+
+  [changes introduced in 4.9.51-1+rpi1 by Peter Michael Green]
+  * Make usbip gcc 7 fix work with gcc 6 too.
+  * Remove features/all/rt/0207-block-Turn-off-warning-which-is-bogus-on-RT.patch from debian/patches/series-rt as it conflicts
+    with rpi patches.
+
+  [changes brought forward from 4.9.51-1+rpi2 by Peter Michael Green <plugwash@raspbian.org> at Sun, 15 Oct 2017 12:38:04 +0000]
+  * Try to make package binnmu safe.
+
+  [changes brought forward from 4.9.51-1+rpi3 by Peter Michael Green <plugwash@raspbian.org> at Sun, 22 Oct 2017 11:49:09 +0000]
+  * Re-enable usbip and cpupower packages.
+
+ -- Raspbian forward porter <root@raspbian.org>  Sat, 31 Mar 2018 14:43:51 +0000
+
 linux (4.9.82-1+deb9u3) stretch-security; urgency=medium
 
   * [powerpc] Backport more RFI flush related patches from 4.9.84.  Closes:

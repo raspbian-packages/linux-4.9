@@ -89,6 +89,29 @@ clean: debian/control
 	dh_testdir
 	rm -rf $(BUILD_DIR) $(STAMPS_DIR) debian/lib/python/debian_linux/*.pyc debian/lib/python/debian_linux/__pycache__ $$(find debian -maxdepth 1 -type d -name 'linux-*') debian/*-modules-*-di* debian/kernel-image-*-di* debian/xen-linux-system-* debian/*-tmp
 	dh_clean
+	rm -f arch/s390/include/asm/cmb.h.1
+	rm -f drivers/acpi/scan.c.1
+	rm -f drivers/base/reservation.c.1
+	rm -f drivers/usb/gadget/f_acm.c.1
+	rm -f drivers/usb/gadget/f_ecm.c.1
+	rm -f drivers/usb/gadget/f_obex.c.1
+	rm -f drivers/usb/gadget/f_serial.c.1
+	rm -f drivers/usb/gadget/f_subset.c.1
+	rm -f include/linux/reservation.h.1
+	rm -f include/net/cfg80211.h.1
+	rm -f kernel/sys.c.1
+	rm -f lib/crc32.c.1
+	rm -f drivers/dma-buf/reservation.c.1
+	rm -f drivers/dma-buf/seqno-fence.c.1
+	rm -f drivers/usb/gadget/function/f_acm.c.1
+	rm -f drivers/usb/gadget/function/f_ecm.c.1
+	rm -f drivers/usb/gadget/function/f_obex.c.1
+	rm -f drivers/usb/gadget/function/f_serial.c.1
+	rm -f drivers/usb/gadget/function/f_subset.c.1
+	chmod 644 arch/arm/boot/dts/overlays/mcp3008-overlay.dts
+	chmod 644 drivers/net/wireless/realtek/rtl8192cu/clean drivers/net/wireless/realtek/rtl8192cu/ifcfg-wlan0 drivers/net/wireless/realtek/rtl8192cu/runwpa drivers/net/wireless/realtek/rtl8192cu/wlan0dhcp scripts/knlinfo scripts/mkknlimg sound/arm/bcm2835-ctl.c sound/arm/bcm2835-pcm.c sound/arm/bcm2835-vchiq.c sound/arm/bcm2835.h arch/arm/boot/dts/overlays/mcp2515-can0-overlay.dts
+	rm -f Documentation/sphinx/*.pyc
+
 
 CONTROL_FILES = debian/changelog $(wildcard debian/templates/*.in)
 CONTROL_FILES += debian/config/defines $(wildcard debian/config/*/defines) $(wildcard debian/config/*/*/defines)
