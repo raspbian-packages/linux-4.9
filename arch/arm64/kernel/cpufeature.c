@@ -46,10 +46,18 @@ unsigned int compat_elf_hwcap __read_mostly = COMPAT_ELF_HWCAP_DEFAULT;
 unsigned int compat_elf_hwcap2 __read_mostly;
 #endif
 
+#ifndef __GENKSYMS__
 DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+#else
+DECLARE_BITMAP(cpu_hwcaps, 18);
+#endif
 EXPORT_SYMBOL(cpu_hwcaps);
 
+#ifndef __GENKSYMS__
 DEFINE_STATIC_KEY_ARRAY_FALSE(cpu_hwcap_keys, ARM64_NCAPS);
+#else
+DEFINE_STATIC_KEY_ARRAY_FALSE(cpu_hwcap_keys, 18);
+#endif
 EXPORT_SYMBOL(cpu_hwcap_keys);
 
 #define __ARM64_FTR_BITS(SIGNED, STRICT, TYPE, SHIFT, WIDTH, SAFE_VAL) \
