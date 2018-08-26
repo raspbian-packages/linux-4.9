@@ -1945,3 +1945,10 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
 				  argv, envp, flags);
 }
 #endif
+
+#undef get_task_comm
+char *get_task_comm(char *buf, struct task_struct *tsk)
+{
+	return __get_task_comm(buf, TASK_COMM_LEN, tsk);
+}
+EXPORT_SYMBOL_GPL(get_task_comm);
