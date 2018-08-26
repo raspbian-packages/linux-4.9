@@ -71,7 +71,7 @@ static int iio_set_bytes_per_datum_kfifo(struct iio_buffer *r, size_t bpd)
 	return 0;
 }
 
-static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
+static int iio_set_length_kfifo(struct iio_buffer *r, int length)
 {
 	/* Avoid an invalid state */
 	if (length < 2)

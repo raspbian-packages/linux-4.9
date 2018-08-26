@@ -498,6 +498,9 @@ static ssize_t iio_buffer_write_length(struct device *dev,
 	if (val == buffer->length)
 		return len;
 
+	if (val > INT_MAX)
+		return -EINVAL;
+
 	mutex_lock(&indio_dev->mlock);
 	if (iio_buffer_is_active(indio_dev->buffer)) {
 		ret = -EBUSY;
@@ -603,18 +606,20 @@ static int iio_buffer_disable(struct iio_buffer *buffer,
 	return buffer->access->disable(buffer, indio_dev);
 }
 
-static void iio_buffer_update_bytes_per_datum(struct iio_dev *indio_dev,
+static int iio_buffer_update_bytes_per_datum(struct iio_dev *indio_dev,
 	struct iio_buffer *buffer)
 {
 	unsigned int bytes;
 
 	if (!buffer->access->set_bytes_per_datum)
-		return;
+		return 0;
 
 	bytes = iio_compute_scan_bytes(indio_dev, buffer->scan_mask,
 		buffer->scan_timestamp);
+	if (bytes > INT_MAX)
+		return -EINVAL;
 
-	buffer->access->set_bytes_per_datum(buffer, bytes);
+	return buffer->access->set_bytes_per_datum(buffer, bytes);
 }
 
 static int iio_buffer_request_update(struct iio_dev *indio_dev,
@@ -622,15 +627,14 @@ static int iio_buffer_request_update(struct iio_dev *indio_dev,
 {
 	int ret;
 
-	iio_buffer_update_bytes_per_datum(indio_dev, buffer);
-	if (buffer->access->request_update) {
+	ret = iio_buffer_update_bytes_per_datum(indio_dev, buffer);
+	if (ret == 0 && buffer->access->request_update)
 		ret = buffer->access->request_update(buffer);
-		if (ret) {
-			dev_dbg(&indio_dev->dev,
-			       "Buffer not started: buffer parameter update failed (%d)\n",
-				ret);
-			return ret;
-		}
+	if (ret) {
+		dev_dbg(&indio_dev->dev,
+			"Buffer not started: buffer parameter update failed (%d)\n",
+			ret);
+		return ret;
 	}
 
 	return 0;
