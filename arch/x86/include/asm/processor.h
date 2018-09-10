@@ -136,8 +136,10 @@ struct cpuinfo_x86 {
 	/* Index into per_cpu list: */
 	u16			cpu_index;
 	u32			microcode;
+#if !defined(__GENKSYMS__) && !defined(MODULE)
 	/* Address space bits used by the cache internally */
 	u8			x86_cache_bits;
+#endif
 };
 
 #define X86_VENDOR_INTEL	0
@@ -175,10 +177,12 @@ extern const struct seq_operations cpuinfo_op;
 
 extern void cpu_detect(struct cpuinfo_x86 *c);
 
+#ifndef MODULE
 static inline unsigned long long l1tf_pfn_limit(void)
 {
 	return BIT_ULL(boot_cpu_data.x86_cache_bits - 1 - PAGE_SHIFT);
 }
+#endif
 
 extern void early_cpu_init(void);
 extern void identify_boot_cpu(void);
