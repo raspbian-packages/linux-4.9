@@ -398,7 +398,11 @@ struct kioctx_table;
 struct mm_struct {
 	struct vm_area_struct *mmap;		/* list of VMAs */
 	struct rb_root mm_rb;
-	u64 vmacache_seqnum;                   /* per-thread vmacache */
+#ifndef __GENKSYMS__
+	u32 __pad_was_vmacache_seqnum;
+#else
+	u32 vmacache_seqnum;
+#endif
 #ifdef CONFIG_MMU
 	unsigned long (*get_unmapped_area) (struct file *filp,
 				unsigned long addr, unsigned long len,
@@ -523,6 +527,9 @@ struct mm_struct {
 	atomic_long_t hugetlb_usage;
 #endif
 	struct work_struct async_put_work;
+#ifndef __GENKSYMS__
+	u64 vmacache_seqnum;                   /* per-thread vmacache */
+#endif
 };
 
 static inline void mm_init_cpumask(struct mm_struct *mm)
