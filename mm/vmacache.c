@@ -33,12 +33,12 @@ static bool vmacache_valid(struct mm_struct *mm)
 		return false;
 
 	curr = current;
-	if (mm->vmacache_seqnum != curr->vmacache_seqnum) {
+	if (mm->vmacache_seqnum != task_ext(curr)->vmacache_seqnum) {
 		/*
 		 * First attempt will always be invalid, initialize
 		 * the new cache for this task here.
 		 */
-		curr->vmacache_seqnum = mm->vmacache_seqnum;
+		task_ext(curr)->vmacache_seqnum = mm->vmacache_seqnum;
 		vmacache_flush(curr);
 		return false;
 	}
