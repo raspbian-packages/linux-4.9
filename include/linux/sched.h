@@ -1483,6 +1483,12 @@ struct tlbflush_unmap_batch {
 	bool writable;
 };
 
+#ifndef MODULE
+struct task_struct_ext {
+	u64 vmacache_seqnum;                   /* per-thread vmacache */
+};
+#endif
+
 struct task_struct {
 #ifdef CONFIG_THREAD_INFO_IN_TASK
 	/*
@@ -1559,7 +1565,11 @@ struct task_struct {
 
 	struct mm_struct *mm, *active_mm;
 	/* per-thread vma caching */
-	u64 vmacache_seqnum;
+#ifndef __GENKSYMS__
+	u32 __pad_was_vmacache_seqnum;
+#else
+	u32 vmacache_seqnum;
+#endif
 	struct vm_area_struct *vmacache[VMACACHE_SIZE];
 #if defined(SPLIT_RSS_COUNTING)
 	struct task_rss_stat	rss_stat;
@@ -1979,12 +1989,23 @@ struct task_struct {
  *
  * Do not put anything below here!
  */
+#if !defined(__GENKSYMS__) && !defined(MODULE)
+	/* bwh: Use task_ext() rather than accessing this field directly */
+	struct task_struct_ext __pad_for_ext;
+#endif
 };
 
 #ifdef CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT
 extern int arch_task_struct_size __read_mostly;
 #else
 # define arch_task_struct_size (sizeof(struct task_struct))
+#endif
+
+#if !defined(__GENKSYMS__) && !defined(MODULE)
+static inline struct task_struct_ext *task_ext(struct task_struct *t)
+{
+	return (struct task_struct_ext *)((char *)t + arch_task_struct_size) - 1;
+}
 #endif
 
 #ifdef CONFIG_VMAP_STACK
