@@ -646,10 +646,14 @@ struct sk_buff {
 		struct rb_node		rbnode; /* used in netem, ip4 defrag, and tcp stack */
 	};
 
+#ifndef __GENKSYMS__
 	union {
 		struct sock		*sk;
 		int			ip_defrag_offset;
 	};
+#else
+	struct sock		*sk;
+#endif
 
 	struct net_device	*dev;
 
