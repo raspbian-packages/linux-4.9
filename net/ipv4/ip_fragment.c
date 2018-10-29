@@ -759,7 +759,7 @@ unsigned int inet_frag_rbtree_purge(struct rb_root *root)
 EXPORT_SYMBOL(inet_frag_rbtree_purge);
 
 #ifdef CONFIG_SYSCTL
-static int dist_min;
+static long zero;
 
 static struct ctl_table ip4_frags_ns_ctl_table[] = {
 	{
@@ -776,6 +776,7 @@ static struct ctl_table ip4_frags_ns_ctl_table[] = {
 		.maxlen		= sizeof(unsigned long),
 		.mode		= 0644,
 		.proc_handler	= proc_doulongvec_minmax,
+		.extra1		= &zero,
 		.extra2		= &init_net.ipv4.frags.high_thresh
 	},
 	{
@@ -791,7 +792,7 @@ static struct ctl_table ip4_frags_ns_ctl_table[] = {
 		.maxlen		= sizeof(int),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_minmax,
-		.extra1		= &dist_min,
+		.extra1		= &zero
 	},
 	{ }
 };
