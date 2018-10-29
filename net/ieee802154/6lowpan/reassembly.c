@@ -82,7 +82,8 @@ fq_find(struct net *net, const struct lowpan_802154_cb *cb,
 	key.src = *src;
 	key.dst = *dst;
 
-	q = inet_frag_find(&ieee802154_lowpan->frags, &key);
+	q = inet_frag_find(&ieee802154_lowpan->frags,
+			   &net->ieee802154_lowpan_frags_ext, &key);
 	if (!q)
 		return NULL;
 
@@ -548,14 +549,16 @@ static int __net_init lowpan_frags_init_net(struct net *net)
 	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
 	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
 	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
-	ieee802154_lowpan->frags.f = &lowpan_frags;
+	net->ieee802154_lowpan_frags_ext.f = &lowpan_frags;
 
-	res = inet_frags_init_net(&ieee802154_lowpan->frags);
+	res = inet_frags_init_net(&ieee802154_lowpan->frags,
+				  &net->ieee802154_lowpan_frags_ext);
 	if (res < 0)
 		return res;
 	res = lowpan_frags_ns_sysctl_register(net);
 	if (res < 0)
-		inet_frags_exit_net(&ieee802154_lowpan->frags);
+		inet_frags_exit_net(&ieee802154_lowpan->frags,
+				    &net->ieee802154_lowpan_frags_ext);
 	return res;
 }
 
@@ -565,7 +568,8 @@ static void __net_exit lowpan_frags_exit_net(struct net *net)
 		net_ieee802154_lowpan(net);
 
 	lowpan_frags_ns_sysctl_unregister(net);
-	inet_frags_exit_net(&ieee802154_lowpan->frags);
+	inet_frags_exit_net(&ieee802154_lowpan->frags,
+			    &net->ieee802154_lowpan_frags_ext);
 }
 
 static struct pernet_operations lowpan_frags_ops = {

@@ -143,6 +143,18 @@ struct net {
 #endif
 	struct sock		*diag_nlsk;
 	atomic_t		fnhe_genid;
+#ifndef __GENKSYMS__
+	struct netns_frags_ext	ipv4_frags_ext;
+#if IS_ENABLED(CONFIG_IPV6)
+	struct netns_frags_ext	ipv6_frags_ext;
+#endif
+#if IS_ENABLED(CONFIG_IEEE802154_6LOWPAN)
+	struct netns_frags_ext	ieee802154_lowpan_frags_ext;
+#endif
+#if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+	struct netns_frags_ext	nf_frag_frags_ext;
+#endif
+#endif
 };
 
 #include <linux/seq_file_net.h>

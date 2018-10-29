@@ -1,11 +1,11 @@
 #ifndef __NET_FRAG_H__
 #define __NET_FRAG_H__
 
+#ifndef __GENKSYMS__
 #include <linux/rhashtable.h>
+#endif
 
 struct netns_frags {
-	struct rhashtable       rhashtable ____cacheline_aligned_in_smp;
-
 	/* Keep atomic mem on separate cachelines in structs that include it */
 	atomic_t		mem ____cacheline_aligned_in_smp;
 	/* sysctls */
@@ -13,7 +13,11 @@ struct netns_frags {
 	int			high_thresh;
 	int			low_thresh;
 	int			max_dist;
+};
+
+struct netns_frags_ext {
 	struct inet_frags	*f;
+	struct rhashtable       rhashtable ____cacheline_aligned_in_smp;
 };
 
 /**
@@ -85,6 +89,7 @@ struct inet_frag_queue {
 	__u8			flags;
 	u16			max_size;
 	struct netns_frags      *net;
+	struct netns_frags_ext	*net_ext;
 	struct rcu_head		rcu;
 };
 
@@ -103,16 +108,19 @@ struct inet_frags {
 int inet_frags_init(struct inet_frags *);
 void inet_frags_fini(struct inet_frags *);
 
-static inline int inet_frags_init_net(struct netns_frags *nf)
+static inline int inet_frags_init_net(struct netns_frags *nf,
+				      struct netns_frags_ext *nf_ext)
 {
 	atomic_set(&nf->mem, 0);
-	return rhashtable_init(&nf->rhashtable, &nf->f->rhash_params);
+	return rhashtable_init(&nf_ext->rhashtable, &nf_ext->f->rhash_params);
 }
-void inet_frags_exit_net(struct netns_frags *nf);
+void inet_frags_exit_net(struct netns_frags *nf, struct netns_frags_ext *ext);
 
 void inet_frag_kill(struct inet_frag_queue *q);
 void inet_frag_destroy(struct inet_frag_queue *q);
-struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key);
+struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
+				       struct netns_frags_ext *nf_ext,
+				       void *key);
 
 /* Free all skbs in the queue; return the sum of their truesizes. */
 unsigned int inet_frag_rbtree_purge(struct rb_root *root);

@@ -279,7 +279,7 @@ static struct ipq *ip_find(struct net *net, struct iphdr *iph,
 	};
 	struct inet_frag_queue *q;
 
-	q = inet_frag_find(&net->ipv4.frags, &key);
+	q = inet_frag_find(&net->ipv4.frags, &net->ipv4_frags_ext, &key);
 	if (!q)
 		return NULL;
 
@@ -900,21 +900,21 @@ static int __net_init ipv4_frags_init_net(struct net *net)
 	net->ipv4.frags.timeout = IP_FRAG_TIME;
 
 	net->ipv4.frags.max_dist = 64;
-	net->ipv4.frags.f = &ip4_frags;
+	net->ipv4_frags_ext.f = &ip4_frags;
 
-	res = inet_frags_init_net(&net->ipv4.frags);
+	res = inet_frags_init_net(&net->ipv4.frags, &net->ipv4_frags_ext);
 	if (res < 0)
 		return res;
 	res = ip4_frags_ns_ctl_register(net);
 	if (res < 0)
-		inet_frags_exit_net(&net->ipv4.frags);
+		inet_frags_exit_net(&net->ipv4.frags, &net->ipv4_frags_ext);
 	return res;
 }
 
 static void __net_exit ipv4_frags_exit_net(struct net *net)
 {
 	ip4_frags_ns_ctl_unregister(net);
-	inet_frags_exit_net(&net->ipv4.frags);
+	inet_frags_exit_net(&net->ipv4.frags, &net->ipv4_frags_ext);
 }
 
 static struct pernet_operations ip4_frags_ops = {
