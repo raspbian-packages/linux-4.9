@@ -321,6 +321,12 @@ struct fpu {
 	 */
 	unsigned char			fpregs_active;
 
+#ifndef __GENKSYMS__
+	unsigned char                   __pad_was_counter;
+#else
+	unsigned char                   counter;
+#endif
+
 	/*
 	 * @state:
 	 *
