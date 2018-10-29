@@ -249,7 +249,10 @@ struct power_supply {
 	spinlock_t changed_lock;
 	bool changed;
 	bool initialized;
+#ifndef __GENKSYMS__
 	bool removing;
+	/* 1 padding byte spare */
+#endif
 	atomic_t use_cnt;
 #ifdef CONFIG_THERMAL
 	struct thermal_zone_device *tzd;
