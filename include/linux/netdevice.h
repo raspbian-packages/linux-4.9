@@ -2338,12 +2338,14 @@ struct netdev_notifier_info {
 	struct net_device *dev;
 };
 
+#ifndef MODULE
 struct netdev_notifier_info_ext {
 	struct netdev_notifier_info info; /* must be first */
 	union {
 		u32 mtu;
 	} ext;
 };
+#endif
 
 struct netdev_notifier_change_info {
 	struct netdev_notifier_info info; /* must be first */
