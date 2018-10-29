@@ -176,7 +176,7 @@ static struct frag_queue *fq_find(struct net *net, __be32 id, u32 user,
 	};
 	struct inet_frag_queue *q;
 
-	q = inet_frag_find(&net->nf_frag.frags, &key);
+	q = inet_frag_find(&net->nf_frag.frags, &net->nf_frag_frags_ext, &key);
 	if (!q)
 		return NULL;
 
@@ -614,21 +614,22 @@ static int nf_ct_net_init(struct net *net)
 	net->nf_frag.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
 	net->nf_frag.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
 	net->nf_frag.frags.timeout = IPV6_FRAG_TIMEOUT;
-	net->nf_frag.frags.f = &nf_frags;
+	net->nf_frag_frags_ext.f = &nf_frags;
 
-	res = inet_frags_init_net(&net->nf_frag.frags);
+	res = inet_frags_init_net(&net->nf_frag.frags, &net->nf_frag_frags_ext);
 	if (res < 0)
 		return res;
 	res = nf_ct_frag6_sysctl_register(net);
 	if (res < 0)
-		inet_frags_exit_net(&net->nf_frag.frags);
+		inet_frags_exit_net(&net->nf_frag.frags,
+				    &net->nf_frag_frags_ext);
 	return res;
 }
 
 static void nf_ct_net_exit(struct net *net)
 {
 	nf_ct_frags6_sysctl_unregister(net);
-	inet_frags_exit_net(&net->nf_frag.frags);
+	inet_frags_exit_net(&net->nf_frag.frags, &net->nf_frag_frags_ext);
 }
 
 static struct pernet_operations nf_ct_net_ops = {

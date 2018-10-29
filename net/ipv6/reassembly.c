@@ -161,7 +161,7 @@ fq_find(struct net *net, __be32 id, const struct ipv6hdr *hdr, int iif)
 					    IPV6_ADDR_LINKLOCAL)))
 		key.iif = 0;
 
-	q = inet_frag_find(&net->ipv6.frags, &key);
+	q = inet_frag_find(&net->ipv6.frags, &net->ipv6_frags_ext, &key);
 	if (!q)
 		return NULL;
 
@@ -679,22 +679,22 @@ static int __net_init ipv6_frags_init_net(struct net *net)
 	net->ipv6.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
 	net->ipv6.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
 	net->ipv6.frags.timeout = IPV6_FRAG_TIMEOUT;
-	net->ipv6.frags.f = &ip6_frags;
+	net->ipv6_frags_ext.f = &ip6_frags;
 
-	res = inet_frags_init_net(&net->ipv6.frags);
+	res = inet_frags_init_net(&net->ipv6.frags, &net->ipv6_frags_ext);
 	if (res < 0)
 		return res;
 
 	res = ip6_frags_ns_sysctl_register(net);
 	if (res < 0)
-		inet_frags_exit_net(&net->ipv6.frags);
+		inet_frags_exit_net(&net->ipv6.frags, &net->ipv6_frags_ext);
 	return res;
 }
 
 static void __net_exit ipv6_frags_exit_net(struct net *net)
 {
 	ip6_frags_ns_sysctl_unregister(net);
-	inet_frags_exit_net(&net->ipv6.frags);
+	inet_frags_exit_net(&net->ipv6.frags, &net->ipv6_frags_ext);
 }
 
 static struct pernet_operations ip6_frags_ops = {
