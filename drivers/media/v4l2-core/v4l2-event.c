@@ -197,12 +197,14 @@ int v4l2_event_pending(struct v4l2_fh *fh)
 }
 EXPORT_SYMBOL_GPL(v4l2_event_pending);
 
+static DEFINE_MUTEX(v4l2_event_subscribe_lock);
+
 static void __v4l2_event_unsubscribe(struct v4l2_subscribed_event *sev)
 {
 	struct v4l2_fh *fh = sev->fh;
 	unsigned int i;
 
-	lockdep_assert_held(&fh->subscribe_lock);
+	lockdep_assert_held(&v4l2_event_subscribe_lock);
 	assert_spin_locked(&fh->vdev->fh_lock);
 
 	/* Remove any pending events for this subscription */
@@ -240,7 +242,7 @@ int v4l2_event_subscribe(struct v4l2_fh *fh,
 	sev->ops = ops;
 	sev->elems = elems;
 
-	mutex_lock(&fh->subscribe_lock);
+	mutex_lock(&v4l2_event_subscribe_lock);
 
 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
 	found_ev = v4l2_event_subscribed(fh, sub->type, sub->id);
@@ -261,7 +263,7 @@ int v4l2_event_subscribe(struct v4l2_fh *fh,
 		}
 	}
 
-	mutex_unlock(&fh->subscribe_lock);
+	mutex_unlock(&v4l2_event_subscribe_lock);
 
 	return ret;
 }
@@ -301,7 +303,7 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
 		return 0;
 	}
 
-	mutex_lock(&fh->subscribe_lock);
+	mutex_lock(&v4l2_event_subscribe_lock);
 
 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
 
@@ -314,7 +316,7 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
 	if (sev && sev->ops && sev->ops->del)
 		sev->ops->del(sev);
 
-	mutex_unlock(&fh->subscribe_lock);
+	mutex_unlock(&v4l2_event_subscribe_lock);
 
 	kfree(sev);
 
