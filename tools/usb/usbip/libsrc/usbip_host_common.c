@@ -21,6 +21,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma GCC diagnostic warning "-Wpragmas"
+#pragma GCC diagnostic warning "-Wformat-truncation"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
