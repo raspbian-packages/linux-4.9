@@ -1,0 +1,80 @@
+commit e935a9f098315069b98aaa6de4a3f221df7b256c
+Author: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Date:   Wed Nov 23 10:25:31 2016 +0000
+
+    brcmfmac: fix scheduled scan result handling for newer chips
+    
+    commit 53e3a80d80c80bf50ab64cf6c44fb0fa41aa22d8 upstream.
+    
+    The scan results for scheduled scan as retrieved from the device
+    have changed. A field has been added which is not needed. However,
+    the appended info is. Luckily they are versioned so check that to
+    find out the location of the appended data.
+    
+    Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+    Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+    Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+    Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+    Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index e0a80a02a9ee..0490c4806a80 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -3157,6 +3157,28 @@ static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
+ 		  brcmf_cfg80211_escan_timeout_worker);
+ }
+ 
++static struct brcmf_pno_net_info_le *
++brcmf_get_netinfo_array(struct brcmf_pno_scanresults_le *pfn_v1)
++{
++	struct brcmf_pno_scanresults_v2_le *pfn_v2;
++	struct brcmf_pno_net_info_le *netinfo;
++
++	switch (pfn_v1->version) {
++	default:
++		WARN_ON(1);
++		/* fall-thru */
++	case cpu_to_le32(1):
++		netinfo = (struct brcmf_pno_net_info_le *)(pfn_v1 + 1);
++		break;
++	case cpu_to_le32(2):
++		pfn_v2 = (struct brcmf_pno_scanresults_v2_le *)pfn_v1;
++		netinfo = (struct brcmf_pno_net_info_le *)(pfn_v2 + 1);
++		break;
++	}
++
++	return netinfo;
++}
++
+ /* PFN result doesn't have all the info which are required by the supplicant
+  * (For e.g IEs) Do a target Escan so that sched scan results are reported
+  * via wl_inform_single_bss in the required format. Escan does require the
+@@ -3213,8 +3235,7 @@ brcmf_notify_sched_scan_results(struct brcmf_if *ifp,
+ 		}
+ 
+ 		request->wiphy = wiphy;
+-		data += sizeof(struct brcmf_pno_scanresults_le);
+-		netinfo_start = (struct brcmf_pno_net_info_le *)data;
++		netinfo_start = brcmf_get_netinfo_array(pfn_result);
+ 
+ 		for (i = 0; i < result_count; i++) {
+ 			netinfo = &netinfo_start[i];
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil_types.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil_types.h
+index 86305bb9c37f..346fde693fc4 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil_types.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil_types.h
+@@ -790,6 +790,13 @@ struct brcmf_pno_scanresults_le {
+ 	__le32 count;
+ };
+ 
++struct brcmf_pno_scanresults_v2_le {
++	__le32 version;
++	__le32 status;
++	__le32 count;
++	__le32 scan_ch_bucket;
++};
++
+ /**
+  * struct brcmf_pno_macaddr_le - to configure PNO macaddr randomization.
+  *
