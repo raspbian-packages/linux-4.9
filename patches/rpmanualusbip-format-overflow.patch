@@ -1,0 +1,21 @@
+commit 7bba4828900638795851a595ce3b5ef442630417
+Author: Peter Michael Green <plugwash@raspbian.org>
+Date:   Thu Feb 15 18:08:18 2018 +0000
+
+    Apply parts of previous usbip format overflow patch that still
+    apply.
+
+diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
+index 6ff7b601f854..7cc43384f4d1 100644
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -21,6 +21,9 @@
+  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#pragma GCC diagnostic warning "-Wpragmas"
++#pragma GCC diagnostic warning "-Wformat-truncation"
++
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
