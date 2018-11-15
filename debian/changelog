@@ -1,3 +1,10 @@
+linux-4.9 (4.9.82-1+deb9u3+rpi2) buster-staging; urgency=medium
+
+  * Apply patches to fix tools build with current gcc.
+  * Disable documentation, it seems to fail to build.
+
+ -- Peter Michael Green <plugwash@raspbian.org>  Fri, 09 Nov 2018 05:34:01 +0000
+
 linux-4.9 (4.9.82-1+deb9u3+rpi1) stretch-staging; urgency=medium
 
   [Changes from 3.18.5-1~exp1+rpi1 or earlier]

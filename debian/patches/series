@@ -643,3 +643,7 @@ rpi/rpi_1484_128cbca6aa55382fbe4538c110013784b9352833.patch
 rpi/rpi_9999_other_changes.patch
 #rpi/rpi_9999_other_changes.patch
 rpmanualusbip-format-overflow.patch
+rpmanual-alias-error.patch
+rpmanual-perf-python.patch
+rpmanual-perf-snprintf.patch
+rpmanual-usbip-strncpy.patch

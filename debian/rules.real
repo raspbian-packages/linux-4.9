@@ -202,7 +202,7 @@ $(STAMPS_DIR)/build-doc: $(STAMPS_DIR)/source
 	@$(stamp)
 
 install-base:
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs $(INSTALLDOCS_ARGS)
 endif
 	dh_installchangelogs
@@ -548,7 +548,7 @@ install-kbuild: $(STAMPS_DIR)/build-tools
 	$(call make-tools,scripts) install DESTDIR=$(DIR) prefix=$(PREFIX_DIR)
 	dh_link $(PREFIX_DIR) /usr/src/$(PACKAGE_NAME)
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 endif
 	dh_strip
@@ -580,7 +580,7 @@ ifneq ($(filter i386 amd64 x32,$(DEB_HOST_ARCH)),)
 endif
 	dh_install --sourcedir=$(DIR)
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 	dh_installman
 endif
@@ -605,7 +605,7 @@ install-perf: $(STAMPS_DIR)/build-tools
 	dh_perl /usr/share/perf_$(VERSION)-core/scripts/perl/Perf-Trace-Util/lib/
 	dh_python2 /usr/share/perf_$(VERSION)-core/scripts/python/Perf-Trace-Util/lib/
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 endif
 	dh_lintian
@@ -627,7 +627,7 @@ install-usbip: $(STAMPS_DIR)/build-tools
 	$(call make-tools,tools/usb/usbip) install DESTDIR=$(DIR)
 	dh_install --sourcedir=$(DIR)
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 	dh_installman
 endif
@@ -658,7 +658,7 @@ install-hyperv-daemons: $(STAMPS_DIR)/build-tools
 			|| break; \
 	done
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 endif
 	dh_systemd_enable
@@ -689,7 +689,7 @@ install-liblockdep: $(STAMPS_DIR)/build-tools
 		'usr/lib/*/liblockdep.so.*'
 	dh_install --sourcedir=$(DIR)
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 endif
 	dh_strip
@@ -716,7 +716,7 @@ install-lockdep:
 		> $(DIR)/usr/bin/lockdep
 	chmod 755 $(DIR)/usr/bin/lockdep
 	dh_installchangelogs
-ifeq (,$(filter nodoc,$(DEB_BUILD_PROFILES)))
+ifeq (docsdisabled,$(filter nodoc,$(DEB_BUILD_PROFILES)))
 	dh_installdocs
 endif
 	dh_compress
