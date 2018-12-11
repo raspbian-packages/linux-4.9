@@ -287,7 +287,7 @@ static void __reset_control_put_internal(struct reset_control *rstc)
 	kfree(rstc);
 }
 
-struct reset_control *__of_reset_control_get(struct device_node *node,
+struct reset_control *__of_reset_control_get_5(struct device_node *node,
 				     const char *id, int index, bool shared,
 				     bool optional)
 {
@@ -349,7 +349,7 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
 
 	return rstc;
 }
-EXPORT_SYMBOL_GPL(__of_reset_control_get);
+EXPORT_SYMBOL_GPL(__of_reset_control_get_5);
 
 struct reset_control *__reset_control_get(struct device *dev, const char *id,
 					  int index, bool shared, bool optional)
@@ -361,6 +361,14 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
 	return optional ? NULL : ERR_PTR(-EINVAL);
 }
 EXPORT_SYMBOL_GPL(__reset_control_get);
+
+#undef __of_reset_control_get
+struct reset_control *__of_reset_control_get(struct device_node *node,
+				     const char *id, int index, int shared)
+{
+	return __of_reset_control_get_5(node, id, index, shared, false);
+}
+EXPORT_SYMBOL_GPL(__of_reset_control_get);
 
 /**
  * reset_control_put - free the reset controller
@@ -383,7 +391,7 @@ static void devm_reset_control_release(struct device *dev, void *res)
 	reset_control_put(*(struct reset_control **)res);
 }
 
-struct reset_control *__devm_reset_control_get(struct device *dev,
+struct reset_control *__devm_reset_control_get_5(struct device *dev,
 				     const char *id, int index, bool shared,
 				     bool optional)
 {
@@ -403,6 +411,14 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
 	}
 
 	return rstc;
+}
+EXPORT_SYMBOL_GPL(__devm_reset_control_get_5);
+
+#undef __devm_reset_control_get
+struct reset_control *__devm_reset_control_get(struct device *dev,
+				     const char *id, int index, int shared)
+{
+	return __devm_reset_control_get_5(dev, id, index, shared, false);
 }
 EXPORT_SYMBOL_GPL(__devm_reset_control_get);
 
@@ -432,3 +448,9 @@ int __device_reset(struct device *dev, bool optional)
 	return ret;
 }
 EXPORT_SYMBOL_GPL(__device_reset);
+
+int __must_check device_reset(struct device *dev)
+{
+	return __device_reset(dev, false);
+}
+EXPORT_SYMBOL_GPL(device_reset);
