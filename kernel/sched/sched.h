@@ -256,7 +256,9 @@ struct cfs_bandwidth {
 	int nr_periods, nr_throttled;
 	u64 throttled_time;
 
+#ifndef __GENKSYMS__
 	bool distribute_running;
+#endif
 #endif
 };
 
