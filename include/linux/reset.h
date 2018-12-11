@@ -13,16 +13,23 @@ int reset_control_deassert(struct reset_control *rstc);
 int reset_control_status(struct reset_control *rstc);
 
 struct reset_control *__of_reset_control_get(struct device_node *node,
+				     const char *id, int index, int shared);
+struct reset_control *__of_reset_control_get_5(struct device_node *node,
 				     const char *id, int index, bool shared,
 				     bool optional);
+#define __of_reset_control_get __of_reset_control_get_5
 struct reset_control *__reset_control_get(struct device *dev, const char *id,
 					  int index, bool shared,
 					  bool optional);
 void reset_control_put(struct reset_control *rstc);
 int __device_reset(struct device *dev, bool optional);
+int __must_check device_reset(struct device *dev);
 struct reset_control *__devm_reset_control_get(struct device *dev,
+				     const char *id, int index, int shared);
+struct reset_control *__devm_reset_control_get_5(struct device *dev,
 				     const char *id, int index, bool shared,
 				     bool optional);
+#define __devm_reset_control_get __devm_reset_control_get_5
 
 #else
 
@@ -55,6 +62,11 @@ static inline int __device_reset(struct device *dev, bool optional)
 	return optional ? 0 : -ENOTSUPP;
 }
 
+static inline int __must_check device_reset(struct device *dev)
+{
+	return __device_reset(dev, false);
+}
+
 static inline struct reset_control *__of_reset_control_get(
 					struct device_node *node,
 					const char *id, int index, bool shared,
@@ -78,11 +90,6 @@ static inline struct reset_control *__devm_reset_control_get(
 }
 
 #endif /* CONFIG_RESET_CONTROLLER */
-
-static inline int __must_check device_reset(struct device *dev)
-{
-	return __device_reset(dev, false);
-}
 
 static inline int device_reset_optional(struct device *dev)
 {
