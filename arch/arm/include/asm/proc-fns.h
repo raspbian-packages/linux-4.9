@@ -37,10 +37,6 @@ extern struct processor {
 	 */
 	void (*_proc_init)(void);
 	/*
-	 * Check for processor bugs
-	 */
-	void (*check_bugs)(void);
-	/*
 	 * Disable any processor specifics
 	 */
 	void (*_proc_fin)(void);
@@ -79,6 +75,12 @@ extern struct processor {
 	unsigned int suspend_size;
 	void (*do_suspend)(void *);
 	void (*do_resume)(void *);
+#if !defined(__GENKSYMS__) && !defined(MODULE)
+	/*
+	 * Check for processor bugs
+	 */
+	void (*check_bugs)(void);
+#endif
 } processor;
 
 #ifndef MULTI_CPU

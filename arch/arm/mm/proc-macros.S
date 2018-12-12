@@ -281,7 +281,6 @@ ENTRY(\name\()_processor_functions)
 	.word	\dabort
 	.word	\pabort
 	.word	cpu_\name\()_proc_init
-	.word	\bugs
 	.word	cpu_\name\()_proc_fin
 	.word	cpu_\name\()_reset
 	.word	cpu_\name\()_do_idle
@@ -308,6 +307,8 @@ ENTRY(\name\()_processor_functions)
 	.word	0
 	.word	0
 	.endif
+
+	.word	\bugs
 
 	.size	\name\()_processor_functions, . - \name\()_processor_functions
 .endm
