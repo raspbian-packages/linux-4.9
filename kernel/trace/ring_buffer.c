@@ -4055,7 +4055,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_consume);
  * This overall must be paired with ring_buffer_read_finish.
  */
 struct ring_buffer_iter *
-ring_buffer_read_prepare(struct ring_buffer *buffer, int cpu, gfp_t flags)
+ring_buffer_read_prepare_3(struct ring_buffer *buffer, int cpu, gfp_t flags)
 {
 	struct ring_buffer_per_cpu *cpu_buffer;
 	struct ring_buffer_iter *iter;
@@ -4075,6 +4075,14 @@ ring_buffer_read_prepare(struct ring_buffer *buffer, int cpu, gfp_t flags)
 	atomic_inc(&cpu_buffer->record_disabled);
 
 	return iter;
+}
+EXPORT_SYMBOL_GPL(ring_buffer_read_prepare_3);
+
+#undef ring_buffer_read_prepare
+struct ring_buffer_iter *
+ring_buffer_read_prepare(struct ring_buffer *buffer, int cpu)
+{
+	return ring_buffer_read_prepare_3(buffer, cpu, GFP_KERNEL);
 }
 EXPORT_SYMBOL_GPL(ring_buffer_read_prepare);
 
