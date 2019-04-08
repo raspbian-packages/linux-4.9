@@ -125,7 +125,10 @@ ring_buffer_consume(struct ring_buffer *buffer, int cpu, u64 *ts,
 		    unsigned long *lost_events);
 
 struct ring_buffer_iter *
-ring_buffer_read_prepare(struct ring_buffer *buffer, int cpu, gfp_t flags);
+ring_buffer_read_prepare(struct ring_buffer *buffer, int cpu);
+struct ring_buffer_iter *
+ring_buffer_read_prepare_3(struct ring_buffer *buffer, int cpu, gfp_t flags);
+#define ring_buffer_read_prepare ring_buffer_read_prepare_3
 void ring_buffer_read_prepare_sync(void);
 void ring_buffer_read_start(struct ring_buffer_iter *iter);
 void ring_buffer_read_finish(struct ring_buffer_iter *iter);
