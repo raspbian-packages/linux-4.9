@@ -144,6 +144,9 @@ struct net {
 #endif
 	struct sock		*diag_nlsk;
 	atomic_t		fnhe_genid;
+#if !defined(__GENKSYMS__) && !defined(MODULE)
+	int			ipv4_sysctl_tcp_min_snd_mss;
+#endif
 };
 
 #include <linux/seq_file_net.h>
