@@ -282,7 +282,9 @@ enum
 	LINUX_MIB_TCPKEEPALIVE,			/* TCPKeepAlive */
 	LINUX_MIB_TCPMTUPFAIL,			/* TCPMTUPFail */
 	LINUX_MIB_TCPMTUPSUCCESS,		/* TCPMTUPSuccess */
+#if !defined(__KERNEL__) || (!defined(__GENKSYMS__) && !defined(MODULE))
 	LINUX_MIB_TCPWQUEUETOOBIG,		/* TCPWqueueTooBig */
+#endif
 	__LINUX_MIB_MAX
 };
 
