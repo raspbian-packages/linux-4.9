@@ -138,6 +138,6 @@ struct netns_ipv4 {
 	int sysctl_fib_multipath_use_neigh;
 #endif
 	atomic_t	rt_genid;
-	siphash_key_t	ip_id_key;
+	/* siphash_key_t ip_id_key; - bwh: moved to end of struct net */
 };
 #endif
