@@ -69,6 +69,10 @@ struct drm_mm_node {
 	unsigned scanned_next_free : 1;
 	unsigned scanned_preceeds_hole : 1;
 	unsigned allocated : 1;
+#ifndef __GENKSYMS__
+	unsigned readonly : 1;	/* really for drm_vma_offset_node */
+	/* 25 bits spare */
+#endif
 	unsigned long color;
 	u64 start;
 	u64 size;

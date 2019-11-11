@@ -2350,13 +2350,13 @@ extern void drm_gem_object_unreference_unlocked(struct drm_gem_object *);
 static inline void
 i915_gem_object_set_readonly(struct drm_i915_gem_object *obj)
 {
-	obj->base.vma_node.readonly = true;
+	obj->base.vma_node.vm_node.readonly = true;
 }
 
 static inline bool
 i915_gem_object_is_readonly(const struct drm_i915_gem_object *obj)
 {
-	return obj->base.vma_node.readonly;
+	return obj->base.vma_node.vm_node.readonly;
 }
 
 static inline bool
