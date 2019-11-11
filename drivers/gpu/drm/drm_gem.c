@@ -996,7 +996,7 @@ int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
 		return -EACCES;
 	}
 
-	if (node->readonly) {
+	if (node->vm_node.readonly) {
 		if (vma->vm_flags & VM_WRITE) {
 			drm_gem_object_unreference_unlocked(obj);
 			return -EINVAL;
