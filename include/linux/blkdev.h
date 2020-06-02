@@ -446,7 +446,6 @@ struct request_queue {
 	int			node;
 #ifdef CONFIG_BLK_DEV_IO_TRACE
 	struct blk_trace __rcu	*blk_trace;
-	struct mutex		blk_trace_mutex;
 #endif
 	/*
 	 * for flush operations
@@ -482,6 +481,12 @@ struct request_queue {
 	struct bio_set		*bio_split;
 
 	bool			mq_sysfs_init_done;
+
+#ifndef __GENKSYMS__
+#ifdef CONFIG_BLK_DEV_IO_TRACE
+	struct mutex		blk_trace_mutex;
+#endif
+#endif
 };
 
 #define QUEUE_FLAG_QUEUED	1	/* uses generic tag queueing */
